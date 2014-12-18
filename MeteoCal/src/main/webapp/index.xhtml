@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>MeteoCal</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link rel="stylesheet" type="text/css" href="css/generic.css"/>
+    </h:head>
+    <h:body>
+        <h1 class = "title">MeteoCal WebApp</h1>
+        <h:form id = "registrationForm">
+            <p:panel header="Registration Form">
+                <h:panelGrid columns="3" id="regGrid">
+                    <h:outputLabel for="name">Name:</h:outputLabel>
+                    <p:inputText id="name" value="#{registrationBean.user.name}">
+                        <p:ajax update="namemsg"/>
+                    </p:inputText>
+                    <p:message id="namemsg" for="name" />
+
+                    <h:outputLabel for="surname">Surname:</h:outputLabel>
+                    <p:inputText id="surname" value="#{registrationBean.user.surname}" >
+                        <p:ajax update="surnamemsg"/>
+                    </p:inputText>
+                    <p:message id="surnamemsg" for="surname" />
+
+                    <h:outputLabel for="email">Email:</h:outputLabel>
+                    <p:inputText id="email" value="#{registrationBean.user.email}" >
+                        <p:ajax update="emailmsg"/>
+                    </p:inputText>
+                    <p:message id="emailmsg" for="email" />
+
+                    <h:outputLabel for="password">Password:</h:outputLabel>
+                    <p:password id="password" value="#{registrationBean.user.password}"
+                                feedback="true" match="pwd2" label="Password"/>
+                    <p:message for="password" />
+
+                    <h:outputLabel for="pwd2">Confirm Password:</h:outputLabel>
+                    <p:password id="pwd2" label="Confirm Password"/>
+                </h:panelGrid>
+                <p:commandButton value="Register" update="regGrid"
+                                 action="#{registrationBean.register()}" />
+
+            </p:panel>
+        </h:form>
+
+        <h:form id = "loginForm">
+            <p:panel header="Login Form">
+                <p:panelGrid columns="2">
+                    <p:outputLabel for="emailInput" value="Email"/>
+                    <p:inputText id="emailInput" value="#{loginBean.email}" 
+                                 required="true" />
+                    <p:outputLabel for="passwordInput" value="Password"/>
+                    <p:password id="passwordInput" value="#{loginBean.password}" 
+                                required="true" />
+                    <p:commandButton value="Login" 
+                                     action="#{loginBean.login()}" />
+                    <h:outputText rendered="#{param['error']}"
+                                     style="color: red" value="LOGIN FAILED"/>
+                </p:panelGrid>
+            </p:panel>
+        </h:form>
+        
+            <h:outputText rendered="#{param['faces-redirect']}" style="color: red" value="Logout!!!"/>
+        <br />
+    </h:body>
+</html>
