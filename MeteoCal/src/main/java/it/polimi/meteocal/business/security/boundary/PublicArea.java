@@ -5,7 +5,13 @@
  */
 package it.polimi.meteocal.business.security.boundary;
 
+import it.polimi.meteocal.business.security.entity.Group;
+import it.polimi.meteocal.business.security.entity.User;
+import java.security.Principal;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  *
@@ -14,6 +20,22 @@ import javax.ejb.Stateless;
 @Stateless
 public class PublicArea {
 
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+    @PersistenceContext
+    EntityManager em;
+    
+    @Inject
+    Principal principal;
+
+    public void save(User user) {
+        user.setGroupName(Group.USERS);
+        em.persist(user);
+    }
+
+    public void unregister() {
+        em.remove(getLoggedUser());
+    }
+
+    public User getLoggedUser() {
+        return em.find(User.class, principal.getName());
+    }
 }
