@@ -54,11 +54,11 @@ public class LoginBean {
         try {
             request.login(this.email, this.password);
         } catch (ServletException e) {
-            //context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Login Failed","Login Failed"));
-            //logger.log(Level.SEVERE,"Login Failed");
-            //return null;
-            context.addMessage(null, new FacesMessage("Login failed."));
-            return "/index?error=true";
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Login Failed","Login Failed"));
+            logger.log(Level.SEVERE,"Login Failed");
+            return null;
+            //context.addMessage(null, new FacesMessage("Login failed."));
+            //return "/index?error=true";
         }
         return "/user/home";
     }
