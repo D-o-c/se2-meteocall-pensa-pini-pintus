@@ -5,41 +5,67 @@
  */
 package it.polimi.meteocal.gui.security;
 
-import java.beans.*;
-import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.inject.Named;
+import javax.enterprise.context.RequestScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  *
- * @author doc
+ * @author aldo
  */
-public class LoginBean implements Serializable {
+@Named
+@RequestScoped
+public class LoginBean {
     
-    public static final String PROP_SAMPLE_PROPERTY = "sampleProperty";
+    @Inject
+    private Logger logger;
     
-    private String sampleProperty;
-    
-    private PropertyChangeSupport propertySupport;
-    
+
+    private String username;
+    private String password;
+
     public LoginBean() {
-        propertySupport = new PropertyChangeSupport(this);
     }
-    
-    public String getSampleProperty() {
-        return sampleProperty;
+
+    public String getUsername() {
+        return this.username;
     }
-    
-    public void setSampleProperty(String value) {
-        String oldValue = sampleProperty;
-        sampleProperty = value;
-        propertySupport.firePropertyChange(PROP_SAMPLE_PROPERTY, oldValue, sampleProperty);
+
+    public void setUsername(String username) {
+        this.username = username;
     }
-    
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        propertySupport.addPropertyChangeListener(listener);
+
+    public String getPassword() {
+        return this.password;
     }
-    
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        propertySupport.removePropertyChangeListener(listener);
+
+    public void setPassword(String password) {
+        this.password = password;
     }
-    
+
+    public String login() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
+        try {
+            request.login(this.username, this.password);
+            return "/user/home";
+        } catch (ServletException e) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Login Failed","Login Failed"));
+            logger.log(Level.SEVERE,"Login Failed");
+            return null;
+        }
+    }
+    public String logout() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
+        request.getSession().invalidate();
+        logger.log(Level.INFO, "User Logged out");
+        return "/index?faces-redirect=true";
+    }
 }

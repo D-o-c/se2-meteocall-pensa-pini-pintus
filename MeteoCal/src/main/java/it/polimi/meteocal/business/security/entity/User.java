@@ -5,54 +5,71 @@
  */
 package it.polimi.meteocal.business.security.entity;
 
+import it.polimi.meteocal.business.security.control.PasswordEncrypter;
 import java.io.Serializable;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 /**
  *
- * @author doc
+ * @author aldo
  */
-@Entity
+@Entity(name = "USERS")
 public class User implements Serializable {
+
     private static final long serialVersionUID = 1L;
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",
+            message = "invalid email")
+    @NotNull(message = "May not be empty")
+    private String email;
+    @NotNull(message = "May not be empty")
+    private String password;
+    @NotNull(message = "May not be empty")
+    private String groupName;
+    
+    @NotNull(message = "May not be empty")
+    private String name;
+    
 
-    public Long getId() {
-        return id;
+    public String getName() {
+        return name;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof User)) {
-            return false;
-        }
-        User other = (User) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "it.polimi.meteocal.business.security.entity.User[ id=" + id + " ]";
+    public String getGroupName() {
+        return groupName;
     }
     
+    
+    
+    
+
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = PasswordEncrypter.encryptPassword(password);
+    }
+
 }
