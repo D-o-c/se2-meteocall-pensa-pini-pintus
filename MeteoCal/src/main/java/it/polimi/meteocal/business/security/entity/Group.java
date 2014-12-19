@@ -12,5 +12,3 @@ package it.polimi.meteocal.business.security.entity;
 public class Group {
     public static final String USERS = "USERS";
 }
-
-}
