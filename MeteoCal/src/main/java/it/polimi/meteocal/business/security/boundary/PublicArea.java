@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package boundaries;
+package it.polimi.meteocal.business.security.boundary;
 
-import entities.Group;
-import entities.User;
+import it.polimi.meteocal.business.security.entity.Group;
+import it.polimi.meteocal.business.security.entity.User;
 import java.security.Principal;
 import javax.ejb.Stateless;
 import javax.inject.Inject;

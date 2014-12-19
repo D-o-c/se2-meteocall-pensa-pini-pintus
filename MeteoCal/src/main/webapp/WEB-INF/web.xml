@@ -32,7 +32,7 @@
         <realm-name>jdbcRealMeteoCal</realm-name>
         <form-login-config>
             <form-login-page>/index.xhtml</form-login-page>
-            <form-error-page>/index.xhtml</form-error-page>
+            <form-error-page>/index.xhtml?error=true</form-error-page>
         </form-login-config>
     </login-config>
     <security-constraint>

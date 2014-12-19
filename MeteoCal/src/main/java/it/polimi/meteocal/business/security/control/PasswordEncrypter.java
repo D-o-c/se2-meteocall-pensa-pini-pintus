@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package controls;
+package it.polimi.meteocal.business.security.control;
 
-import entities.User;
+import it.polimi.meteocal.business.security.entity.User;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.MessageDigest;

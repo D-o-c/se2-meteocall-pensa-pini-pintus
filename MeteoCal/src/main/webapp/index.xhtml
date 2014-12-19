@@ -63,8 +63,9 @@ and open the template in the editor.
                                 required="true" />
                     <p:commandButton value="Login" 
                                      action="#{loginBean.login()}" />
-                    <h:outputText rendered="#{param['error']}"
-                                     style="color: red" value="LOGIN FAILED"/>
+                    <!--<h:outputText rendered="#{param['error']}"
+                                     style="color: red" value="LOGIN FAILED"/>-->
+                    <!--<h:messages  style="color: red"/>-->
                 </p:panelGrid>
             </p:panel>
         </h:form>

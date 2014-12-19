@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gui;
+package it.polimi.meteocal.gui.security;
 
-import boundaries.PublicArea;
-import entities.User;
+import it.polimi.meteocal.business.security.boundary.PublicArea;
+import it.polimi.meteocal.business.security.entity.User;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
