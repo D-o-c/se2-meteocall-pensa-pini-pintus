@@ -5,15 +5,11 @@
       xmlns:p="http://primefaces.org/ui">
     <h:head>
         <title>Calendar Page</title>
+        <h:outputStylesheet library="css" name="stylesheet.css" />
     </h:head>
     <h:body>
         <h1>MeteoCal</h1>
-        <h:form id="searchform">
-            <p:inputText id="username" value="" 
-                         required="true" />
-            <p:commandButton id="submit" action="#{loginBean.login()}" value="Search Users"/>
-        </h:form>
-        <ul>
+        <ul id="landmarks">
             <li>#{userBean.name}'s Calendar</li>
             <li><p:link outcome="notifications" value="Notifications"/></li>
             <li><p:link outcome="addressbook" value="Addressbook"/></li>

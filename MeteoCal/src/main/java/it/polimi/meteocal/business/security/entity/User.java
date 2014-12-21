@@ -61,11 +61,6 @@ public class User implements Serializable {
         return groupName;
     }
     
-    
-    
-    
-
-
     public String getEmail() {
         return email;
     }

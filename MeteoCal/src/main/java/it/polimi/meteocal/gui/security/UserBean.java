@@ -6,6 +6,7 @@
 package it.polimi.meteocal.gui.security;
 
 import it.polimi.meteocal.business.security.boundary.UserManager;
+import it.polimi.meteocal.business.security.entity.User;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
@@ -21,11 +22,24 @@ public class UserBean{
     @EJB
     UserManager um;
     
+    private User user;
+    
     public UserBean() {
+    }
+
+    public User getUser() {
+        if (user==null) {
+            user = new User();
+        }
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
     
     public String getName() {
         return um.getLoggedUser().getName();
     }
-    
+      
 }
