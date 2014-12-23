@@ -31,8 +31,8 @@
         <auth-method>FORM</auth-method>
         <realm-name>jdbcRealmMeteoCal</realm-name>
         <form-login-config>
-            <form-login-page>/login.xhtml</form-login-page>
-            <form-error-page>/login.xhtml?error=true</form-error-page>
+            <form-login-page>/index.xhtml</form-login-page>
+            <form-error-page>/index.xhtml?error=true</form-error-page>
         </form-login-config>
     </login-config>
     <security-constraint>

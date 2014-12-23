@@ -15,10 +15,10 @@ import javax.persistence.PersistenceContext;
 
 /**
  *
- * @author doc
+ * @author aldo
  */
 @Stateless
-public class PublicArea {
+public class UserManager {
 
     @PersistenceContext
     EntityManager em;
@@ -37,5 +37,9 @@ public class PublicArea {
 
     public User getLoggedUser() {
         return em.find(User.class, principal.getName());
+    }
+    
+    public String find(String email) {
+        return email;
     }
 }

@@ -5,13 +5,8 @@
  */
 package it.polimi.meteocal.business.security.entity;
 
+import it.polimi.meteocal.business.security.control.PasswordEncrypter;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
@@ -19,9 +14,9 @@ import javax.validation.constraints.Pattern;
 
 /**
  *
- * @author miglie
+ * @author aldo
  */
-@Entity
+@Entity(name = "USERS")
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -38,6 +33,8 @@ public class User implements Serializable {
     
     @NotNull(message = "May not be empty")
     private String name;
+    @NotNull(message = "May not be empty")
+    private String surname;
     
 
     public String getName() {
@@ -58,7 +55,6 @@ public class User implements Serializable {
     
     
     
-    
 
 
     public String getEmail() {
@@ -74,19 +70,7 @@ public class User implements Serializable {
     }
 
     public void setPassword(String password) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(password.getBytes("UTF-8"));
-            BigInteger bigInt = new BigInteger(1, hash);
-            this.password = bigInt.toString(16);
-//            StringBuilder hexString = new StringBuilder();
-//            for (int i = 0; i < hash.length; i++) {
-//                hexString.append(Integer.toHexString(0xFF & hash[i]));
-//            }
-//            this.password = hexString.toString();
-        } catch (NoSuchAlgorithmException | UnsupportedEncodingException ex) {
-            Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        this.password = PasswordEncrypter.encryptPassword(password);
     }
 
 }

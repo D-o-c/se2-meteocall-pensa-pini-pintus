@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Notification Page</title>
+        <h:outputStylesheet library="css" name="stylesheet.css" />
+    </h:head>
+    <h:body>
+        <h1>MeteoCal</h1>
+        <ul id="landmarks">
+            <li><p:link outcome="home" value="#{userBean.name}'s Calendar"/></li>
+            <li>Notifications</li>
+            <li><p:link outcome="addressbook" value="Addressbook"/></li>
+            <li><p:link outcome="settings" value="Settings"/></li>
+            <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
+        </ul>
+    </h:body>
+</html>
+

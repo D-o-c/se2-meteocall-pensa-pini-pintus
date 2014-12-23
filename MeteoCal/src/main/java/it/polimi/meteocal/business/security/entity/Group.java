@@ -7,7 +7,7 @@ package it.polimi.meteocal.business.security.entity;
 
 /**
  *
- * @author Doc
+ * @author aldo
  */
 public class Group {
     public static final String USERS = "USERS";
