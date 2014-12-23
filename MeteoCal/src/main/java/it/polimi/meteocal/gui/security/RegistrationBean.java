@@ -5,9 +5,8 @@
  */
 package it.polimi.meteocal.gui.security;
 
-import it.polimi.meteocal.business.security.boundary.UserManager;
+import it.polimi.meteocal.business.security.boundary.PublicArea;
 import it.polimi.meteocal.business.security.entity.User;
-import java.util.logging.Level;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
@@ -23,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 public class RegistrationBean {
 
     @EJB
-    private UserManager um;
+    private PublicArea pa;
 
     private User user;
 
@@ -42,12 +41,12 @@ public class RegistrationBean {
     }
 
     public String register() {
-        um.save(user);
+        pa.save(user);
         return "";
     }
     
     public String unregister() {
-        um.unregister();
+        pa.unregister();
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
         request.getSession().invalidate();

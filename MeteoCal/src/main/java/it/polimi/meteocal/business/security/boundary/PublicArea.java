@@ -8,17 +8,19 @@ package it.polimi.meteocal.business.security.boundary;
 import it.polimi.meteocal.business.security.entity.Group;
 import it.polimi.meteocal.business.security.entity.User;
 import java.security.Principal;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 /**
  *
  * @author aldo
  */
 @Stateless
-public class UserManager {
+public class PublicArea {
 
     @PersistenceContext
     EntityManager em;
@@ -39,7 +41,9 @@ public class UserManager {
         return em.find(User.class, principal.getName());
     }
     
-    public String find(String email) {
-        return email;
+    public List<User> findAll() {
+        TypedQuery<User> query = em.createNamedQuery(User.findAll, User.class);
+        List<User> users = query.getResultList();
+        return users;
     }
 }

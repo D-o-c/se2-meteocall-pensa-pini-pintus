@@ -9,6 +9,8 @@ import it.polimi.meteocal.business.security.control.PasswordEncrypter;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -17,9 +19,13 @@ import javax.validation.constraints.Pattern;
  * @author aldo
  */
 @Entity(name = "USERS")
+@NamedQueries({
+        @NamedQuery(name = User.findAll, query = "SELECT u FROM USERS u"),
+})
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    public static final String findAll = "USERS.findAll";
 
     @Id
     @Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",

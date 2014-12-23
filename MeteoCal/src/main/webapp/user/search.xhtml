@@ -16,12 +16,12 @@
             <li><p:link outcome="settings" value="Settings"/></li>
             <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
         </ul>
-        <form class="clear-left">
+        <h:form class="clear-left">
             <p:inputText value="#{searchBean.email}"/>
-           <p:link outcome="search" value="Search"/>
-        </form>
+            <p:commandLink action="#{searchBean.findAll2()}" value="Search"/>
+        </h:form>
         <h2>Results</h2>
-        <p>#{searchBean.find()}</p>
+        <p>#{searchBean.usersInfo}</p>
     </h:body>
 </html>
 

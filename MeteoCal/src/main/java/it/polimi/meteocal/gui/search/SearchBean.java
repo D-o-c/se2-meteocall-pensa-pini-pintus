@@ -5,7 +5,9 @@
  */
 package it.polimi.meteocal.gui.search;
 
-import it.polimi.meteocal.business.security.boundary.UserManager;
+import it.polimi.meteocal.business.security.boundary.PublicArea;
+import it.polimi.meteocal.business.security.entity.User;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
@@ -19,9 +21,11 @@ import javax.enterprise.context.RequestScoped;
 public class SearchBean{
 
     @EJB
-    UserManager um;
+    PublicArea pa;
     
     private String email;
+    
+    private List<User> users;
     
     public SearchBean() {
     }
@@ -36,9 +40,31 @@ public class SearchBean{
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
     
-    public String find() {
-        return um.find(email);
+    public String findAll() {
+        users = pa.findAll();
+        return "search?faces-redirect=true";
+    }
+    
+    public String findAll2() {
+        users = pa.findAll();
+        return "";
+    }
+    
+    public String getUsersInfo() {
+        String s = "";
+        for(int i = 0; i < users.size(); i++) {
+            s += users.get(i).getName()+" "+users.get(i).getSurname()+"---";
+        }
+        return s;
     }
       
 }
