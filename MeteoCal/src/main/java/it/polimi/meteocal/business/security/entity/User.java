@@ -37,6 +37,7 @@ public class User implements Serializable {
     
     @NotNull(message = "May not be empty")
     private String name;
+    
     @NotNull(message = "May not be empty")
     private String surname;
     
@@ -57,7 +58,13 @@ public class User implements Serializable {
         return groupName;
     }
     
+    public String getSurname(){
+        return surname;
+    }
     
+    public void setSurname(String surname){
+        this.surname=surname;
+    }
     
 
 

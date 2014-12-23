@@ -11,13 +11,14 @@
         <h1>MeteoCal</h1>
         <ul id="landmarks">
             <li>#{userBean.name}'s Calendar</li>
+            <li><p:link outcome="createevent" value="Create new event"/></li>
             <li><p:link outcome="notifications" value="Notifications"/></li>
             <li><p:link outcome="addressbook" value="Addressbook"/></li>
             <li><p:link outcome="settings" value="Settings"/></li>
             <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
         </ul>
         <form class="clear-left">
-            <p:inputText value="#{searchBean.email}"/>
+           <p:inputText value="#{searchBean.email}"/>
            <p:link outcome="search" value="Search"/>
         </form>
     </h:body>

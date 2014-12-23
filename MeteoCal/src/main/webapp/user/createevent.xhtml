@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Create new event</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </h:head>
+    <body>
+        <h:form id="createeventform">
+            <p:panel header="New Event Form">
+                <p:panelGrid columns="2">
+                    <p:outputLabel value="Title"/>
+                    <p:inputText id="title" value="#{EventBean.title}" 
+                                 required="true" />
+                    
+                    <p:outputLabel value="Description"/>
+                    <p:inputText id="description" value="#{EventBean.description}"
+                                 required="true"/>
+                    
+                    <p:outputLabel value="Location"/>
+                    <p:inputText id="location" value="#{EventBean.location}"
+                                 required="true"/>
+                    
+                    <p:outputLabel value="Public"/>
+                    <p:selectBooleanCheckbox value="#{EventBean.pub}"/>
+                    
+                    <p:outputLabel value="Begin time"/>
+                    <p:calendar id="beginTime" value="#{EventBean.beginTime}" mode="inline"
+                                pages="3" effect="fold" mindate="#{EventBean.today}" pattern="dd/MM/yyyy HH:mm" />
+                    
+                    <p:outputLabel value="End time"/>
+                    <p:calendar id="endTime" value="#{EventBean.beginEnd}"
+                                pages="3" effect="fold" mindate="#{EventBean.beginTime}" pattern="dd/MM/yyyy HH:mm" />
+                    
+                   </p:panelGrid>
+            </p:panel>
+        </h:form>
+    </body>
+</html>

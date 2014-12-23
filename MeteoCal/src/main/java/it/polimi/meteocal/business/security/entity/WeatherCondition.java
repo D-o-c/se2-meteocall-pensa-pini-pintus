@@ -11,6 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -18,16 +20,18 @@ import javax.persistence.Id;
  */
 @Entity (name= "WEATHERCONDITION")
 public class WeatherCondition implements Serializable {
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     
+    @Id
+    @Temporal(TemporalType.DATE)
     private Date time;
+    @Id
     private Event eventId;
+    
     private String type;
 
     public Date getTime() {
         return time;
+     //   return null;
     }
 
     public void setTime(Date time) {
