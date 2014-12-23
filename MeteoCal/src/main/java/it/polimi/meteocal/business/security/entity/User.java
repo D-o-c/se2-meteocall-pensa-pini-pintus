@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -26,8 +27,11 @@ public class User implements Serializable {
             message = "invalid email")
     @NotNull(message = "May not be empty")
     private String email;
+    
+    @Size(min=4, message="At least 4 characters")
     @NotNull(message = "May not be empty")
     private String password;
+    
     @NotNull(message = "May not be empty")
     private String groupName;
     
