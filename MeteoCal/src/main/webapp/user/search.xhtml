@@ -4,21 +4,24 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <title>Settings Page</title>
+        <title>Calendar Page</title>
         <h:outputStylesheet library="css" name="stylesheet.css" />
     </h:head>
     <h:body>
         <h1>MeteoCal</h1>
         <ul id="landmarks">
             <li><p:link outcome="home" value="#{userBean.name}'s Calendar"/></li>
-            <li><p:link outcome="addressbook" value="Notifications"/></li>
+            <li><p:link outcome="notifications" value="Notifications"/></li>
             <li><p:link outcome="addressbook" value="Addressbook"/></li>
-            <li>Settings</li>
+            <li><p:link outcome="settings" value="Settings"/></li>
             <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
         </ul>
-        <h:form class="clear-left">
-            <p:commandLink action="#{registrationBean.unregister()}" value="Unregister"/>
-        </h:form>
+        <form class="clear-left">
+            <p:inputText value="#{searchBean.email}"/>
+           <p:link outcome="search" value="Search"/>
+        </form>
+        <h2>Results</h2>
+        <p>#{searchBean.find()}</p>
     </h:body>
 </html>
 

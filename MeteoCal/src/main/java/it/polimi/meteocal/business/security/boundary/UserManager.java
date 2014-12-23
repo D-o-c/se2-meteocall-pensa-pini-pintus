@@ -39,4 +39,7 @@ public class UserManager {
         return em.find(User.class, principal.getName());
     }
     
+    public String find(String email) {
+        return email;
+    }
 }
