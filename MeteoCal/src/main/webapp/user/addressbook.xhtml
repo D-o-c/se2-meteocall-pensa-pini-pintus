@@ -2,7 +2,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <h:head>
         <title>Addressbook Page</title>
         <h:outputStylesheet library="css" name="stylesheet.css" />
@@ -20,6 +21,17 @@
             <li><p:link outcome="settings" value="Settings"/></li>
             <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
         </ul>
+        <h:form class="clear-left">
+            <h3 style="margin-top:0">Contact List</h3>
+            <p:outputLabel value="#{userBean.results()}"/>
+            <ul>
+                <ui:repeat value="#{userBean.contacts}" var="contact">    
+                    <li>#{contact.name} #{contact.surname} #{contact.email}</li>
+                    <p:commandButton action="#{userBean.deleteContact(contact.email)}"
+                                     value="Delete"/>
+                </ui:repeat>
+            </ul>
+        </h:form>
     </h:body>
 </html>
 

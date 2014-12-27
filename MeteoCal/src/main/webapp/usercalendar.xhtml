@@ -28,7 +28,11 @@ and open the template in the editor.
             <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
         </ul>
         <p class="clear-left">#{searchBean.name}</p>
-        <br></br>
-        <p class="clear-left">#{searchBean.surname}</p>
+        <p>#{searchBean.surname}</p>
+        <h:form>
+            <p:commandButton 
+                action="#{userBean.addContact(searchBean.email, searchBean.name, searchBean.surname)}"
+                value="Add To Contacts" />
+        </h:form>
     </h:body>
 </html>

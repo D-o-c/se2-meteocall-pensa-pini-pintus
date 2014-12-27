@@ -1,13 +1,11 @@
 package it.polimi.meteocal.gui.search;
 
-import it.polimi.meteocal.business.security.boundary.PublicArea;
+import it.polimi.meteocal.business.security.boundary.UserArea;
 import it.polimi.meteocal.business.security.entity.User;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Named;
-import javax.enterprise.context.RequestScoped;
-import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -18,7 +16,7 @@ import org.primefaces.context.RequestContext;
 public class SearchBean{
 
     @EJB
-    PublicArea pa;
+    UserArea ua;
     
     private String searchInput;
     
@@ -70,13 +68,13 @@ public class SearchBean{
     }
       
     public String findUser() {
-        users = pa.findUser(searchInput);
+        users = ua.findUser(searchInput);
         searchInput = "";
         return "search?faces-redirect=true";
     }
     
     public String findUser2() {
-        users = pa.findUser(searchInput);
+        users = ua.findUser(searchInput);
         searchInput = "";
         return "user/search?faces-redirect=true";
     }

@@ -2,10 +2,12 @@ package it.polimi.meteocal.business.security.entity;
 
 import it.polimi.meteocal.business.security.control.PasswordEncrypter;
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -15,24 +17,27 @@ import javax.validation.constraints.Pattern;
  */
 @Entity(name = "USERS")
 @NamedQueries({
-        @NamedQuery(name = User.count, 
-                query = "SELECT COUNT(u) FROM USERS u"),
         @NamedQuery(name = User.findByEmailOrLikeNameSurname, 
-                query = "SELECT u FROM USERS u WHERE (u.name LIKE ?1) OR "
+                query = "SELECT u FROM USERS u WHERE ((u.name LIKE ?1) OR "
                                                     + "(u.surname LIKE ?1) OR "
-                                                    + "(u.email = ?2)")
+                                                    + "(u.email = ?2)) AND"
+                                                    + "(u.public_ = true)")
 })
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
     public static final String findByEmailOrLikeNameSurname = "User.findByEmailOrLikeNameSurname";
-    public static final String count = "User.count";
+    
 
     @Id
     @Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",
             message = "invalid email")
     @NotNull(message = "May not be empty")
     private String email;
+    
+    @OneToMany(mappedBy="user", orphanRemoval=true)
+    private List<Contact> contacts;
+    
     @NotNull(message = "May not be empty")
     private String password;
     @NotNull(message = "May not be empty")
@@ -45,7 +50,6 @@ public class User implements Serializable {
     
     private boolean public_;
     
-
     public String getName() {
         return name;
     }
@@ -92,6 +96,13 @@ public class User implements Serializable {
 
     public void setPublic(boolean b) {
         this.public_ = b;
+    }
+    
+    public void addContact(Contact contact) {
+        contacts.add(contact);
+        if(contact.getUser() != this) {
+            contact.setUser(this);
+        }
     }
     
 }

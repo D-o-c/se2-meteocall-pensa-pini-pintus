@@ -27,6 +27,7 @@ public class PublicArea {
 
     public void save(User user) {        
         user.setGroupName(Group.USERS);
+        user.setPublic(true);
         em.persist(user);        
     }
 
@@ -37,18 +38,5 @@ public class PublicArea {
     public User getLoggedUser() {
         return em.find(User.class, principal.getName());
     }
-    
-    public List<User> findUser(String searchInput) {
-        List<User> users = em.createNamedQuery(User.findByEmailOrLikeNameSurname, User.class)
-                                .setParameter(1, searchInput+"%")
-                                .setParameter(2, searchInput)
-                                .getResultList();
-        if(users.contains(getLoggedUser())) {
-            users.remove(getLoggedUser());
-        }
-        return users; 
-    }
-    
-    
 
 }
