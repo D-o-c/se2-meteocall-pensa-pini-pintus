@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package it.polimi.meteocal.business.security.entity;
 
 import it.polimi.meteocal.business.security.control.PasswordEncrypter;
@@ -20,12 +15,18 @@ import javax.validation.constraints.Pattern;
  */
 @Entity(name = "USERS")
 @NamedQueries({
-        @NamedQuery(name = User.findAll, query = "SELECT u FROM USERS u"),
+        @NamedQuery(name = User.count, 
+                query = "SELECT COUNT(u) FROM USERS u"),
+        @NamedQuery(name = User.findByEmailOrLikeNameSurname, 
+                query = "SELECT u FROM USERS u WHERE (u.name LIKE ?1) OR "
+                                                    + "(u.surname LIKE ?1) OR "
+                                                    + "(u.email = ?2)")
 })
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    public static final String findAll = "USERS.findAll";
+    public static final String findByEmailOrLikeNameSurname = "User.findByEmailOrLikeNameSurname";
+    public static final String count = "User.count";
 
     @Id
     @Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",
@@ -41,6 +42,8 @@ public class User implements Serializable {
     private String name;
     @NotNull(message = "May not be empty")
     private String surname;
+    
+    private boolean public_;
     
 
     public String getName() {
@@ -83,4 +86,12 @@ public class User implements Serializable {
         this.password = PasswordEncrypter.encryptPassword(password);
     }
 
+    public boolean isPublic() {
+        return public_;
+    }
+
+    public void setPublic(boolean b) {
+        this.public_ = b;
+    }
+    
 }

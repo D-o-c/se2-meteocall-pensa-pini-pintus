@@ -41,5 +41,7 @@ public class UserBean{
     public String getName() {
         return pa.getLoggedUser().getName();
     }
+    
+    
       
 }

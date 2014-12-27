@@ -9,6 +9,10 @@
     </h:head>
     <h:body>
         <h1>MeteoCal</h1>
+        <h:form id="searchForm" class="float-left">
+            <p:inputText value="#{searchBean.searchInput}"/>
+            <p:commandButton action="#{searchBean.findUser}" value="Search"/>
+        </h:form>
         <ul id="landmarks">
             <li><p:link outcome="home" value="#{userBean.name}'s Calendar"/></li>
             <li><p:link outcome="notifications" value="Notifications"/></li>
