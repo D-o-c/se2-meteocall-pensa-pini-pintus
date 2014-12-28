@@ -8,9 +8,12 @@ package it.polimi.meteocal.business.security.entity;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -18,21 +21,47 @@ import javax.persistence.TemporalType;
  */
 
 
-@Entity (name="ENTITY")
+@Entity (name="EVENT")
 public class Event implements Serializable {
     
-    @Temporal(TemporalType.DATE)
-    private Date beginTime;
-    @Temporal(TemporalType.DATE)
-    private Date endTime;
-    private String name;
-    private String description;
-    private boolean pub;
-    private String creatorEmail;
-    private float locationLat;
-    private float locationLon;
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int idEvent;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    @NotNull(message = "May not be empty")
+    private Date beginTime;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    @NotNull(message = "May not be empty")
+    private Date endTime;
+    
+    @NotNull(message = "May not be empty")
+    private String name;
+    
+    @NotNull(message = "May not be empty")
+    private String description;
+    
+    @NotNull(message = "May not be empty")
+    private boolean pub=true;
+    
+    @NotNull(message = "May not be empty")
+    private String creatorEmail;
+    
+    @NotNull(message = "May not be empty")
+    private float locationLat;
+    
+    @NotNull(message = "May not be empty")
+    private float locationLon;
+    
+    
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
     
     public Date getBeginTime() {
         return beginTime;
@@ -88,14 +117,6 @@ public class Event implements Serializable {
 
     public void setLocationLon(float locationLon) {
         this.locationLon = locationLon;
-    }
-
-    public int getIdEvent() {
-        return idEvent;
-    }
-
-    public void setIdEvent(int idEvent) {
-        this.idEvent = idEvent;
     }
     
  

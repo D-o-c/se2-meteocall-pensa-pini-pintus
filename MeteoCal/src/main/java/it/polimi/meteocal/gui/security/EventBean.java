@@ -5,15 +5,71 @@
  */
 package it.polimi.meteocal.gui.security;
 
+import it.polimi.meteocal.business.security.boundary.EventArea;
+import it.polimi.meteocal.business.security.boundary.UserManager;
+import it.polimi.meteocal.business.security.entity.Event;
 import java.util.Calendar;
 import java.util.Date;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
+import javax.faces.context.FacesContext;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
  *
  * @author doc
  */
+@Named
+@RequestScoped
 public class EventBean {
+    
+    
+    
+    
+    @EJB
+    private EventArea ea;
+
+    private Event event;
+    
+    @EJB
+    UserManager um;
+
+    public EventBean() {
+    }
+
+    public Event getEvent() {
+        if (event == null) {
+            event = new Event();
+        }
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
+
+    public String createEvent() {
+        event.setCreatorEmail(um.getLoggedUser().getEmail());
+        ea.save(event);
+        return "/user/home?faces-redirect=true&eventcreated=true";
+    }
+    /*
+    public String unregister() {
+        um.unregister();
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
+        request.getSession().invalidate();
+        return "/index?faces-redirect=true";
+    }
+    
+    
+    
+    
+    
+    
     
     private String title;
     private Date today=new Date();
@@ -21,6 +77,7 @@ public class EventBean {
     private Date endTime;
     private String description;
     private boolean pub=true;
+    private String location;
 
     public String getTitle() {
         return title;
@@ -35,7 +92,7 @@ public class EventBean {
     }
 
     public void setToday(Date today) {
-        this.today = today;
+        //this.today = today;
     }
 
     public Date getBeginTime() {
@@ -77,13 +134,13 @@ public class EventBean {
     public void setLocation(String location) {
         this.location = location;
     }
-    private String location;
+    
     
     
     public String getTodayDate(){        
-        return Calendar.MONTH + "/" + Calendar.DATE + "/" + Calendar.YEAR;
+        return Calendar.DATE + "/" + Calendar.MONTH + 1 + "/" + Calendar.YEAR;
     }
-    
+    */
     
     
 }

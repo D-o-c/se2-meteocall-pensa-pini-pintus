@@ -41,5 +41,9 @@ public class UserBean{
     public String getName() {
         return um.getLoggedUser().getName();
     }
+    
+    public String getEmail() {
+        return um.getLoggedUser().getEmail();
+    }
       
 }

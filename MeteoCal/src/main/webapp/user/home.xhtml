@@ -21,6 +21,9 @@
            <p:inputText value="#{searchBean.email}"/>
            <p:link outcome="search" value="Search"/>
         </form>
+        
+        <h:outputText rendered="#{param['eventcreated']}" style="color: red" value="Event Created!"/><br/>
+        
     </h:body>
 </html>
 

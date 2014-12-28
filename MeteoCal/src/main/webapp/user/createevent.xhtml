@@ -2,7 +2,7 @@
 <!--
 To change this license header, choose License Headers in Project Properties.
 To change this template file, choose Tools | Templates
-and open the template in the editor.
+and open the template in the editor. 
 -->
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
@@ -10,37 +10,74 @@ and open the template in the editor.
       xmlns:p="http://primefaces.org/ui">
     <h:head>
         <title>Create new event</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>     
     </h:head>
-    <body>
-        <h:form id="createeventform">
+    <h:body>
+        <h1>MeteoCal</h1>
+        <ul id="landmarks">
+            <li><p:link outcome="home" value="#{userBean.name}'s Calendar"/></li>
+            <li>Create new event</li>
+            <li><p:link outcome="notifications" value="Notifications"/></li>
+            <li><p:link outcome="addressbook" value="Addressbook"/></li>
+            <li><p:link outcome="settings" value="Settings"/></li>
+            <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
+        </ul>
+        <h:form id="createeventform" class="clear-left">
             <p:panel header="New Event Form">
-                <p:panelGrid columns="2">
-                    <p:outputLabel value="Title"/>
-                    <p:inputText id="title" value="#{EventBean.title}" 
-                                 required="true" />
+                <p:panelGrid columns="3">
+                    <p:outputLabel value="Event Name"/>
+                    <p:inputText id="name" value="#{eventBean.event.name}" 
+                                 required="true">
+                        <p:ajax update="namemsg"/>
+                    </p:inputText>
+                    <p:message id="namemsg" for="name" />
                     
                     <p:outputLabel value="Description"/>
-                    <p:inputText id="description" value="#{EventBean.description}"
-                                 required="true"/>
+                    <p:inputTextarea id="description" value="#{eventBean.event.description}"
+                                     rows="5" cols="30" counter="display" maxlength="100"
+                                     counterTemplate="{0} characters remaining." autoResize="false" 
+                                     required="true"/>
+                    <h:outputText id="display" />
                     
-                    <p:outputLabel value="Location"/>
-                    <p:inputText id="location" value="#{EventBean.location}"
-                                 required="true"/>
+                    <p:outputLabel value="LocationLat"/>
+                    <p:inputText id="locationLat" value="#{eventBean.event.locationLat}"
+                                 required="true">
+                        <p:ajax update="locationLatmsg"/>
+                    </p:inputText>
+                    <p:message id="locationLatmsg" for="locationLat" />
+                    
+                    <p:outputLabel value="LocationLon"/>
+                    <p:inputText id="locationLon" value="#{eventBean.event.locationLon}"
+                                 required="true">
+                        <p:ajax update="locationLonmsg"/>
+                    </p:inputText>
+                    <p:message id="locationLonmsg" for="locationLon" />
                     
                     <p:outputLabel value="Public"/>
-                    <p:selectBooleanCheckbox value="#{EventBean.pub}"/>
+                    <p:selectBooleanCheckbox value="#{eventBean.event.pub}"/>
+                    <p></p>
                     
                     <p:outputLabel value="Begin time"/>
-                    <p:calendar id="beginTime" value="#{EventBean.beginTime}" mode="inline"
-                                pages="3" effect="fold" mindate="#{EventBean.today}" pattern="dd/MM/yyyy HH:mm" />
+                    <p:calendar id="beginTime" value="#{eventBean.event.beginTime}"
+                                pages="3" effect="fold" mindate="27/12/2014"
+                                pattern="dd/MM/yyyy HH:mm">
+                        <p:ajax update="beginTimemsg"/>
+                    </p:calendar>
+                    <p:message id="beginTimemsg" for="beginTime" />
+                    
                     
                     <p:outputLabel value="End time"/>
-                    <p:calendar id="endTime" value="#{EventBean.beginEnd}"
-                                pages="3" effect="fold" mindate="#{EventBean.beginTime}" pattern="dd/MM/yyyy HH:mm" />
+                    <p:calendar id="endTime" value="#{eventBean.event.endTime}"
+                                pages="3" effect="fold" mindate="01/01/2014"
+                                pattern="dd/MM/yyyy HH:mm">
+                        <p:ajax update="endTimemsg"/>
+                    </p:calendar>
+                    <p:message id="endTimemsg" for="endTime" />
                     
+                    <p:commandButton id="submit" value="Create Event" update="@all" ajax="true"
+                                    action="#{eventBean.createEvent()}" />
                    </p:panelGrid>
             </p:panel>
         </h:form>
-    </body>
+    </h:body>
 </html>
