@@ -18,15 +18,15 @@ import javax.validation.constraints.NotNull;
  *
  * @author aldo
  */
-@Entity(name = "CONTACT")
+@Entity(name = "CONTACT")/*
 @NamedQueries({
     @NamedQuery(name = Contact.findByUserEmail, 
                     query = "SELECT c FROM CONTACT c WHERE c.user.email = ?1 ORDER BY c.surname")
-})
+})*/
 @IdClass(ContactPK.class)
 public class Contact implements Serializable {
     private static final long serialVersionUID = 1L;
-    public static final String findByUserEmail = "Contact.findByUserEmail";
+   // public static final String findByUserEmail = "Contact.findByUserEmail";
     
     @Id
     private String email;

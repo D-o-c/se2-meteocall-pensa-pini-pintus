@@ -123,6 +123,10 @@ public class User implements Serializable {
     public void setEvents(List<Calendar> events) {
         this.events = events;
     }
+
+    public List<Contact> getContacts() {
+        return contacts;
+    }
     
     
 }

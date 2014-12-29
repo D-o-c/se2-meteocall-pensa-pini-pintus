@@ -75,11 +75,12 @@ public class UserArea {
     }
     
     public List<Contact> getContacts() {
-        String user_email = getLoggedUser().getEmail();
+       /* String user_email = getLoggedUser().getEmail();
         List<Contact> contacts = em.createNamedQuery(Contact.findByUserEmail, Contact.class)
                                             .setParameter(1, user_email)
                                             .getResultList();
-        return contacts;
+        return contacts;*/
+        return getLoggedUser().getContacts();
     }
     
     public void addContact(String email, String name, String surname, User user) {
