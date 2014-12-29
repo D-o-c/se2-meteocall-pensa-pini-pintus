@@ -5,8 +5,10 @@
  */
 package it.polimi.meteocal.business.security.boundary;
 
+import it.polimi.meteocal.business.security.entity.Calendar;
 import it.polimi.meteocal.business.security.entity.Group;
 import it.polimi.meteocal.business.security.entity.Event;
+import it.polimi.meteocal.business.security.entity.User;
 import java.security.Principal;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -27,8 +29,15 @@ public class EventArea {
     @Inject
     Principal principal;
 
-    public void save(Event event) {
+    public void save(Event event, List<String> invitedUsers) {
+        event.setCreatorEmail(em.find(User.class, principal.getName()).getEmail());  
         em.persist(event);
+        for (String invitedUser : invitedUsers) {
+            User u=em.find(User.class, invitedUser);
+            event.addInvited(u);
+        }
+        em.flush();
+        //em.persist(event);
     }
     
     public List<Event> findAll(){

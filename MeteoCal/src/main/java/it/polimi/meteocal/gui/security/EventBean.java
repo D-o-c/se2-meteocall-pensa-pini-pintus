@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -70,13 +71,11 @@ public class EventBean {
 
     public String createEvent() {
         updateInviteList();
-        event.setCreatorEmail(ua.getLoggedUser().getEmail());
-        ea.save(event);
+        ea.save(event, invitedUsers);
         return "/user/home?faces-redirect=true&eventcreated=true";
     }
     
     public List<String> complete(String query){
-        
         List<String> eCont = new ArrayList<>();
         List<Contact> cList = ua.getContacts();
         for (Contact cList1 : cList) {
@@ -89,11 +88,13 @@ public class EventBean {
     
     private void updateInviteList(){
         String[] part = invites.split(";");
+        HashSet temp = new HashSet();
         invitedUsers = Arrays.asList(part);
         for (int i=0; i<invitedUsers.size();i++){
             invitedUsers.set(i, invitedUsers.get(i).replaceAll(" ", ""));
+            temp.add(invitedUsers.get(i));
         }
-        
+        invitedUsers= new ArrayList<>(temp);
     }
     
     

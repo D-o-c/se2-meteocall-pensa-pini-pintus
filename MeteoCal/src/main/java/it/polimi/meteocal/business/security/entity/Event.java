@@ -6,13 +6,20 @@
 package it.polimi.meteocal.business.security.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -33,9 +40,13 @@ public class Event implements Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int idEvent;
+    private long idEvent;
     
     public static final String findAll = "Event.findAll";
+    
+    
+    @OneToMany(mappedBy="event", cascade = CascadeType.PERSIST)
+    private List<Calendar> invited;
     
     
     @Temporal(TemporalType.TIMESTAMP)
@@ -118,6 +129,33 @@ public class Event implements Serializable {
 
     public void setLocation(String location) {
         this.location=location;
+    }
+
+    public List<Calendar> getInvited() {
+        return invited;
+    }
+
+    public long getIdEvent() {
+        return idEvent;
+    }
+
+    public void setIdEvent(long idEvent) {
+        this.idEvent = idEvent;
+    }
+    
+    public void addInvited(User user) {
+        Calendar calendar = new Calendar();
+        calendar.setUser(user);
+        calendar.setEvent(this);
+        calendar.setIdEvent(this.getIdEvent());
+        calendar.setUserEmail(user.getEmail());
+        calendar.setInviteStatus(0);
+        
+        if (invited==null){
+            invited=new ArrayList<>();
+        }
+        this.invited.add(calendar);
+        user.getEvents().add(calendar);
     }
     
  

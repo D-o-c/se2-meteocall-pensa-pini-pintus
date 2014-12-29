@@ -3,6 +3,7 @@ package it.polimi.meteocal.business.security.entity;
 import it.polimi.meteocal.business.security.control.PasswordEncrypter;
 import java.io.Serializable;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
@@ -35,6 +36,10 @@ public class User implements Serializable {
             message = "invalid email")
     @NotNull(message = "May not be empty")
     private String email;
+    
+    @OneToMany(mappedBy="user")
+    private List<Calendar> events;
+    
     
     @OneToMany(mappedBy="user", orphanRemoval=true)
     private List<Contact> contacts;
@@ -110,5 +115,14 @@ public class User implements Serializable {
             contact.setUser(this);
         }
     }
+
+    public List<Calendar> getEvents() {
+        return events;
+    }
+
+    public void setEvents(List<Calendar> events) {
+        this.events = events;
+    }
+    
     
 }
