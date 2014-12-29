@@ -143,13 +143,13 @@ public class Event implements Serializable {
         this.idEvent = idEvent;
     }
     
-    public void addInvited(User user) {
+    public void addInvited(User user, int inviteStatus) {
         Calendar calendar = new Calendar();
         calendar.setUser(user);
         calendar.setEvent(this);
         calendar.setIdEvent(this.getIdEvent());
         calendar.setUserEmail(user.getEmail());
-        calendar.setInviteStatus(0);
+        calendar.setInviteStatus(inviteStatus);
         
         if (invited==null){
             invited=new ArrayList<>();

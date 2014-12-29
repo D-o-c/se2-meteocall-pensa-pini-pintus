@@ -29,15 +29,26 @@ public class EventArea {
     @Inject
     Principal principal;
 
-    public void save(Event event, List<String> invitedUsers) {
-        event.setCreatorEmail(em.find(User.class, principal.getName()).getEmail());  
-        em.persist(event);
+    public int save(Event event, List<String> invitedUsers) {
+        int status =0;
+        User creator = em.find(User.class, principal.getName()); //seleziona l'utente creatore
+        event.setCreatorEmail(creator.getEmail()); //salva la sua mail nell'evento
+        em.persist(event); //salva l'evento nel DB
+        
+        event.addInvited(creator, 1); //inserisce l'evento nel calendario dell'utente creatore 
+        invitedUsers.remove(creator.getEmail()); //toglie l'utente creatore tra gli invitati (se presente)
+        
         for (String invitedUser : invitedUsers) {
             User u=em.find(User.class, invitedUser);
-            event.addInvited(u);
+            try{
+                event.addInvited(u, 0);
+            }
+            catch (NullPointerException e){
+                status= 1;
+            }
+            
         }
-        em.flush();
-        //em.persist(event);
+        return status;
     }
     
     public List<Event> findAll(){

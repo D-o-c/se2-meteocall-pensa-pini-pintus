@@ -71,7 +71,10 @@ public class EventBean {
 
     public String createEvent() {
         updateInviteList();
-        ea.save(event, invitedUsers);
+        int error=ea.save(event, invitedUsers);
+        if (error==1){
+            return "/user/home?faces-redirect=true&eventcreatedwitherror=true";
+        }
         return "/user/home?faces-redirect=true&eventcreated=true";
     }
     
@@ -94,6 +97,7 @@ public class EventBean {
             invitedUsers.set(i, invitedUsers.get(i).replaceAll(" ", ""));
             temp.add(invitedUsers.get(i));
         }
+        temp.remove("");
         invitedUsers= new ArrayList<>(temp);
     }
     
