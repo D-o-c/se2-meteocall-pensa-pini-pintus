@@ -6,7 +6,7 @@
 package it.polimi.meteocal.gui.security;
 
 import it.polimi.meteocal.business.security.boundary.EventArea;
-import it.polimi.meteocal.business.security.boundary.UserManager;
+import it.polimi.meteocal.business.security.boundary.UserArea;
 import it.polimi.meteocal.business.security.entity.Event;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,7 +35,7 @@ public class EventBean {
     private Event event;
     
     @EJB
-    UserManager um;
+    UserArea ua;
 
     public EventBean() {
     }
@@ -52,7 +52,7 @@ public class EventBean {
     }
 
     public String createEvent() {
-        event.setCreatorEmail(um.getLoggedUser().getEmail());
+        event.setCreatorEmail(ua.getLoggedUser().getEmail());
         ea.save(event);
         return "/user/home?faces-redirect=true&eventcreated=true";
     }

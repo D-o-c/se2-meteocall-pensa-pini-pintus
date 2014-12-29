@@ -93,6 +93,12 @@ public class UserArea {
         Contact contact = em.find(Contact.class, pk);
         em.remove(contact);
     }
+
+    public boolean exist(String cEmail) {
+        List<Contact> cList=getContacts();
+        ContactPK cpk = new ContactPK(cEmail, getLoggedUser().getEmail());
+        return cList.contains(em.find(Contact.class, cpk));
+    }
     
     
 }

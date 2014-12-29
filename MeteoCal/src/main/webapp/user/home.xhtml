@@ -21,10 +21,6 @@
             <li><p:link outcome="settings" value="Settings"/></li>
             <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
         </ul>
-        <form class="clear-left">
-           <p:inputText value="#{searchBean.email}"/>
-           <p:link outcome="search" value="Search"/>
-        </form>
         
         <h:outputText rendered="#{param['eventcreated']}" style="color: red" value="Event Created!"/><br/>
         

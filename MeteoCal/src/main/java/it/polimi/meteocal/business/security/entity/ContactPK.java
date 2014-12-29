@@ -17,7 +17,11 @@ public class ContactPK implements Serializable{
 
     public ContactPK() {
     }
-    
+    /**
+     * 
+     * @param email: email del contatto
+     * @param user : email dell'utente che possiede il contatto
+     */
     public ContactPK(String email, String user) {
         this.email = email;
         this.user = user;

@@ -141,8 +141,8 @@ public class UserBean{
         return "addressbook?faces-redirect=true";
     }
     
-    public String getEmail() {
-        return um.getLoggedUser().getEmail();
+    public boolean exist(String cEmail){
+        return ua.exist(cEmail);
     }
       
 }
