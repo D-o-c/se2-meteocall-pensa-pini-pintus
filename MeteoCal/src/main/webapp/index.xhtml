@@ -51,8 +51,8 @@
                     <h:outputLabel for="pwd2">Confirm Password:</h:outputLabel>
                     <p:password id="pwd2" label="Confirm Password"/>
                 </h:panelGrid>
-                <p:commandButton id="submit" value="Register" update="@all" ajax="true"
-                                 action="#{registrationBean.register()}" />
+                <p:commandButton id="submit" value="Register" ajax="true" update="@all"
+                                 action="#{registrationBean.register()}"/>
             </p:panel>
         </h:form>
     </h:body>

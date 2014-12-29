@@ -1,24 +1,23 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package it.polimi.meteocal.business.security.boundary;
 
 import it.polimi.meteocal.business.security.entity.Group;
 import it.polimi.meteocal.business.security.entity.User;
 import java.security.Principal;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 /**
  *
  * @author aldo
  */
 @Stateless
-public class UserManager {
+public class PublicArea {
 
     @PersistenceContext
     EntityManager em;
@@ -26,9 +25,10 @@ public class UserManager {
     @Inject
     Principal principal;
 
-    public void save(User user) {
+    public void save(User user) {        
         user.setGroupName(Group.USERS);
-        em.persist(user);
+        user.setPublic(true);
+        em.persist(user);        
     }
 
     public void unregister() {
@@ -38,8 +38,5 @@ public class UserManager {
     public User getLoggedUser() {
         return em.find(User.class, principal.getName());
     }
-    
-    public String find(String email) {
-        return email;
-    }
+
 }

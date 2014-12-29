@@ -2,13 +2,18 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title>Settings Page</title>
         <h:outputStylesheet library="css" name="stylesheet.css" />
     </h:head>
     <h:body>
         <h1>MeteoCal</h1>
+        <h:form id="searchForm" class="float-left">
+            <p:inputText value="#{searchBean.searchInput}"/>
+            <p:commandButton action="#{searchBean.findUser()}" value="Search"/>
+        </h:form>
         <ul id="landmarks">
             <li><p:link outcome="home" value="#{userBean.name}'s Calendar"/></li>
             <li><p:link outcome="addressbook" value="Notifications"/></li>
@@ -17,7 +22,32 @@
             <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
         </ul>
         <h:form class="clear-left">
-            <p:commandLink action="#{registrationBean.unregister()}" value="Unregister"/>
+            <h3 style="margin-top:0">Unregister Your Account</h3>
+            <p:commandButton action="#{registrationBean.unregister()}" value="Unregister"/>
+        </h:form>
+        <h:form>
+            <h3 style="margin-top:0">Calendar Visibility</h3>
+            <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+                <p:outputLabel value="Currently #{userBean.calendarVisibility}" />
+                <p:selectOneRadio value="#{userBean.publicCalendar}">
+                    <f:selectItem itemLabel="Private" itemValue="false" />
+                    <f:selectItem itemLabel="Public" itemValue="true" />
+                </p:selectOneRadio>
+            </h:panelGrid>
+            <p:commandButton value="Change" action="#{userBean.changeCalendarVisibility()}"/>
+        </h:form>
+        <h:form>
+            <h3 style="margin-top:0">Change password</h3>
+            <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+                <p:outputLabel for="oldpsw" value="Confirm old Password"/>
+                <p:password id="oldpsw" value="#{userBean.password}" 
+                             required="true" />
+                <p:outputLabel for="newpsw" value="Insert new Password"/>
+                <p:password id="newpsw" value="#{userBean.newPassword}" 
+                            required="true" />
+                <p:commandButton id="submit" action="#{userBean.changePassword()}" value="Submit" ajax="true" update="@all"/>
+            </h:panelGrid>
+            <h:messages style="color:red"/>
         </h:form>
     </h:body>
 </html>

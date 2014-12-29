@@ -1,14 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package it.polimi.meteocal.business.security.entity;
 
 import it.polimi.meteocal.business.security.control.PasswordEncrypter;
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -18,15 +17,27 @@ import javax.validation.constraints.Size;
  * @author aldo
  */
 @Entity(name = "USERS")
+@NamedQueries({
+        @NamedQuery(name = User.findByEmailOrLikeNameSurname, 
+                query = "SELECT u FROM USERS u WHERE ((u.name LIKE ?1) OR "
+                                                    + "(u.surname LIKE ?1) OR "
+                                                    + "(u.email = ?2)) AND"
+                                                    + "(u.public_ = true)")
+})
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    public static final String findByEmailOrLikeNameSurname = "User.findByEmailOrLikeNameSurname";
+    
 
     @Id
     @Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",
             message = "invalid email")
     @NotNull(message = "May not be empty")
     private String email;
+    
+    @OneToMany(mappedBy="user", orphanRemoval=true)
+    private List<Contact> contacts;
     
     @Size(min=4, message="At least 4 characters")
     @NotNull(message = "May not be empty")
@@ -41,7 +52,8 @@ public class User implements Serializable {
     @NotNull(message = "May not be empty")
     private String surname;
     
-
+    private boolean public_;
+    
     public String getName() {
         return name;
     }
@@ -84,4 +96,19 @@ public class User implements Serializable {
         this.password = PasswordEncrypter.encryptPassword(password);
     }
 
+    public boolean isPublic() {
+        return public_;
+    }
+
+    public void setPublic(boolean b) {
+        this.public_ = b;
+    }
+    
+    public void addContact(Contact contact) {
+        contacts.add(contact);
+        if(contact.getUser() != this) {
+            contact.setUser(this);
+        }
+    }
+    
 }

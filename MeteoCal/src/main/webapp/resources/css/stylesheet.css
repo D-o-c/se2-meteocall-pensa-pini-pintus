@@ -8,7 +8,13 @@ h1 {
     float:left;
 }
 
-#landmarks {
+h1 {
+    margin:0px;
+    float:left;
+    padding: 0px 20px 0px 0px;
+}
+
+ul, #landmarks {
     list-style:none;
     padding:0px;
     margin:0px;
@@ -21,4 +27,12 @@ h1 {
 
 .clear-left {
     clear:left;
+}
+
+.float-left {
+    float:left;
+}
+
+#searchForm {
+    margin-bottom:20px;
 }
