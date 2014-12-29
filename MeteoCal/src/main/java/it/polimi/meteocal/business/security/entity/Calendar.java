@@ -40,7 +40,7 @@ public class Calendar implements Serializable{
     @PrimaryKeyJoinColumn(name="IDEVENT", referencedColumnName="IDEVENT")
     private Event event;
 
-    
+    //ATTENZIONE NON CANCELLARE IL COSTRUTTORE!!!!!
     public Calendar(){
         
     }
