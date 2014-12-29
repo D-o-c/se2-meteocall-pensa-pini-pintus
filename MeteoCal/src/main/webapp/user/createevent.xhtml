@@ -39,19 +39,12 @@ and open the template in the editor.
                                      required="true"/>
                     <h:outputText id="display" />
                     
-                    <p:outputLabel value="LocationLat"/>
-                    <p:inputText id="locationLat" value="#{eventBean.event.locationLat}"
+                    <p:outputLabel value="Location, write \"address, city, state\""/>
+                    <p:inputText id="location" value="#{eventBean.event.location}"
                                  required="true">
-                        <p:ajax update="locationLatmsg"/>
+                        <p:ajax update="locationmsg"/>
                     </p:inputText>
-                    <p:message id="locationLatmsg" for="locationLat" />
-                    
-                    <p:outputLabel value="LocationLon"/>
-                    <p:inputText id="locationLon" value="#{eventBean.event.locationLon}"
-                                 required="true">
-                        <p:ajax update="locationLonmsg"/>
-                    </p:inputText>
-                    <p:message id="locationLonmsg" for="locationLon" />
+                    <p:message id="locationmsg" for="location" />
                     
                     <p:outputLabel value="Public"/>
                     <p:selectBooleanCheckbox value="#{eventBean.event.pub}"/>

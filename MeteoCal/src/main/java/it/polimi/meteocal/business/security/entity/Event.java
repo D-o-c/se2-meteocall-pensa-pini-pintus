@@ -11,9 +11,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 /**
  *
@@ -22,11 +25,18 @@ import javax.validation.constraints.NotNull;
 
 
 @Entity (name="EVENT")
+@NamedQueries({
+        @NamedQuery(name = Event.findAll, 
+                query = "SELECT e FROM EVENT e")
+})
 public class Event implements Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int idEvent;
+    
+    public static final String findAll = "Event.findAll";
+    
     
     @Temporal(TemporalType.TIMESTAMP)
     @NotNull(message = "May not be empty")
@@ -48,11 +58,10 @@ public class Event implements Serializable {
     @NotNull(message = "May not be empty")
     private String creatorEmail;
     
+    @Pattern(regexp="[\\w*[ ]*]*[,][\\w*[ ]*]*[,][\\w*[ ]*]*",
+             message="write \"address, city, state\"")
     @NotNull(message = "May not be empty")
-    private float locationLat;
-    
-    @NotNull(message = "May not be empty")
-    private float locationLon;
+    private String location;
     
     
     public String getName() {
@@ -103,20 +112,12 @@ public class Event implements Serializable {
         this.creatorEmail = creatorEmail;
     }
 
-    public float getLocationLat() {
-        return locationLat;
+    public String getLocation() {
+        return location;
     }
 
-    public void setLocationLat(float locationLat) {
-        this.locationLat = locationLat;
-    }
-
-    public float getLocationLon() {
-        return locationLon;
-    }
-
-    public void setLocationLon(float locationLon) {
-        this.locationLon = locationLon;
+    public void setLocation(String location) {
+        this.location=location;
     }
     
  

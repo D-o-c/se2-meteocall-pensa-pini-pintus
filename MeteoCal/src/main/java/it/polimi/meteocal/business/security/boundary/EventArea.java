@@ -8,6 +8,7 @@ package it.polimi.meteocal.business.security.boundary;
 import it.polimi.meteocal.business.security.entity.Group;
 import it.polimi.meteocal.business.security.entity.Event;
 import java.security.Principal;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -28,6 +29,11 @@ public class EventArea {
 
     public void save(Event event) {
         em.persist(event);
+    }
+    
+    public List<Event> findAll(){
+        return em.createNamedQuery(Event.findAll, Event.class)
+                                .getResultList();
     }
     
 }

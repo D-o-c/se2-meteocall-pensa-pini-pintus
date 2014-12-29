@@ -11,6 +11,7 @@ import it.polimi.meteocal.business.security.entity.Contact;
 import it.polimi.meteocal.business.security.entity.Event;
 import it.polimi.meteocal.business.security.entity.User;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -42,6 +43,8 @@ public class EventBean {
     UserArea ua;
     
     private String invites;
+    private List<String> invitedUsers;
+    
 
     public String getInvites() {
         return invites;
@@ -66,6 +69,7 @@ public class EventBean {
     }
 
     public String createEvent() {
+        updateInviteList();
         event.setCreatorEmail(ua.getLoggedUser().getEmail());
         ea.save(event);
         return "/user/home?faces-redirect=true&eventcreated=true";
@@ -73,7 +77,7 @@ public class EventBean {
     
     public List<String> complete(String query){
         
-        List<String> eCont = new ArrayList<String>();
+        List<String> eCont = new ArrayList<>();
         List<Contact> cList = ua.getContacts();
         for (Contact cList1 : cList) {
             if (cList1.getEmail().contains(query)) {
@@ -81,6 +85,15 @@ public class EventBean {
             }
         }
         return eCont;
+    }
+    
+    private void updateInviteList(){
+        String[] part = invites.split(";");
+        invitedUsers = Arrays.asList(part);
+        for (int i=0; i<invitedUsers.size();i++){
+            invitedUsers.set(i, invitedUsers.get(i).replaceAll(" ", ""));
+        }
+        
     }
     
     
