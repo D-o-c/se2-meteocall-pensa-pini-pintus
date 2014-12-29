@@ -8,12 +8,14 @@ package it.polimi.meteocal.gui.security;
 import it.polimi.meteocal.business.security.boundary.UserArea;
 import it.polimi.meteocal.business.security.entity.Contact;
 import it.polimi.meteocal.business.security.entity.User;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 
 /**
@@ -22,6 +24,7 @@ import javax.faces.context.FacesContext;
  */
 @Named
 @RequestScoped
+@ManagedBean
 public class UserBean{
 
     @EJB
@@ -34,6 +37,7 @@ public class UserBean{
     private String newEmail;
     private String newPassword;
     private String password;
+    
             
     public UserBean() {
     }

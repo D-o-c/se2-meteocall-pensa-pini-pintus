@@ -74,6 +74,12 @@ and open the template in the editor.
                     </p:calendar>
                     <p:message id="endTimemsg" for="endTime" />
                     
+                    <p>Insert email of invited users separated by ";"</p>
+                    <p:inputTextarea value="#{eventBean.invites}" rows="10" cols="50"
+                                     completeMethod="#{eventBean.complete}"
+                                     queryDelay="500" minQueryLength="2"/>
+ 
+                    
                     <p:commandButton id="submit" value="Create Event" update="@all" ajax="true"
                                     action="#{eventBean.createEvent()}" />
                    </p:panelGrid>

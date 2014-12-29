@@ -7,9 +7,13 @@ package it.polimi.meteocal.gui.security;
 
 import it.polimi.meteocal.business.security.boundary.EventArea;
 import it.polimi.meteocal.business.security.boundary.UserArea;
+import it.polimi.meteocal.business.security.entity.Contact;
 import it.polimi.meteocal.business.security.entity.Event;
+import it.polimi.meteocal.business.security.entity.User;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.context.RequestScoped;
@@ -36,6 +40,16 @@ public class EventBean {
     
     @EJB
     UserArea ua;
+    
+    private String invites;
+
+    public String getInvites() {
+        return invites;
+    }
+
+    public void setInvites(String invites) {
+        this.invites = invites;
+    }
 
     public EventBean() {
     }
@@ -56,6 +70,21 @@ public class EventBean {
         ea.save(event);
         return "/user/home?faces-redirect=true&eventcreated=true";
     }
+    
+    public List<String> complete(String query){
+        
+        List<String> eCont = new ArrayList<String>();
+        List<Contact> cList = ua.getContacts();
+        for (Contact cList1 : cList) {
+            if (cList1.getEmail().contains(query)) {
+                eCont.add(cList1.getEmail() + "; ");
+            }
+        }
+        return eCont;
+    }
+    
+    
+    
     /*
     public String unregister() {
         um.unregister();
