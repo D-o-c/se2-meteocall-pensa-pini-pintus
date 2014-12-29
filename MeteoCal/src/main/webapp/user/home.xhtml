@@ -15,11 +15,17 @@
         </h:form>
         <ul id="landmarks">
             <li>#{userBean.name}'s Calendar</li>
+            <li><p:link outcome="createevent" value="Create new event"/></li>
             <li><p:link outcome="notifications" value="Notifications"/></li>
             <li><p:link outcome="addressbook" value="Addressbook"/></li>
             <li><p:link outcome="settings" value="Settings"/></li>
             <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
         </ul>
+        
+        <h:outputText rendered="#{param['eventcreated']}" style="color: red" value="Event Created!"/><br/>
+        <h:outputText rendered="#{param['eventcreatedwitherror']}" style="color: red"
+                      value="Event Created but some users don't exist!"/><br/>
+        
     </h:body>
 </html>
 

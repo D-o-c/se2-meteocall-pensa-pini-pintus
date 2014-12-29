@@ -32,7 +32,7 @@ and open the template in the editor.
         <h:form>
             <p:commandButton 
                 action="#{userBean.addContact(searchBean.email, searchBean.name, searchBean.surname)}"
-                value="Add To Contacts" />
+                value="Add To Contacts" disabled="#{userBean.exist(searchBean.email)}"/>
         </h:form>
     </h:body>
 </html>

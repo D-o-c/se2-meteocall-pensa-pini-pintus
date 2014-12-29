@@ -31,10 +31,6 @@ footer {
     text-shadow: 1px 1px #000000;
 }
 
-h1 {
-    
-}
-
 ul, #landmarks {
     list-style:none;
     padding:0px;
@@ -57,3 +53,4 @@ ul, #landmarks {
 #searchForm {
     margin-bottom:20px;
 }
+

@@ -3,6 +3,7 @@ package it.polimi.meteocal.business.security.entity;
 import it.polimi.meteocal.business.security.control.PasswordEncrypter;
 import java.io.Serializable;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
@@ -10,6 +11,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -35,16 +37,23 @@ public class User implements Serializable {
     @NotNull(message = "May not be empty")
     private String email;
     
+    @OneToMany(mappedBy="user")
+    private List<Calendar> events;
+    
+    
     @OneToMany(mappedBy="user", orphanRemoval=true)
     private List<Contact> contacts;
     
+    @Size(min=4, message="At least 4 characters")
     @NotNull(message = "May not be empty")
     private String password;
+    
     @NotNull(message = "May not be empty")
     private String groupName;
     
     @NotNull(message = "May not be empty")
     private String name;
+    
     @NotNull(message = "May not be empty")
     private String surname;
     
@@ -57,14 +66,6 @@ public class User implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-    
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
@@ -74,6 +75,16 @@ public class User implements Serializable {
         return groupName;
     }
     
+    public String getSurname(){
+        return surname;
+    }
+    
+    public void setSurname(String surname){
+        this.surname=surname;
+    }
+    
+
+
     public String getEmail() {
         return email;
     }
@@ -104,5 +115,18 @@ public class User implements Serializable {
             contact.setUser(this);
         }
     }
+
+    public List<Calendar> getEvents() {
+        return events;
+    }
+
+    public void setEvents(List<Calendar> events) {
+        this.events = events;
+    }
+
+    public List<Contact> getContacts() {
+        return contacts;
+    }
+    
     
 }
