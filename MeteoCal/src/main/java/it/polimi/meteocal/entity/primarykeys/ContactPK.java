@@ -1,4 +1,4 @@
-package it.polimi.meteocal.entity;
+package it.polimi.meteocal.entity.primarykeys;
 
 import java.io.Serializable;
 

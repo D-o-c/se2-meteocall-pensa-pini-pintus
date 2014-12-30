@@ -1,5 +1,6 @@
 package it.polimi.meteocal.entity;
 
+import it.polimi.meteocal.entity.primarykeys.ContactPK;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;

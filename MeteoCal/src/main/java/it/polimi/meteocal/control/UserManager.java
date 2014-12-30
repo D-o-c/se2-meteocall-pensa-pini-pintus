@@ -2,7 +2,7 @@ package it.polimi.meteocal.control;
 
 import it.polimi.meteocal.business.security.PasswordEncrypter;
 import it.polimi.meteocal.entity.Contact;
-import it.polimi.meteocal.entity.ContactPK;
+import it.polimi.meteocal.entity.primarykeys.ContactPK;
 import it.polimi.meteocal.entity.User;
 import java.security.Principal;
 import java.util.List;
