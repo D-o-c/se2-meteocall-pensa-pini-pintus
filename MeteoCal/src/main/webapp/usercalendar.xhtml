@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="windows-1252"?>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
@@ -15,23 +10,27 @@ and open the template in the editor.
         <h:outputStylesheet library="css" name="stylesheet.css" />
     </h:head>
     <h:body>
-        <h1>MeteoCal</h1>
-        <h:form id="searchForm" class="float-left">
-            <p:inputText value="#{searchBean.searchInput}"/>
-            <p:commandButton action="#{searchBean.findUser2()}" value="Search"/>
-        </h:form>
-        <ul id="landmarks">
-            <li><p:link outcome="user/home" value="#{userBean.name}'s Calendar"/></li>
-            <li><p:link outcome="user/notifications" value="Notifications"/></li>
-            <li><p:link outcome="user/addressbook" value="Addressbook"/></li>
-            <li><p:link outcome="user/settings" value="Settings"/></li>
-            <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
-        </ul>
-        <p class="clear-left">#{searchBean.selectedUser.name} #{searchBean.selectedUser.surname}</p>
-        <h:form>
+        <header>
+            <h1 id="title">MeteoCal</h1>
+            <h:form id="searchForm" class="float-left">
+                <p:inputText value="#{searchBean.searchInput}"/>
+                <p:commandButton style="margin-left: 20px;" action="#{searchBean.findUser()}" value="Search"/>
+            </h:form>
+            <ul id="landmarks">
+                <li><p:link outcome="user/home" value="#{userBean.name}'s Calendar"/></li>
+                <li><p:link outcome="user/notifications" value="Notifications"/></li>
+                <li><p:link outcome="user/addressbook" value="Addressbook"/></li>
+                <li><p:link outcome="user/settings" value="Settings"/></li>
+                <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
+            </ul>
+        </header>
+        <section>
+        <p class="clear-left" style="margin:0;padding:20px;">#{searchBean.selectedUser.name} #{searchBean.selectedUser.surname}</p>
+        <h:form style="margin:0;padding:20px;">
             <p:commandButton 
                 action="#{searchBean.addContact()}"
                 value="Add To Contacts" disabled="#{searchBean.exist()}"/>
         </h:form>
+        </section>
     </h:body>
 </html>

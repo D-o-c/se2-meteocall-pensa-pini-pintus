@@ -10,28 +10,33 @@
         <h:outputStylesheet library="css" name="stylesheet.css" />
     </h:head>
     <h:body>
-        <h1>MeteoCal</h1>
-        <h:form id="searchForm" class="float-left">
-            <p:inputText value="#{searchBean.searchInput}"/>
-            <p:commandButton action="#{searchBean.findUser()}" value="Search"/>
-            <br></br>
-            <p:outputLabel value="#{searchBean.resultsLabel()}"/>
-            <ul>
-                <ui:repeat value="#{searchBean.users}" var="user">    
-                <li>    
-                    <h:commandLink action="#{searchBean.selectUser(user)}"
-                                   value="#{user.name} #{user.surname}" />
-                </li>    
-                </ui:repeat>
+        <header>
+            <h1 id="title">MeteoCal</h1>
+            <h:form id="searchForm" class="float-left">
+                <p:inputText value="#{searchBean.searchInput}"/>
+                <p:commandButton style="margin-left: 20px;" action="#{searchBean.findUser()}" value="Search"/>
+                <br></br>
+                <p:outputLabel style="position:relative;top:50px;left:-150px;"
+                               value="#{searchBean.resultsLabel()}"/>
+                <ul style="position:relative;top:50px;left:-150px;">
+                    <ui:repeat value="#{searchBean.users}" var="user">    
+                    <li style="padding-top:10px;">    
+                        <h:commandLink action="#{searchBean.selectUser(user)}"
+                                       value="#{user.name} #{user.surname}" />
+                    </li>    
+                    </ui:repeat>
+                </ul>
+            </h:form>
+            <ul id="landmarks">
+                <li><p:link outcome="home" value="#{userBean.name}'s Calendar"/></li>
+                <li><p:link outcome="notifications" value="Notifications"/></li>
+                <li><p:link outcome="addressbook" value="Addressbook"/></li>
+                <li><p:link outcome="settings" value="Settings"/></li>
+                <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
             </ul>
-        </h:form>
-        <ul id="landmarks">
-            <li><p:link outcome="home" value="#{userBean.name}'s Calendar"/></li>
-            <li><p:link outcome="notifications" value="Notifications"/></li>
-            <li><p:link outcome="addressbook" value="Addressbook"/></li>
-            <li><p:link outcome="settings" value="Settings"/></li>
-            <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
-        </ul>
+        </header>
+        <section>
+        </section>
     </h:body>
 </html>
 

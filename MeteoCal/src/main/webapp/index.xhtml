@@ -11,9 +11,9 @@
         <header>
            <h1 id="mainTitle">Welcome To MeteoCal</h1> 
         </header>
-        <section style="height:540px;">
+        <section>
             <h:form id="loginform" style="width:40%;padding-top:110px;" class="float-left">
-                <p:panel header="Login Form" style="height: 273px;">
+                <p:panel header="Login Form" style="height: 329px;">
                     <h:panelGrid columns="2" id="logGrid">
                         <p:outputLabel for="username" value="Email"/>
                         <p:inputText id="username" value="#{loginBean.username}" 
@@ -28,7 +28,7 @@
                 </p:panel>
             </h:form>
             <h:form id="registrationform" style="width:60%;padding-top:110px;" class="float-left">
-                <p:panel header="Registration Form">
+                <p:panel header="Registration Form" style="height: 329px;">
                     <h:panelGrid columns="3" id="regGrid">
                         <h:outputLabel for="name">Name:</h:outputLabel>
                         <p:inputText id="name" value="#{registrationBean.user.name}">
@@ -59,11 +59,10 @@
                         <h:outputLabel/>
                         <p:commandButton id="submit" value="Register" ajax="true" update="regGrid"
                                      action="#{registrationBean.register()}"/>
+                        <h:messages style="color: red"/>
                     </h:panelGrid>
                 </p:panel>
             </h:form>
         </section>
-        <footer class="clear-left">
-        </footer>
     </h:body>
 </html>

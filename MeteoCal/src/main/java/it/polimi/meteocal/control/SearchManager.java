@@ -73,15 +73,6 @@ public class SearchManager {
     }
     
     /**
-     * Label if getContacts().isEmpty()
-     * @return "Your Addressbook Is Empty"
-     */
-    public String contactsResultsLabel() {
-        if(getLoggedUser().getContacts().isEmpty()) return "Your Addressbook Is Empty";
-        else return null;
-    }
-    
-    /**
      * @return List of contacts of the logged user
      */
     public List<Contact> getContacts() {
@@ -108,10 +99,11 @@ public class SearchManager {
      * Calls EntityManager.remove(contact)
      * @param contact 
      */
-    public void deleteContact(Contact contact) {
-        ContactPK pk = new ContactPK(contact.getEmail(),getLoggedUser().getEmail());
-        em.remove(em.find(Contact.class, pk));
-        getLoggedUser().getContacts().remove(contact);
+    public void deleteContact(String contactEmail) {
+        ContactPK pk = new ContactPK(contactEmail,getLoggedUser().getEmail());
+        Contact toBeRemoved = em.find(Contact.class, pk);
+        getLoggedUser().getContacts().remove(toBeRemoved);
+        em.remove(toBeRemoved);
     }
 
     /**

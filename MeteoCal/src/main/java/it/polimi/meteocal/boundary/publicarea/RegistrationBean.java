@@ -3,6 +3,7 @@ package it.polimi.meteocal.boundary.publicarea;
 import it.polimi.meteocal.entity.User;
 import it.polimi.meteocal.control.SignManager;
 import javax.ejb.EJB;
+import javax.ejb.EJBException;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
@@ -46,10 +47,10 @@ public class RegistrationBean {
      * Calls SignManager.register(User user) 
      */
     public void register() {
-        sm.register(user);
+        String result = sm.register(user);
         FacesContext.getCurrentInstance()
             .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "Registration Successfull",null));
+                    result, null));
     }
     
     /**

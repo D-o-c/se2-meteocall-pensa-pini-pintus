@@ -5,6 +5,7 @@ import it.polimi.meteocal.entity.User;
 import java.security.Principal;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -35,10 +36,16 @@ public class SignManager {
      * Calls EntityManager.persist(user)
      * @param user 
      */
-    public void register(User user) {        
-        user.setGroupName(Group.USERS);
-        user.setPublic(true);
-        em.persist(user);        
+    public String register(User user) {
+        try {
+            String s = em.find(User.class, user.getEmail()).getEmail();
+            return "Registration Failed";
+        } catch(NullPointerException e) {
+            user.setGroupName(Group.USERS);
+            user.setPublic(true);
+            em.persist(user);
+            return "Registration Successfull";
+        }       
     }
 
     /**

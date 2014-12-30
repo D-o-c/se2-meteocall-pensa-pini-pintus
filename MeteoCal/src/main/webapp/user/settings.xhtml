@@ -9,46 +9,56 @@
         <h:outputStylesheet library="css" name="stylesheet.css" />
     </h:head>
     <h:body>
-        <h1>MeteoCal</h1>
-        <h:form id="searchForm" class="float-left">
-            <p:inputText value="#{searchBean.searchInput}"/>
-            <p:commandButton action="#{searchBean.findUser()}" value="Search"/>
-        </h:form>
-        <ul id="landmarks">
-            <li><p:link outcome="home" value="#{userBean.name}'s Calendar"/></li>
-            <li><p:link outcome="addressbook" value="Notifications"/></li>
-            <li><p:link outcome="addressbook" value="Addressbook"/></li>
-            <li>Settings</li>
-            <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
-        </ul>
-        <h:form class="clear-left">
-            <h3 style="margin-top:0">Unregister Your Account</h3>
-            <p:commandButton action="#{registrationBean.unregister()}" value="Unregister"/>
-        </h:form>
-        <h:form>
-            <h3 style="margin-top:0">Calendar Visibility</h3>
-            <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
-                <p:outputLabel value="Currently #{userBean.calendarVisibility}" />
-                <p:selectOneRadio value="#{userBean.publicCalendar}">
-                    <f:selectItem itemLabel="Private" itemValue="false" />
+        <header>
+            <h1 id="title">MeteoCal</h1>
+            <h:form id="searchForm" class="float-left">
+                <p:inputText value="#{searchBean.searchInput}"/>
+                <p:commandButton style="margin-left: 20px;" action="#{searchBean.findUser()}" value="Search"/>
+            </h:form>
+            <ul id="landmarks">
+                <li><p:link outcome="home" value="#{userBean.name}'s Calendar"/></li>
+                <li><p:link outcome="addressbook" value="Notifications"/></li>
+                <li><p:link outcome="addressbook" value="Addressbook"/></li>
+                <li>Settings</li>
+                <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
+            </ul>
+        </header>
+        <section>
+            <h:form class="clear-left" style="padding:20px;">
+                <h3 style="margin-top:0">Calendar Visibility (Currently is #{userBean.calendarVisibility})</h3>
+                <p:selectOneRadio value="#{userBean.pub}">
                     <f:selectItem itemLabel="Public" itemValue="true" />
+                    <f:selectItem itemLabel="Private" itemValue="false" />
                 </p:selectOneRadio>
-            </h:panelGrid>
-            <p:commandButton value="Change" action="#{userBean.changeCalendarVisibility()}"/>
-        </h:form>
-        <h:form>
-            <h3 style="margin-top:0">Change password</h3>
-            <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
-                <p:outputLabel for="oldpsw" value="Confirm old Password"/>
-                <p:password id="oldpsw" value="#{userBean.password}" 
-                             required="true" />
-                <p:outputLabel for="newpsw" value="Insert new Password"/>
-                <p:password id="newpsw" value="#{userBean.newPassword}" 
-                            required="true" />
-                <p:commandButton id="submit" action="#{userBean.changePassword()}" value="Submit" ajax="true" update="@all"/>
-            </h:panelGrid>
-            <h:messages style="color:red"/>
-        </h:form>
+                <p:commandButton value="Submit"
+                                 action="#{userBean.changeCalendarVisibility()}"
+                                 icon="ui-icon-check"/>
+            </h:form>
+            <h:form style="padding:20px;">
+                <h3 style="margin-top:0">Change password</h3>
+                <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+                    <p:outputLabel for="oldpsw" value="Confirm old Password"/>
+                    <p:password id="oldpsw" value="#{userBean.password}" 
+                                 required="true" />
+                    <p:outputLabel for="newpsw" value="Insert new Password"/>
+                    <p:password id="newpsw" value="#{userBean.newPassword}" 
+                                required="true" />
+                    <p:commandButton id="submit"
+                                     action="#{userBean.changePassword()}"
+                                     value="Change"
+                                     ajax="true"
+                                     update="@all"
+                                     icon="ui-icon-wrench"/>
+                </h:panelGrid>
+                <h:messages style="color:red"/>
+            </h:form>
+            <h:form style="padding:20px;">
+                <h3 style="margin-top:0">Unregister Your Account</h3>
+                <p:commandButton action="#{registrationBean.unregister()}"
+                                 value="Unregister"
+                                 icon="ui-icon-circle-close"/>
+            </h:form>
+        </section>
     </h:body>
 </html>
 

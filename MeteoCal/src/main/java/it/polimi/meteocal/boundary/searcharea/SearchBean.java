@@ -81,15 +81,7 @@ public class SearchBean{
     public String resultsLabel() {
         return sm.resultsLabel();
     }
-    
-    /**
-     * @return SearchManager.contactResultsLabel()
-     * e.g. "Contact List:/Contact List : Addressbook Empty"
-     */
-    public String contactsResultsLabel() {
-        return sm.contactsResultsLabel();
-    }
-     
+         
     /**
      * Calls SearchManager.getUserSearched()
      * @return List of users searched 
@@ -119,11 +111,11 @@ public class SearchBean{
     }
     
     /**
-     * Calls SearchManager.deleteContact(contact)
+     * Calls SearchManager.deleteContact(String contactEmail)
      * @return addressbook page
      */
-    public String deleteContact(Contact contact) {
-        sm.deleteContact(contact);
+    public String deleteContact(String contactEmail) {
+        sm.deleteContact(contactEmail);
         return addressbok_page_url;
     }
     

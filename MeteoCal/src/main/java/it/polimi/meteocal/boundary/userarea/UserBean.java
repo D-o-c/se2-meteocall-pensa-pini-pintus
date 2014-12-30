@@ -15,16 +15,16 @@ import javax.faces.context.FacesContext;
 @RequestScoped
 public class UserBean{
 
-    private static final String home_page_url = "home?faces-redirect=true";
+    private static final String home_page_url_pub = "home?faces-redirect=true&visibilitychanged=true";
+    private static final String home_page_url_psw = "home?faces-redirect=true&passwordchanged=true";
     
     @EJB
     UserManager um;
-    
-    private boolean publicCalendar;
-    
+        
     private String newEmail;
     private String newPassword;
     private String password;
+    private boolean pub;
     
     /**
      * Empty Constructor
@@ -34,14 +34,6 @@ public class UserBean{
     /**************************** Getter and Setter ***************************/    
     public String getName() {
         return um.getLoggedUser().getName();
-    }
-
-    public boolean isPublicCalendar() {
-        return publicCalendar;
-    }
-
-    public void setPublicCalendar(boolean publicCalendar) {
-        this.publicCalendar = publicCalendar;
     }
 
     public String getNewEmail() {
@@ -68,17 +60,18 @@ public class UserBean{
         this.newPassword = newPassword;
     }
 
+    public boolean isPub() {
+        return pub;
+    }
+
+    public void setPub(boolean pub) {
+        this.pub = pub;
+    }
     /**************************************************************************/
     
-    /**
-     * Calls UserManager to get the visibility of the calendar
-     * @return The current visibility of the calendar
-     */
     public String getCalendarVisibility() {
-        String visibility;
-        if(um.getLoggedUser().isPublic()) visibility = "Public";
-        else visibility = "Private";
-        return visibility;
+        if(um.getLoggedUser().isPublic() == true) return "Public";
+        else return "Private";
     }
     
     /**
@@ -86,8 +79,8 @@ public class UserBean{
      * @return user home page
      */
     public String changeCalendarVisibility() {
-        um.changeCalendarVisibility(publicCalendar);
-        return home_page_url;
+        um.changeCalendarVisibility(pub);
+        return home_page_url_pub;
     }
     
     /**
@@ -97,11 +90,12 @@ public class UserBean{
     public String changePassword() {
         boolean changeIsOk = um.changePassword(password,newPassword);
         if(changeIsOk) {
-            return home_page_url;
+            return home_page_url_psw;
         }
         else {
             FacesContext.getCurrentInstance()
-                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Error","Please Try Again"));
+                    .addMessage(null, new FacesMessage(
+                            FacesMessage.SEVERITY_ERROR,"Please Try Again",null));
             return null;
         }
     }
