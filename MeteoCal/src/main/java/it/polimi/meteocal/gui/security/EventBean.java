@@ -95,6 +95,9 @@ public class EventBean {
         invitedUsers = Arrays.asList(part);
         for (int i=0; i<invitedUsers.size();i++){
             invitedUsers.set(i, invitedUsers.get(i).replaceAll(" ", ""));
+            invitedUsers.set(i, invitedUsers.get(i).replaceAll("\n", ""));
+            invitedUsers.set(i, invitedUsers.get(i).replaceAll("\r", ""));
+            invitedUsers.set(i, invitedUsers.get(i).replaceAll("\t", ""));
             temp.add(invitedUsers.get(i));
         }
         temp.remove("");
