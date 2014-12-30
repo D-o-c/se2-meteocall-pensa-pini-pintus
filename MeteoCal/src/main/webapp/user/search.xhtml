@@ -15,11 +15,11 @@
             <p:inputText value="#{searchBean.searchInput}"/>
             <p:commandButton action="#{searchBean.findUser()}" value="Search"/>
             <br></br>
-            <p:outputLabel value="#{searchBean.results()}"/>
+            <p:outputLabel value="#{searchBean.resultsLabel()}"/>
             <ul>
                 <ui:repeat value="#{searchBean.users}" var="user">    
                 <li>    
-                    <h:commandLink action="#{searchBean.goToUserPage(user.name,user.surname,user.email)}"
+                    <h:commandLink action="#{searchBean.selectUser(user)}"
                                    value="#{user.name} #{user.surname}" />
                 </li>    
                 </ui:repeat>

@@ -11,11 +11,10 @@
         <h1>MeteoCal</h1>
         <h:form id="searchForm" class="float-left">
             <p:inputText value="#{searchBean.searchInput}"/>
-            <p:commandButton action="#{searchBean.findUser}" value="Search"/>
+            <p:commandButton action="#{searchBean.findUser()}" value="Search"/>
         </h:form>
         <ul id="landmarks">
             <li>#{userBean.name}'s Calendar</li>
-            <li><p:link outcome="createevent" value="Create new event"/></li>
             <li><p:link outcome="notifications" value="Notifications"/></li>
             <li><p:link outcome="addressbook" value="Addressbook"/></li>
             <li><p:link outcome="settings" value="Settings"/></li>
@@ -26,6 +25,7 @@
         <h:outputText rendered="#{param['eventcreatedwitherror']}" style="color: red"
                       value="Event Created but some users don't exist!"/><br/>
         
+        <p:commandButton action="createevent?faces-redirect=true" value="Create New Event"/>
     </h:body>
 </html>
 

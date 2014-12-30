@@ -23,11 +23,11 @@
         </ul>
         <h:form class="clear-left">
             <h3 style="margin-top:0">Contact List</h3>
-            <p:outputLabel value="#{userBean.results()}"/>
+            <p:outputLabel value="#{searchBean.contactsResultsLabel()}"/>
             <ul>
-                <ui:repeat value="#{userBean.contacts}" var="contact">    
+                <ui:repeat value="#{searchBean.contacts}" var="contact">    
                     <li>#{contact.name} #{contact.surname} #{contact.email}</li>
-                    <p:commandButton action="#{userBean.deleteContact(contact.email)}"
+                    <p:commandButton action="#{searchBean.deleteContact(contact)}"
                                      value="Delete"/>
                 </ui:repeat>
             </ul>

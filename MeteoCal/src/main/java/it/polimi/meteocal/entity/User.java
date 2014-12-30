@@ -1,9 +1,8 @@
-package it.polimi.meteocal.business.security.entity;
+package it.polimi.meteocal.entity;
 
-import it.polimi.meteocal.business.security.control.PasswordEncrypter;
+import it.polimi.meteocal.business.security.PasswordEncrypter;
 import java.io.Serializable;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
@@ -83,8 +82,6 @@ public class User implements Serializable {
         this.surname=surname;
     }
     
-
-
     public String getEmail() {
         return email;
     }
