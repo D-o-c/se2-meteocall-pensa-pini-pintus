@@ -40,41 +40,76 @@ public class SearchBean{
     }
     /**************************************************************************/
     
+    /**
+     * Calls SearchManager.findUser(searchinput) from a user/page
+     * @return search page
+     */
     public String findUser() {
         sm.findUser(searchInput);
         return search_page_url;
     }
     
+    /**
+     * Calls SearchManager.findUser(searchinput)
+     * @return search page
+     */
     public String findUser2() {
         sm.findUser(searchInput);
         return search_page_url_2;
     }
     
+    /**
+     * Calls SearchManager.getSelectedUser
+     * @return the User "clicked" in the search page
+     */
     public User getSelectedUser() {
         return sm.getSelectedUser();
     }
     
+    /**
+     * Calls SearchManager.selectUser(searchedUser) to set the User "clicked"
+     * @return usercalendar page
+     */
     public String selectUser(User searchedUser) {
         sm.selectUser(searchedUser);
         return selected_user_page_url;
     }
     
+    /**
+     * @return SearchManager.resultsLabel() e.g. "Results:/Results : Not Found"
+     */
     public String resultsLabel() {
         return sm.resultsLabel();
     }
     
+    /**
+     * @return SearchManager.contactResultsLabel()
+     * e.g. "Contact List:/Contact List : Addressbook Empty"
+     */
     public String contactsResultsLabel() {
         return sm.contactsResultsLabel();
     }
-      
+     
+    /**
+     * Calls SearchManager.getUserSearched()
+     * @return List of users searched 
+     */
     public List<User> getUsers() {
         return sm.getUsersSearched();
     }
     
+    /**
+     * Calls SearchManager.getContacts()
+     * @return List of contacts of logged user
+     */
     public List<Contact> getContacts() {
         return sm.getContacts();
     }
     
+    /**
+     * Calls SearchManager.addContact()
+     * @return addressbook page
+     */
     public String addContact() {
         sm.addContact(  getSelectedUser().getEmail(),
                         getSelectedUser().getName(),
@@ -83,11 +118,19 @@ public class SearchBean{
         return user_addressbook_page_url;
     }
     
+    /**
+     * Calls SearchManager.deleteContact(contact)
+     * @return addressbook page
+     */
     public String deleteContact(Contact contact) {
         sm.deleteContact(contact);
         return addressbok_page_url;
     }
     
+    /**
+     * Calls SearchManager.exist()
+     * @return if the user searched belongs to logged user contacts
+     */
     public boolean exist(){
         return sm.exist(getSelectedUser().getEmail());
     }
