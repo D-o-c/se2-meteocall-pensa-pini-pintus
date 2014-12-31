@@ -1,4 +1,4 @@
-package it.polimi.meteocal.control;
+package it.polimi.meteocal.boundary;
 
 import it.polimi.meteocal.entity.Group;
 import it.polimi.meteocal.entity.User;
@@ -14,7 +14,7 @@ import javax.persistence.PersistenceContext;
  * @author aldo
  */
 @Stateless
-public class SignManager {
+public class PublicArea {
 
     @PersistenceContext
     EntityManager em;

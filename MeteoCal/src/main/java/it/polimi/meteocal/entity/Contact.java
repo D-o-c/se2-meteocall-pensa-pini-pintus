@@ -2,6 +2,7 @@ package it.polimi.meteocal.entity;
 
 import it.polimi.meteocal.entity.primarykeys.ContactPK;
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
@@ -24,16 +25,20 @@ public class Contact implements Serializable {
    // public static final String findByUserEmail = "Contact.findByUserEmail";
     
     @Id
+    @Column(name="CONTACT_EMAIL")
     private String email;
     
     @ManyToOne
     @Id
-    @JoinColumn(name="USER_EMAIL")
+    @JoinColumn(name="EMAIL")
     private User user;
     
     @NotNull(message = "May not be empty")
+    @Column(name="CONTACT_NAME")
     private String name;
+    
     @NotNull(message = "May not be empty")
+    @Column(name="CONTACT_SURNAME")
     private String surname;
     
     public Contact() {

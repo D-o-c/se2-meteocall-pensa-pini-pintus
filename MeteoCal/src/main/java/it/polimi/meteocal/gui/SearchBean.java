@@ -1,6 +1,6 @@
-package it.polimi.meteocal.boundary.searcharea;
+package it.polimi.meteocal.gui;
 
-import it.polimi.meteocal.control.SearchManager;
+import it.polimi.meteocal.boundary.SearchArea;
 import it.polimi.meteocal.entity.Contact;
 import it.polimi.meteocal.entity.User;
 import java.util.List;
@@ -24,7 +24,7 @@ public class SearchBean{
             "user/addressbook?faces-redirect=true";
     
     @EJB
-    SearchManager sm;
+    SearchArea sm;
     
     private String searchInput;
     
@@ -41,7 +41,7 @@ public class SearchBean{
     /**************************************************************************/
     
     /**
-     * Calls SearchManager.findUser(searchinput) from a user/page
+     * Calls SearchArea.findUser(searchinput) from a user/page
      * @return search page
      */
     public String findUser() {
@@ -50,7 +50,7 @@ public class SearchBean{
     }
     
     /**
-     * Calls SearchManager.findUser(searchinput)
+     * Calls SearchArea.findUser(searchinput)
      * @return search page
      */
     public String findUser2() {
@@ -59,7 +59,7 @@ public class SearchBean{
     }
     
     /**
-     * Calls SearchManager.getSelectedUser
+     * Calls SearchArea.getSelectedUser
      * @return the User "clicked" in the search page
      */
     public User getSelectedUser() {
@@ -67,7 +67,7 @@ public class SearchBean{
     }
     
     /**
-     * Calls SearchManager.selectUser(searchedUser) to set the User "clicked"
+     * Calls SearchArea.selectUser(searchedUser) to set the User "clicked"
      * @return usercalendar page
      */
     public String selectUser(User searchedUser) {
@@ -76,14 +76,14 @@ public class SearchBean{
     }
     
     /**
-     * @return SearchManager.resultsLabel() e.g. "Results:/Results : Not Found"
+     * @return SearchArea.resultsLabel() e.g. "Results:/Results : Not Found"
      */
     public String resultsLabel() {
         return sm.resultsLabel();
     }
          
     /**
-     * Calls SearchManager.getUserSearched()
+     * Calls SearchArea.getUserSearched()
      * @return List of users searched 
      */
     public List<User> getUsers() {
@@ -91,7 +91,7 @@ public class SearchBean{
     }
     
     /**
-     * Calls SearchManager.getContacts()
+     * Calls SearchArea.getContacts()
      * @return List of contacts of logged user
      */
     public List<Contact> getContacts() {
@@ -99,7 +99,7 @@ public class SearchBean{
     }
     
     /**
-     * Calls SearchManager.addContact()
+     * Calls SearchArea.addContact()
      * @return addressbook page
      */
     public String addContact() {
@@ -111,7 +111,7 @@ public class SearchBean{
     }
     
     /**
-     * Calls SearchManager.deleteContact(String contactEmail)
+     * Calls SearchArea.deleteContact(String contactEmail)
      * @return addressbook page
      */
     public String deleteContact(String contactEmail) {
@@ -120,7 +120,7 @@ public class SearchBean{
     }
     
     /**
-     * Calls SearchManager.exist()
+     * Calls SearchArea.exist()
      * @return if the user searched belongs to logged user contacts
      */
     public boolean exist(){

@@ -1,4 +1,4 @@
-package it.polimi.meteocal.control;
+package it.polimi.meteocal.boundary;
 
 import it.polimi.meteocal.entity.Contact;
 import it.polimi.meteocal.entity.primarykeys.ContactPK;
@@ -15,7 +15,7 @@ import javax.persistence.PersistenceContext;
  * @author user
  */
 @Stateless
-public class SearchManager {
+public class SearchArea {
     
     @PersistenceContext
     EntityManager em;

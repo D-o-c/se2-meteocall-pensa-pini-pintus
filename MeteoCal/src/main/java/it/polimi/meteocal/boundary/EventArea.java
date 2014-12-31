@@ -1,4 +1,4 @@
-package it.polimi.meteocal.control;
+package it.polimi.meteocal.boundary;
 
 import it.polimi.meteocal.entity.Contact;
 import it.polimi.meteocal.entity.Event;
@@ -15,7 +15,7 @@ import javax.persistence.PersistenceContext;
  * @author doc
  */
 @Stateless
-public class EventManager{
+public class EventArea{
     
     @PersistenceContext
     EntityManager em;
@@ -50,7 +50,7 @@ public class EventManager{
         boolean noErrors = true;
         //Logged user is the creator of the event
         User creator = getLoggedUser();
-        event.setCreatorEmail(creator.getEmail());
+        event.setCreator(creator);
         //persists the event into the database
         em.persist(event);
         
