@@ -1,7 +1,7 @@
-package it.polimi.meteocal.boundary.publicarea;
+package it.polimi.meteocal.gui;
 
 import it.polimi.meteocal.entity.User;
-import it.polimi.meteocal.control.SignManager;
+import it.polimi.meteocal.boundary.PublicArea;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.inject.Named;
@@ -21,7 +21,7 @@ public class RegistrationBean {
     private static final String index_page_url = "/index?faces-redirect=true";
     
     @EJB
-    private SignManager sm;
+    private PublicArea sm;
 
     private User user;
 
@@ -44,7 +44,7 @@ public class RegistrationBean {
     /**************************************************************************/
     
     /**
-     * Calls SignManager.register(User user) 
+     * Calls PublicArea.register(User user) 
      */
     public void register() {
         String result = sm.register(user);
@@ -54,7 +54,7 @@ public class RegistrationBean {
     }
     
     /**
-     * Calls SignManager.unregister(), invalidate the session
+     * Calls PublicArea.unregister(), invalidate the session
      * @return index page
      */
     public String unregister() {

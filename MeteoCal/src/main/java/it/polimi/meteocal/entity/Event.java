@@ -5,10 +5,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -32,7 +35,8 @@ public class Event implements Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long idEvent;
+    @Column(name = "ID")
+    private long eventId;
     
     public static final String findAll = "Event.findAll";
     
@@ -43,27 +47,35 @@ public class Event implements Serializable {
     
     @Temporal(TemporalType.TIMESTAMP)
     @NotNull(message = "May not be empty")
+    @Column(name = "BEGIN_TIME")
     private Date beginTime;
     
     @Temporal(TemporalType.TIMESTAMP)
     @NotNull(message = "May not be empty")
+    @Column(name = "END_TIME")
     private Date endTime;
     
     @NotNull(message = "May not be empty")
+    @Column(name = "NAME")
     private String name;
     
     @NotNull(message = "May not be empty")
+    @Column(name = "DESCRIPTION")
     private String description;
     
     @NotNull(message = "May not be empty")
+    @Column(name = "PUBLIC_")
     private boolean pub=true;
     
     @NotNull(message = "May not be empty")
-    private String creatorEmail;
+    @ManyToOne
+    @JoinColumn(name = "EMAIL")
+    private User creator;
     
     @Pattern(regexp="[\\w*[ ]*]*[,][\\w*[ ]*]*[,][\\w*[ ]*]*",
              message="write \"address, city, state\"")
     @NotNull(message = "May not be empty")
+    @Column(name = "LOCATION")
     private String location;
     
     
@@ -107,12 +119,12 @@ public class Event implements Serializable {
         this.pub = pub;
     }
 
-    public String getCreatorEmail() {
-        return creatorEmail;
+    public User getCreator() {
+        return creator;
     }
 
-    public void setCreatorEmail(String creatorEmail) {
-        this.creatorEmail = creatorEmail;
+    public void setCreator(User creator) {
+        this.creator = creator;
     }
 
     public String getLocation() {
@@ -127,19 +139,19 @@ public class Event implements Serializable {
         return invited;
     }
 
-    public long getIdEvent() {
-        return idEvent;
+    public long getEventId() {
+        return eventId;
     }
 
-    public void setIdEvent(long idEvent) {
-        this.idEvent = idEvent;
+    public void setEventId(long eventId) {
+        this.eventId = eventId;
     }
     
     public void addInvited(User user, int inviteStatus) {
         Calendar calendar = new Calendar();
         calendar.setUser(user);
         calendar.setEvent(this);
-        calendar.setIdEvent(this.getIdEvent());
+        calendar.setEventId(this.getEventId());
         calendar.setUserEmail(user.getEmail());
         calendar.setInviteStatus(inviteStatus);
         

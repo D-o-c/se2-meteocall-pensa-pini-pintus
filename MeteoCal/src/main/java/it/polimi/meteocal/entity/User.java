@@ -1,8 +1,9 @@
 package it.polimi.meteocal.entity;
 
-import it.polimi.meteocal.business.security.PasswordEncrypter;
+import it.polimi.meteocal.control.PasswordEncrypter;
 import java.io.Serializable;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
@@ -34,6 +35,7 @@ public class User implements Serializable {
     @Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",
             message = "invalid email")
     @NotNull(message = "May not be empty")
+    @Column(name = "EMAIL")
     private String email;
     
     @OneToMany(mappedBy="user")
@@ -45,17 +47,22 @@ public class User implements Serializable {
     
     @Size(min=4, message="At least 4 characters")
     @NotNull(message = "May not be empty")
+    @Column(name = "PASSWORD")
     private String password;
     
     @NotNull(message = "May not be empty")
+    @Column(name = "GROUPNAME")
     private String groupName;
     
     @NotNull(message = "May not be empty")
+    @Column(name = "NAME")
     private String name;
     
     @NotNull(message = "May not be empty")
+    @Column(name = "SURNAME")
     private String surname;
     
+    @Column(name = "PUBLIC_")
     private boolean public_;
     
     public String getName() {

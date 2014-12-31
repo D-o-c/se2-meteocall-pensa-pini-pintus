@@ -1,6 +1,6 @@
-package it.polimi.meteocal.boundary.userarea;
+package it.polimi.meteocal.gui;
 
-import it.polimi.meteocal.control.UserManager;
+import it.polimi.meteocal.boundary.UserArea;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
@@ -19,7 +19,7 @@ public class UserBean{
     private static final String home_page_url_psw = "home?faces-redirect=true&passwordchanged=true";
     
     @EJB
-    UserManager um;
+    UserArea um;
         
     private String newEmail;
     private String newPassword;
@@ -75,7 +75,7 @@ public class UserBean{
     }
     
     /**
-     * Calls UserManager to set the visibility of the calendar
+     * Calls UserArea to set the visibility of the calendar
      * @return user home page
      */
     public String changeCalendarVisibility() {
@@ -84,7 +84,7 @@ public class UserBean{
     }
     
     /**
-     * Calls UserManager to set the new password
+     * Calls UserArea to set the new password
      * @return user home page if opassword change is correct
      */
     public String changePassword() {

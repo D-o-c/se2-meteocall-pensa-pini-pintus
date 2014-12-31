@@ -2,6 +2,7 @@ package it.polimi.meteocal.entity;
 
 import it.polimi.meteocal.entity.primarykeys.CalendarPK;
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
@@ -18,21 +19,24 @@ import javax.validation.constraints.NotNull;
 public class Calendar implements Serializable{
     
     @Id
+    @Column(name = "USER_EMAIL")
     private String userEmail;
     
     @Id
-    private long idEvent;
+    @Column(name = "EVENT_ID")
+    private long eventId;
     
     
     @NotNull
+    @Column(name = "INVITE_STATUS")
     private int inviteStatus;
     
     @ManyToOne
-    @PrimaryKeyJoinColumn(name="USEREMAIL", referencedColumnName="EMAIL")
+    @PrimaryKeyJoinColumn(name="USER_EMAIL", referencedColumnName="EMAIL")
     private User user;
     
     @ManyToOne
-    @PrimaryKeyJoinColumn(name="IDEVENT", referencedColumnName="IDEVENT")
+    @PrimaryKeyJoinColumn(name="EVENT_ID", referencedColumnName="ID")
     private Event event;
 
     //ATTENZIONE NON CANCELLARE IL COSTRUTTORE!!!!!
@@ -48,12 +52,12 @@ public class Calendar implements Serializable{
         this.userEmail = userEmail;
     }
 
-    public long getIdEvent() {
-        return idEvent;
+    public long getEventId() {
+        return eventId;
     }
 
-    public void setIdEvent(long idEvent) {
-        this.idEvent = idEvent;
+    public void setEventId(long eventId) {
+        this.eventId = eventId;
     }
 
     public void setInviteStatus(int inviteStatus) {

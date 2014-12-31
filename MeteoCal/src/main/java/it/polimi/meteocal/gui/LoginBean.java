@@ -1,4 +1,4 @@
-package it.polimi.meteocal.boundary.publicarea;
+package it.polimi.meteocal.gui;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

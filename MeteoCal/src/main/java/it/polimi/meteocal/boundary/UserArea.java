@@ -1,6 +1,6 @@
-package it.polimi.meteocal.control;
+package it.polimi.meteocal.boundary;
 
-import it.polimi.meteocal.business.security.PasswordEncrypter;
+import it.polimi.meteocal.control.PasswordEncrypter;
 import it.polimi.meteocal.entity.Contact;
 import it.polimi.meteocal.entity.primarykeys.ContactPK;
 import it.polimi.meteocal.entity.User;
@@ -16,7 +16,7 @@ import javax.persistence.PersistenceContext;
  * @author aldo
  */
 @Stateless
-public class UserManager {
+public class UserArea {
 
     @PersistenceContext
     EntityManager em;

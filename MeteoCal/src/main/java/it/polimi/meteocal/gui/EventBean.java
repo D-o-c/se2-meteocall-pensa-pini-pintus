@@ -1,8 +1,8 @@
-package it.polimi.meteocal.boundary.eventarea;
+package it.polimi.meteocal.gui;
 
 import it.polimi.meteocal.entity.Contact;
 import it.polimi.meteocal.entity.Event;
-import it.polimi.meteocal.control.EventManager;
+import it.polimi.meteocal.boundary.EventArea;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -26,7 +26,7 @@ public class EventBean {
             "/user/home?faces-redirect=true&eventcreated=true";
     
     @EJB
-    EventManager em;
+    EventArea em;
     
     private Event event;
     
@@ -61,7 +61,7 @@ public class EventBean {
     
     /**
      * Calls updateInviteList() to clean the invitedUsers List
-     * Calls EventManager.createEvent(event,invitedUsers)
+ Calls EventArea.createEvent(event,invitedUsers)
      * @return 
      */
     public String createEvent() {
