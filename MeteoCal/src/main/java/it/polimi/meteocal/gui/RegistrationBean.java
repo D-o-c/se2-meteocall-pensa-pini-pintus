@@ -8,6 +8,7 @@ import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -46,11 +47,12 @@ public class RegistrationBean {
     /**
      * Calls PublicArea.register(User user) 
      */
-    public void register() {
+    public void register() throws MessagingException {
         String result = sm.register(user);
         FacesContext.getCurrentInstance()
             .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
                     result, null));
+        
     }
     
     /**

@@ -1,5 +1,6 @@
 package it.polimi.meteocal.boundary;
 
+import it.polimi.meteocal.control.EmailSender;
 import it.polimi.meteocal.entity.Contact;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.User;
@@ -7,6 +8,7 @@ import java.security.Principal;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -52,7 +54,7 @@ public class EventArea{
      * @param invitedUsers
      * @return if all invited users exist in the database
      */
-    public boolean createEvent(Event event, List<String> invitedUsers) {
+    public boolean createEvent(Event event, List<String> invitedUsers) throws MessagingException {
         boolean noErrors = true;
         //Logged user is the creator of the event
         User creator = getLoggedUser();
@@ -71,6 +73,8 @@ public class EventArea{
             try {
                 //if exists, add event to his calendar
                 event.addInvited(u, 0);
+                EmailSender.send(invitedUser,"Invite",
+                        "You received an invitation to an event, log on MeteoCal to accept!");
             } catch (NullPointerException e){
                 noErrors = false;
             }
@@ -96,8 +100,6 @@ public class EventArea{
     public Event findEvent(long id) {
         return em.find(Event.class, id);
     }
-
-    
 
     
     

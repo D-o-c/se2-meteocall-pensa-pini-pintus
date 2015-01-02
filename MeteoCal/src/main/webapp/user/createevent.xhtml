@@ -60,11 +60,11 @@ and open the template in the editor.
                     
                     <p:outputLabel value="End time"/>
                     <p:calendar id="endTime" value="#{eventBean.event.endTime}"
-                                pages="3" effect="fold" mindate="#{eventBean.event.beginTime}"
+                                pages="3" effect="fold" mindate="#{scheduleBean.today()}"
                                 pattern="dd/MM/yyyy HH:mm">
-                        <p:ajax update="endTimemsg"/>
+                        <!--<p:ajax update="endTimemsg"/>-->
                     </p:calendar>
-                    <p:message id="endTimemsg" for="endTime" />
+                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
                     
                     <p>Insert email of invited users separated by ";"</p>
                     <p:inputTextarea value="#{eventBean.invites}" rows="10" cols="50"

@@ -2,13 +2,18 @@ package it.polimi.meteocal.gui;
 
 import it.polimi.meteocal.boundary.EventArea;
 import it.polimi.meteocal.boundary.UserArea;
+import it.polimi.meteocal.control.EmailSender;
 import it.polimi.meteocal.entity.Event;
+import it.polimi.meteocal.entity.User;
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.mail.MessagingException;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultScheduleEvent;
 import org.primefaces.model.ScheduleEvent;
@@ -31,7 +36,7 @@ public class UserBean{
     private String newEmail;
     private String newPassword;
     private String password;
-    private boolean pub;
+    private EmailSender se;
 
     
     /**
@@ -69,27 +74,19 @@ public class UserBean{
     public void setNewPassword(String newPassword) {
         this.newPassword = newPassword;
     }
-
-    public boolean isPub() {
-        return pub;
-    }
-
-    public void setPub(boolean pub) {
-        this.pub = pub;
+    
+    public User getLoggedUser(){
+        return ua.getLoggedUser();
     }
     /**************************************************************************/
     
-    public String getCalendarVisibility() {
-        if(ua.getLoggedUser().isPublic() == true) return "Public";
-        else return "Private";
-    }
-    
     /**
      * Calls UserArea to set the visibility of the calendar
+     * @param pub
      * @return user home page
      */
     public String changeCalendarVisibility() {
-        ua.changeCalendarVisibility(pub);
+        ua.changeCalendarVisibility();
         return home_page_url_pub;
     }
     
@@ -110,4 +107,11 @@ public class UserBean{
         }
     }
     
+    public void sendEmail() throws MessagingException{
+        List<String> lista = new ArrayList<>();
+        lista.add("mpini91@gmail.com");
+        lista.add("aldo.pintus@gmail.com");
+        lista.add("pensa.dario@gmail.com");
+        EmailSender.send(lista, "viva lo spam", "prova invio più destinatari");
+    }
 }

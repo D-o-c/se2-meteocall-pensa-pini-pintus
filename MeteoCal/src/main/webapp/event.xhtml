@@ -24,9 +24,12 @@
                 <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
             </ul>
         </header>
+        <p>Event's Name: #{scheduleBean.currentEvent.name}</p>
         <p>#{scheduleBean.currentEvent.description}</p>
-        
-        
-        
+        <p>#{scheduleBean.currentEvent.beginTime}</p>
+        <p>#{scheduleBean.currentEvent.endTime}</p>
+        <p>#{scheduleBean.currentEvent.location}</p>
+        <p:gmap center="41.381542, 2.122893" zoom="15" type="HYBRID" style="width:100%;height:400px" />
+        <p><p:commandButton action="#{eventBean.changeEventInfo()}" value="Change event info"/></p>
     </h:body>
 </html>

@@ -22,6 +22,7 @@
                 <li><p:link outcome="addressbook" value="Addressbook"/></li>
                 <li><p:link outcome="settings" value="Settings"/></li>
                 <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
+                <li><p:commandButton value="TestEmail" action="#{userBean.sendEmail()}"/></li>
             </ul>
         </header>
         <section>

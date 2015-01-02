@@ -25,14 +25,14 @@
         </header>
         <section>
             <h:form class="clear-left" style="padding:20px;">
-                <h3 style="margin-top:0">Calendar Visibility (Currently is #{userBean.calendarVisibility})</h3>
-                <p:selectOneRadio value="#{userBean.pub}">
-                    <f:selectItem itemLabel="Public" itemValue="true" />
-                    <f:selectItem itemLabel="Private" itemValue="false" />
-                </p:selectOneRadio>
-                <p:commandButton value="Submit"
+                <p:commandButton value="Make calendar public"
                                  action="#{userBean.changeCalendarVisibility()}"
-                                 icon="ui-icon-check"/>
+                                 icon="ui-icon-check"
+                                 disabled="#{userBean.loggedUser.public}"/>
+                <p:commandButton value="Make calendar private"
+                                 action="#{userBean.changeCalendarVisibility()}"
+                                 icon="ui-icon-check"
+                                 disabled="#{!userBean.loggedUser.public}"/>
             </h:form>
             <h:form style="padding:20px;">
                 <h3 style="margin-top:0">Change password</h3>

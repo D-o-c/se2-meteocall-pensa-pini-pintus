@@ -38,10 +38,19 @@ public class UserArea {
     /**
      * Calls EntityManager.find(User.class, PrimaryKey)
      * Sets the logged user privacy
-     * @param input 
+     * @param pub 
      */
-    public void changeCalendarVisibility(boolean input) {
-        em.find(User.class, getLoggedUser().getEmail()).setPublic(input);    
+    public void changeCalendarVisibility() {
+        boolean temp = getLoggedUser().isPublic();
+        temp ^= true;
+        getLoggedUser().setPublic(temp);
+        /*boolean pub=getLoggedUser().isPublic();
+        if (pub){
+            getLoggedUser().setPublic(false);
+        }
+        else{
+            getLoggedUser().setPublic(true);
+        }*/
     }
     
     /**

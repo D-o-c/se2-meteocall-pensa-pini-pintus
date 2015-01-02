@@ -4,23 +4,19 @@ import it.polimi.meteocal.entity.Contact;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.boundary.EventArea;
 import it.polimi.meteocal.boundary.UserArea;
-import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import it.polimi.meteocal.entity.Calendar;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
-import javax.faces.bean.ManagedBean;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
-import org.primefaces.event.SelectEvent;
-import org.primefaces.model.DefaultScheduleEvent;
-import org.primefaces.model.ScheduleEvent;
-import org.primefaces.model.ScheduleModel;
+import javax.mail.MessagingException;
+import javax.validation.constraints.Pattern;
+import org.primefaces.event.FlowEvent;
 
 
 /**
@@ -38,6 +34,8 @@ public class EventBean{
     
     @EJB
     EventArea ea;
+    @EJB
+    UserArea ua;
     
     private Event event;
     private String invites;
@@ -69,14 +67,22 @@ public class EventBean{
         this.invites = invites;
     }
     
+    public List<String> getInvitedUser(){
+        return invitedUsers;
+    }
     /**************************************************************************/
     
     /**
      * Calls updateInviteList() to clean the invitedUsers List
  Calls EventArea.createEvent(event,invitedUsers)
      * @return 
+     * @throws javax.mail.MessagingException 
      */
-    public String createEvent() {
+    public String createEvent() throws MessagingException {
+        
+        if (!timeConsistency()){
+            return null;
+        }
         updateInviteList();
         boolean noErrors = ea.createEvent(event, invitedUsers);
         if (noErrors){
@@ -119,6 +125,26 @@ public class EventBean{
         invitedUsers = new ArrayList<>(temp);
     }
     
-    
+    private boolean timeConsistency(){
+        if (this.event.getBeginTime().after(this.event.getEndTime())){ //beginTime is AFTER endTime
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "Begin Time must be before End Time"));
+            return false;
+        }
+        
+        List<Calendar> c = ua.getLoggedUser().getEvents();
+        for (Calendar c1 : c) {
+            if (this.event.getBeginTime().before(c1.getEvent().getEndTime()) &&
+                    this.event.getEndTime().after(c1.getEvent().getBeginTime())) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "You cannot have more events at the same time!"));
+                return false;
+            }
+        }
+        
+        
+        
+        return true;
+    }
     
 }
