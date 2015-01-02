@@ -1,8 +1,8 @@
 package it.polimi.meteocal.boundary;
 
 import it.polimi.meteocal.control.PasswordEncrypter;
-import it.polimi.meteocal.entity.Contact;
-import it.polimi.meteocal.entity.primarykeys.ContactPK;
+import it.polimi.meteocal.entity.Calendar;
+import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.User;
 import java.security.Principal;
 import java.util.List;
@@ -10,6 +10,9 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.primefaces.model.DefaultScheduleEvent;
+import org.primefaces.model.DefaultScheduleModel;
+import org.primefaces.model.ScheduleModel;
 
 /**
  *
@@ -59,6 +62,22 @@ public class UserArea {
         else {
             return false;
         }
+    }
+    
+    public ScheduleModel getCalendar(){
+        ScheduleModel calendar = new DefaultScheduleModel();
+        List<Calendar> temp = getLoggedUser().getEvents();
+        for (Calendar temp1 : temp) {
+            if (temp1.getInviteStatus() == 1) {
+                Event evntTemp = temp1.getEvent();
+                calendar.addEvent(new DefaultScheduleEvent( evntTemp.getName()+" $"+evntTemp.getEventId(),
+                                                            evntTemp.getBeginTime(),
+                                                            evntTemp.getEndTime()));
+            }
+        }
+        
+        
+        return calendar;
     }
     
 }

@@ -51,7 +51,7 @@ and open the template in the editor.
                     
                     <p:outputLabel value="Begin time"/>
                     <p:calendar id="beginTime" value="#{eventBean.event.beginTime}"
-                                pages="3" effect="fold" mindate="27/12/2014"
+                                pages="3" effect="fold" mindate="#{scheduleBean.today()}"
                                 pattern="dd/MM/yyyy HH:mm">
                         <p:ajax update="beginTimemsg"/>
                     </p:calendar>
@@ -60,7 +60,7 @@ and open the template in the editor.
                     
                     <p:outputLabel value="End time"/>
                     <p:calendar id="endTime" value="#{eventBean.event.endTime}"
-                                pages="3" effect="fold" mindate="01/01/2014"
+                                pages="3" effect="fold" mindate="#{eventBean.event.beginTime}"
                                 pattern="dd/MM/yyyy HH:mm">
                         <p:ajax update="endTimemsg"/>
                     </p:calendar>

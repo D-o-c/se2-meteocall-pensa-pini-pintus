@@ -22,6 +22,8 @@ public class EventArea{
     
     @Inject
     Principal principal;
+    
+    Event currentEvent;
 
     /**
      * Calls EntityManager.find(User.class, principal.getName())
@@ -36,6 +38,10 @@ public class EventArea{
      */
     public List<Contact> getContacts() {
         return getLoggedUser().getContacts();
+    }
+    
+    public Event getCurrentEvent() {
+        return currentEvent;
     }
     
     /**
@@ -81,5 +87,18 @@ public class EventArea{
         return em.createNamedQuery(Event.findAll, Event.class)
                                 .getResultList();
     }
+
+    
+    public void setCurrentEvent(long eventId) {
+        currentEvent = em.find(Event.class, eventId);
+    }
+
+    public Event findEvent(long id) {
+        return em.find(Event.class, id);
+    }
+
+    
+
+    
     
 }

@@ -1,11 +1,18 @@
 package it.polimi.meteocal.gui;
 
+import it.polimi.meteocal.boundary.EventArea;
 import it.polimi.meteocal.boundary.UserArea;
+import it.polimi.meteocal.entity.Event;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.model.DefaultScheduleEvent;
+import org.primefaces.model.ScheduleEvent;
+import org.primefaces.model.ScheduleModel;
 
 /**
  *
@@ -19,21 +26,24 @@ public class UserBean{
     private static final String home_page_url_psw = "home?faces-redirect=true&passwordchanged=true";
     
     @EJB
-    UserArea um;
+    UserArea ua;
         
     private String newEmail;
     private String newPassword;
     private String password;
     private boolean pub;
+
     
     /**
      * Empty Constructor
      */
     public UserBean() {}
+    
+    
 
     /**************************** Getter and Setter ***************************/    
     public String getName() {
-        return um.getLoggedUser().getName();
+        return ua.getLoggedUser().getName();
     }
 
     public String getNewEmail() {
@@ -70,7 +80,7 @@ public class UserBean{
     /**************************************************************************/
     
     public String getCalendarVisibility() {
-        if(um.getLoggedUser().isPublic() == true) return "Public";
+        if(ua.getLoggedUser().isPublic() == true) return "Public";
         else return "Private";
     }
     
@@ -79,16 +89,16 @@ public class UserBean{
      * @return user home page
      */
     public String changeCalendarVisibility() {
-        um.changeCalendarVisibility(pub);
+        ua.changeCalendarVisibility(pub);
         return home_page_url_pub;
     }
     
     /**
      * Calls UserArea to set the new password
-     * @return user home page if opassword change is correct
+     * @return user home page if password change is correct
      */
     public String changePassword() {
-        boolean changeIsOk = um.changePassword(password,newPassword);
+        boolean changeIsOk = ua.changePassword(password,newPassword);
         if(changeIsOk) {
             return home_page_url_psw;
         }
@@ -99,5 +109,5 @@ public class UserBean{
             return null;
         }
     }
-      
+    
 }
