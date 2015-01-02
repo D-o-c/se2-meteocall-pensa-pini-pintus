@@ -8,9 +8,9 @@ package it.polimi.meteocal.business.security.entity;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -24,7 +24,10 @@ public class WeatherCondition implements Serializable {
     @Id
     @Temporal(TemporalType.DATE)
     private Date time;
+    
+    @ManyToOne
     @Id
+    @JoinColumn(name="ID")
     private Event eventId;
     
     private String type;

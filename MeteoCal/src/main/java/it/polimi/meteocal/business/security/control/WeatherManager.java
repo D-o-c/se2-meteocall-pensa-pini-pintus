@@ -34,7 +34,7 @@ public class WeatherManager {
     for(int i=0;i<eventList.size();i++){
         if (eventList.get(i).getBeginTime().getYear()==(toDate).getYear()^
                 eventList.get(i).getBeginTime().getMonth()==(toDate).getMonth()^
-                eventList.get(i).getBeginTime().getDay()==(toDate).getDay()+5){ 
+                eventList.get(i).getBeginTime().getDay()<=(toDate).getDay()+5){ 
                 
                 Document doc = generateXML(eventList.get(i).getLocation());
                 
@@ -122,20 +122,31 @@ public class WeatherManager {
                                 
                     
                     		NodeList n15 =eElement.getElementsByTagName("yweather:forecast");
-                            for(int i=0;i<(event.getEndTime().getDay()-event.getBeginTime().getDay());i++){//se segue i giorni e abbiamo un array di weather basta seguire l'arrey
+                            for(int i=0;i<(event.getEndTime().getDay()-event.getBeginTime().getDay());i++){
                     		for (int tempr=0;tempr< n15.getLength();tempr++){
                     			Node n5 =n15.item(tempr);
                                         Date day=new Date(event.getBeginTime().getDay()+i,event.getBeginTime().getMonth(),event.getBeginTime().getYear());
                                         
                     			if(nNode.getNodeType() ==Node.ELEMENT_NODE){
                     				Element e5 =(Element) n5;
-                    				System.out.println("forecast "+e5.getAttribute("day")+" "+ e5.getAttribute("text"));
+                    				
                     			WeatherCondition weather = new WeatherCondition();
                                         weather.setEventId(event);
                                        // it creates the WeatherCondition
-                                        if(day.getDay()==(Integer.parseInt(e5.getAttribute("date").substring(0,1))) )
+                                        if(day.getDay()==(Integer.parseInt(e5.getAttribute("date").substring(0,1))) ){
+                                            if(day.getDay()==toDate.getDay()+5){
                                         weather.setType(e5.getAttribute("text"));
                                         weather.setTime(day);
+                                        em.persist(weather);
+                                        event.addWeatherCondition(weather);
+                                            }
+                                        for(int j=0;j<(event.getEndTime().getDay()-event.getBeginTime().getDay());j++){
+                                        if(event.getWeatherConditions().get(j).getTime().getDay()==day.getDay()) {
+                                            event.getWeatherConditions().get(j).setType(e5.getAttribute("text"));
+                                        }
+                                        
+                                        }
+                                        }
                                         }
                                 }
                     		}

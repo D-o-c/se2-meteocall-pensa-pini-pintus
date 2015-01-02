@@ -7,12 +7,14 @@ package it.polimi.meteocal.business.security.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -63,6 +65,9 @@ public class Event implements Serializable {
     @NotNull(message = "May not be empty")
     private String location;
     
+    @OneToMany(mappedBy="event", orphanRemoval=true)
+    private List<WeatherCondition> weatherConditions;
+    
     public int getId(){
         return idEvent;
     }
@@ -70,6 +75,23 @@ public class Event implements Serializable {
         return name;
     }
 
+    public int getIdEvent() {
+        return idEvent;
+    }
+
+    public void setIdEvent(int idEvent) {
+        this.idEvent = idEvent;
+    }
+
+    public List<WeatherCondition> getWeatherConditions() {
+        return weatherConditions;
+    }
+
+    public void setWeatherConditions(List<WeatherCondition> weatherConditions) {
+        this.weatherConditions = weatherConditions;
+    }
+
+    
     public void setName(String name) {
         this.name = name;
     }
@@ -122,6 +144,9 @@ public class Event implements Serializable {
         this.location=location;
     }
     
- 
+    public void addWeatherCondition(WeatherCondition wc){
+        weatherConditions.add(wc);
+        
+    }
     
 }
