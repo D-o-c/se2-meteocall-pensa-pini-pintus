@@ -63,7 +63,9 @@ public class Event implements Serializable {
     @NotNull(message = "May not be empty")
     private String location;
     
-    
+    public int getId(){
+        return idEvent;
+    }
     public String getName() {
         return name;
     }
