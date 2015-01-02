@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
+import javax.ejb.Schedule;
 import javax.persistence.EntityManager;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -24,13 +25,18 @@ import org.w3c.dom.NodeList;
  *
  * @author Anton
  */
+
 public class WeatherManager {
     
     EntityManager em;
     
-    private List<Event> eventList = findAll();
-    Date toDate=new Date();
+    
+    private List<Event> eventList;
+    Date toDate;
+    @Schedule(dayOfWeek="*", hour="12")
     public void weatherCreation() throws IOException{
+        toDate=new Date();
+    eventList=findAll();
     for(int i=0;i<eventList.size();i++){
         if (eventList.get(i).getBeginTime().getYear()==(toDate).getYear()^
                 eventList.get(i).getBeginTime().getMonth()==(toDate).getMonth()^
