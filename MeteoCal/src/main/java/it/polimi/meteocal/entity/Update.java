@@ -21,7 +21,7 @@ import javax.validation.constraints.NotNull;
 public class Update implements Serializable {
     private static final long serialVersionUID = 1L;
    
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Id
     @Column(name = "UPDATE_NUMBER")
     private long number;

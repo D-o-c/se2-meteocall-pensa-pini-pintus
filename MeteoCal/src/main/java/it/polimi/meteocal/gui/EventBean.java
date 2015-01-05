@@ -15,8 +15,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.mail.MessagingException;
-import javax.validation.constraints.Pattern;
-import org.primefaces.event.FlowEvent;
 
 
 /**
@@ -70,6 +68,10 @@ public class EventBean{
     public List<String> getInvitedUser(){
         return invitedUsers;
     }
+    
+    public Event getCurrentEvent(){
+        return ea.getCurrentEvent();
+    }
     /**************************************************************************/
     
     /**
@@ -80,7 +82,7 @@ public class EventBean{
      */
     public String createEvent() throws MessagingException {
         
-        if (!timeConsistency()){
+        if (!timeConsistency(this.event)){
             return null;
         }
         updateInviteList();
@@ -114,6 +116,9 @@ public class EventBean{
      * From ; and " "
      */
     private void updateInviteList(){
+        if (invites == null){
+            invites = "";
+        }
         String[] part = invites.split(";");
         HashSet temp = new HashSet();
         invitedUsers = Arrays.asList(part);
@@ -123,10 +128,11 @@ public class EventBean{
         }
         temp.remove("");
         invitedUsers = new ArrayList<>(temp);
+        
     }
     
-    private boolean timeConsistency(){
-        if (this.event.getBeginTime().after(this.event.getEndTime())){ //beginTime is AFTER endTime
+    private boolean timeConsistency(Event event){
+        if (event.getBeginTime().after(event.getEndTime())){ //beginTime is AFTER endTime
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "Begin Time must be before End Time"));
             return false;
@@ -134,17 +140,31 @@ public class EventBean{
         
         List<Calendar> c = ua.getLoggedUser().getEvents();
         for (Calendar c1 : c) {
-            if (this.event.getBeginTime().before(c1.getEvent().getEndTime()) &&
-                    this.event.getEndTime().after(c1.getEvent().getBeginTime())) {
+            if (event.getBeginTime().before(c1.getEvent().getEndTime()) &&
+                    event.getEndTime().after(c1.getEvent().getBeginTime()) && event.getEventId() != c1.getEventId()){
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "You cannot have more events at the same time!"));
                 return false;
             }
         }
-        
-        
-        
         return true;
+    }
+    
+    public String goToChangeEventInfo(){
+        return "user/changeeventinfo?faces-redirect=true";
+    }
+    
+    public String saveEvent() throws MessagingException{
+        if (timeConsistency(ea.getCurrentEvent())){
+            this.updateInviteList();
+            ea.updateCurrentEvent(invitedUsers);
+            return "/event?faces-redirect=true";
+        }
+        return null;
+    }
+    
+    public boolean isCreator(){
+        return ea.isCreator();
     }
     
 }

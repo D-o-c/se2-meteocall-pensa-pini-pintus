@@ -27,6 +27,8 @@ public class UserArea {
     @Inject
     Principal principal;
     
+    Event selectedEvent; //event to accept or deny
+    
     /**
      * Calls EntityManager.find(User.class, principal.getName())
      * @return the logger user
@@ -35,22 +37,24 @@ public class UserArea {
         return em.find(User.class, principal.getName());
     }
     
+    
+
+    public Event getSelectedEvent() {
+        return selectedEvent;
+    }
+
+    public void setSelectedEvent(Event selectedEvent) {
+        this.selectedEvent = selectedEvent;
+    }
+    
     /**
      * Calls EntityManager.find(User.class, PrimaryKey)
      * Sets the logged user privacy
-     * @param pub 
      */
     public void changeCalendarVisibility() {
         boolean temp = getLoggedUser().isPublic();
         temp ^= true;
         getLoggedUser().setPublic(temp);
-        /*boolean pub=getLoggedUser().isPublic();
-        if (pub){
-            getLoggedUser().setPublic(false);
-        }
-        else{
-            getLoggedUser().setPublic(true);
-        }*/
     }
     
     /**
@@ -79,9 +83,12 @@ public class UserArea {
         for (Calendar temp1 : temp) {
             if (temp1.getInviteStatus() == 1) {
                 Event evntTemp = temp1.getEvent();
-                calendar.addEvent(new DefaultScheduleEvent( evntTemp.getName()+" $"+evntTemp.getEventId(),
-                                                            evntTemp.getBeginTime(),
-                                                            evntTemp.getEndTime()));
+                DefaultScheduleEvent dse = new DefaultScheduleEvent(evntTemp.getName(),
+                                                                    evntTemp.getBeginTime(),
+                                                                    evntTemp.getEndTime());
+                dse.setDescription(Long.toString(evntTemp.getEventId()));
+                calendar.addEvent(dse);
+                
             }
         }
         
@@ -89,4 +96,33 @@ public class UserArea {
         return calendar;
     }
     
+    public void accept(){
+        for (int i=0;i<selectedEvent.getInvited().size();i++){
+            if (selectedEvent.getInvited().get(i).getUser().getEmail().equals(this.getLoggedUser().getEmail())){
+                selectedEvent.getInvited().get(i).setInviteStatus(1);
+            }
+        }
+        for (int i = 0; i < this.getLoggedUser().getEvents().size(); i++){
+            if (this.getLoggedUser().getEvents().get(i).getEventId()==selectedEvent.getEventId()){
+                this.getLoggedUser().getEvents().get(i).setInviteStatus(1);
+            }
+        }
+        //e.addInvited(this.getLoggedUser(), 1);
+        em.merge(selectedEvent);
+        em.merge(this.getLoggedUser());
+    }
+    public void deny(){
+        for (int i=0;i<selectedEvent.getInvited().size();i++){
+            if (selectedEvent.getInvited().get(i).getUser().getEmail().equals(this.getLoggedUser().getEmail())){
+                selectedEvent.getInvited().get(i).setInviteStatus(-1);
+            }
+        }
+        for (int i = 0; i < this.getLoggedUser().getEvents().size(); i++){
+            if (this.getLoggedUser().getEvents().get(i).getEventId()==selectedEvent.getEventId()){
+                this.getLoggedUser().getEvents().get(i).setInviteStatus(-1);
+            }
+        }
+        em.merge(selectedEvent);
+        em.merge(this.getLoggedUser());
+    }
 }

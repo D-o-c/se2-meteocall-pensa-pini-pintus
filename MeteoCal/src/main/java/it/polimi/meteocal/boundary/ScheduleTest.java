@@ -33,7 +33,7 @@ public class ScheduleTest {
     @Inject
     Principal principal;
     
-    @Schedule(minute = "*", hour = "*")
+ //   @Schedule(minute = "*", hour = "*")
     private void test(){
         
         em.find(Event.class, (long) 1).setPublic(false);

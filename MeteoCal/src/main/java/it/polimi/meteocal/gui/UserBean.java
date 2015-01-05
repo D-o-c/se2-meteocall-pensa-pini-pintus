@@ -3,15 +3,18 @@ package it.polimi.meteocal.gui;
 import it.polimi.meteocal.boundary.EventArea;
 import it.polimi.meteocal.boundary.UserArea;
 import it.polimi.meteocal.control.EmailSender;
+import it.polimi.meteocal.entity.Calendar;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.User;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 import javax.mail.MessagingException;
 import org.primefaces.event.SelectEvent;
@@ -25,6 +28,7 @@ import org.primefaces.model.ScheduleModel;
  */
 @Named
 @RequestScoped
+@ManagedBean
 public class UserBean{
 
     private static final String home_page_url_pub = "home?faces-redirect=true&visibilitychanged=true";
@@ -36,7 +40,7 @@ public class UserBean{
     private String newEmail;
     private String newPassword;
     private String password;
-    private EmailSender se;
+    private List<Event> invites;
 
     
     /**
@@ -78,11 +82,42 @@ public class UserBean{
     public User getLoggedUser(){
         return ua.getLoggedUser();
     }
+    
+    public Locale getLocaleDefault(){
+        return Locale.getDefault();
+    }
+
+    public List<Event> getInvites() {
+        invites = new ArrayList<>();
+        for (int i = 0; i < ua.getLoggedUser().getEvents().size(); i++){
+            if (ua.getLoggedUser().getEvents().get(i).getInviteStatus() == 0){
+                invites.add(ua.getLoggedUser().getEvents().get(i).getEvent());
+            }
+        }
+        return invites;
+    }
+    
+    public int getNumberOfNotifies(){
+        invites = new ArrayList<>();
+        for (int i = 0; i < ua.getLoggedUser().getEvents().size(); i++){
+            if (ua.getLoggedUser().getEvents().get(i).getInviteStatus() == 0){
+                invites.add(ua.getLoggedUser().getEvents().get(i).getEvent());
+            }
+        }
+        return invites.size();
+    }
+    
+    public Event getSelectedEvent() {
+        return ua.getSelectedEvent();
+    }
+
+    public void setSelectedEvent(Event selectedEvent) {
+        ua.setSelectedEvent(selectedEvent);
+    }
     /**************************************************************************/
     
     /**
      * Calls UserArea to set the visibility of the calendar
-     * @param pub
      * @return user home page
      */
     public String changeCalendarVisibility() {
@@ -106,12 +141,23 @@ public class UserBean{
             return null;
         }
     }
-    
+    /*
     public void sendEmail() throws MessagingException{
         List<String> lista = new ArrayList<>();
         lista.add("mpini91@gmail.com");
         lista.add("aldo.pintus@gmail.com");
         lista.add("pensa.dario@gmail.com");
         EmailSender.send(lista, "viva lo spam", "prova invio più destinatari");
+    }*/
+    
+    public String accept(){
+        ua.accept();
+        return "home?faces-redirect=true";
+    }
+    
+    public String deny(){
+        ua.deny();
+        return "home";
+        
     }
 }
