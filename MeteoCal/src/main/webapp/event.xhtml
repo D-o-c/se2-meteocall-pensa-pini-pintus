@@ -31,5 +31,6 @@
         <p>Location: #{scheduleBean.currentEvent.location}</p>
         <p:gmap center="41.381542, 2.122893" zoom="8" type="hybrid" style="width:100%;height:400px" />
         <p><p:commandButton action="#{eventBean.goToChangeEventInfo()}" value="Change event info" disabled="#{!eventBean.isCreator()}" /></p>
+        <p><p:commandButton action="#{eventBean.removePartecipation()}" value="Delete partecipation" disabled="#{eventBean.isCreator()}" /></p>
     </h:body>
 </html>

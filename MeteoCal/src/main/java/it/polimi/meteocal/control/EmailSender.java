@@ -21,7 +21,7 @@ public class EmailSender {
         EmailSender.send(temp, subject, body);
     }
     public static void send(List<String> recipients, String subject, String body) throws NoSuchProviderException, MessagingException {
-/*
+
         final String username = "PPPmeteocal@gmail.com";
         final String password = "meteocalPPP";
 
@@ -56,6 +56,6 @@ public class EmailSender {
 
         } finally{
             t.close();
-        }*/
+        }
     }
 }

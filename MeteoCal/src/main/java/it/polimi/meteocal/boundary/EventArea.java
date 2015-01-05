@@ -124,6 +124,24 @@ public class EventArea{
         return em.find(Event.class, id);
     }
 
+    /**
+     * Remove current user from the list of partecipants of current event
+     */
+    public void removeFromPartecipants() {
+         for (int i=0;i<currentEvent.getInvited().size();i++){
+            if (currentEvent.getInvited().get(i).getUser().getEmail().equals(this.getLoggedUser().getEmail())){
+                currentEvent.getInvited().get(i).setInviteStatus(-1);
+            }
+        }
+        for (int i = 0; i < this.getLoggedUser().getEvents().size(); i++){
+            if (this.getLoggedUser().getEvents().get(i).getEventId()==currentEvent.getEventId()){
+                this.getLoggedUser().getEvents().get(i).setInviteStatus(-1);
+            }
+        }
+        em.merge(currentEvent);
+        em.merge(this.getLoggedUser());
+    }
+
     
     
 }

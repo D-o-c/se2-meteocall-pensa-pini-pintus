@@ -58,13 +58,15 @@
 
                             <h:outputText value="Location" />
                             <h:outputText value="#{userBean.selectedEvent.location}" />
-
-                            <p:commandButton ajax="true" value="Accept" action="#{userBean.accept()}"/>
-                            <p:commandButton value="Deny" action="#{userBean.deny()}" />
+                            
+                            <p></p>
+                            <p:panelGrid columns="2" style="margin: 0 auto;">
+                                <p:commandButton ajax="true" value="Accept" action="#{userBean.accept()}"/>
+                                <p:commandButton value="Deny" action="#{userBean.deny()}" />
+                            </p:panelGrid>
                         </p:panelGrid>
                     </p:outputPanel>
                 </p:dialog>
-                <p:commandButton ajax="true" value="Accept" action="#{userBean.accept()}"/>
             </h:form>
         </section>
     </h:body>

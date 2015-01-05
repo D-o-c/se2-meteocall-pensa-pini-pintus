@@ -7,6 +7,8 @@ import it.polimi.meteocal.entity.User;
 import java.security.Principal;
 import java.util.List;
 import javax.ejb.Stateless;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -95,6 +97,35 @@ public class UserArea {
         
         return calendar;
     }
+    /**
+     * Verify timeConsistency of the @param and between event (with inviteStatus == 1) of logged user and @param
+     * @param event
+     * @return 
+     *      -1: if beginTime is AFTER endTime<br/>
+     *      -2: if the logged user has another event at the same time<br/>
+     *      0: if there isn't problem
+     */
+    public int timeConsistency(Event event){
+        try{
+            if (event.getBeginTime().after(event.getEndTime())){ //beginTime is AFTER endTime
+                return -1;
+            }
+
+            List<Calendar> c = this.getLoggedUser().getEvents();
+            for (Calendar c1 : c) {
+                if (event.getBeginTime().before(c1.getEvent().getEndTime()) &&
+                        event.getEndTime().after(c1.getEvent().getBeginTime()) &&
+                        event.getEventId() != c1.getEventId() &&
+                        c1.getInviteStatus()==1){
+                    return -2;
+                }
+            }
+        }
+        catch(NullPointerException e){
+                
+        }
+        return 0;
+    }
     
     public void accept(){
         for (int i=0;i<selectedEvent.getInvited().size();i++){
@@ -125,4 +156,9 @@ public class UserArea {
         em.merge(selectedEvent);
         em.merge(this.getLoggedUser());
     }
+    
+    
+    
 }
+
+

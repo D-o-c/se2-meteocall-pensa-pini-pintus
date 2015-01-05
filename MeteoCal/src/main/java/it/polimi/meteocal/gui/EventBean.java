@@ -82,15 +82,25 @@ public class EventBean{
      */
     public String createEvent() throws MessagingException {
         
-        if (!timeConsistency(this.event)){
-            return null;
+        switch (ua.timeConsistency(ea.getCurrentEvent())){
+            case -2:
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "You cannot have more events at the same time!"));
+                return null;
+            case -1:
+                FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "Begin Time must be before End Time"));
+                return null;
+            case 0:
+                updateInviteList();
+                boolean noErrors = ea.createEvent(event, invitedUsers);
+                if (noErrors){
+                    return user_home;
+                }
+                return user_home_with_errors;
+            default:
+                return null;
         }
-        updateInviteList();
-        boolean noErrors = ea.createEvent(event, invitedUsers);
-        if (noErrors){
-            return user_home;
-        }
-        return user_home_with_errors;
     }
     
     /**
@@ -130,7 +140,7 @@ public class EventBean{
         invitedUsers = new ArrayList<>(temp);
         
     }
-    
+    /*
     private boolean timeConsistency(Event event){
         if (event.getBeginTime().after(event.getEndTime())){ //beginTime is AFTER endTime
             FacesContext.getCurrentInstance().addMessage(null,
@@ -149,22 +159,37 @@ public class EventBean{
         }
         return true;
     }
-    
+    */
     public String goToChangeEventInfo(){
         return "user/changeeventinfo?faces-redirect=true";
     }
     
     public String saveEvent() throws MessagingException{
-        if (timeConsistency(ea.getCurrentEvent())){
-            this.updateInviteList();
-            ea.updateCurrentEvent(invitedUsers);
-            return "/event?faces-redirect=true";
+        switch (ua.timeConsistency(ea.getCurrentEvent())){
+            case -2:
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "You cannot have more events at the same time!"));
+                return null;
+            case -1:
+                FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "Begin Time must be before End Time"));
+                return null;
+            case 0:
+                this.updateInviteList();
+                ea.updateCurrentEvent(invitedUsers);
+                return "/event?faces-redirect=true";
+            default:
+                return null;
         }
-        return null;
     }
     
     public boolean isCreator(){
         return ea.isCreator();
+    }
+    
+    public String removePartecipation(){
+        ea.removeFromPartecipants();
+        return "/user/home";
     }
     
 }

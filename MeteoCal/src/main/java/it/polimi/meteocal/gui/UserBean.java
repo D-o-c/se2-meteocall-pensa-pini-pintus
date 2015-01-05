@@ -17,6 +17,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 import javax.mail.MessagingException;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultScheduleEvent;
 import org.primefaces.model.ScheduleEvent;
@@ -141,16 +142,15 @@ public class UserBean{
             return null;
         }
     }
-    /*
-    public void sendEmail() throws MessagingException{
-        List<String> lista = new ArrayList<>();
-        lista.add("mpini91@gmail.com");
-        lista.add("aldo.pintus@gmail.com");
-        lista.add("pensa.dario@gmail.com");
-        EmailSender.send(lista, "viva lo spam", "prova invio più destinatari");
-    }*/
     
     public String accept(){
+        if (ua.timeConsistency(ua.getSelectedEvent()) == -2){
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Another Event",
+                                            "You already have another event at the same time! Delete it before!");
+         
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+            return null;
+        }
         ua.accept();
         return "home?faces-redirect=true";
     }
@@ -160,4 +160,5 @@ public class UserBean{
         return "home";
         
     }
+    
 }
