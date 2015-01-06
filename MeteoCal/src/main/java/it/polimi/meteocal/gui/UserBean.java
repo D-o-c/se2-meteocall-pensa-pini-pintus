@@ -22,6 +22,7 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultScheduleEvent;
 import org.primefaces.model.ScheduleEvent;
 import org.primefaces.model.ScheduleModel;
+import org.primefaces.model.UploadedFile;
 
 /**
  *
@@ -42,6 +43,9 @@ public class UserBean{
     private String newPassword;
     private String password;
     private List<Event> invites;
+    private UploadedFile file;
+ 
+    
 
     
     /**
@@ -115,6 +119,13 @@ public class UserBean{
     public void setSelectedEvent(Event selectedEvent) {
         ua.setSelectedEvent(selectedEvent);
     }
+    public UploadedFile getFile() {
+        return file;
+    }
+ 
+    public void setFile(UploadedFile file) {
+        this.file = file;
+    }
     /**************************************************************************/
     
     /**
@@ -167,6 +178,26 @@ public class UserBean{
      */
     public List<Event> getUserEvent(){
         return ua.getUserEvent();
+    }
+     
+    public void upload() {
+        String extension = file.getFileName().substring(file.getFileName().length()-3).toLowerCase();
+        switch (extension) {
+            case "xls":
+                ua.importXLScalendar(file);
+                break;
+            case "csv":
+                ua.importCSVcalendar(file);
+                break;
+            case "xml":
+                ua.importXMLcalendar(file);
+                break;
+            default:
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR",
+                        "Upload only xls, csv or xml file");
+                FacesContext.getCurrentInstance().addMessage(null, message);
+                break;
+        }
     }
     
 }

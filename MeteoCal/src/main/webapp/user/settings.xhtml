@@ -35,7 +35,7 @@
                                  icon="ui-icon-check"
                                  disabled="#{!userBean.loggedUser.public}"/>
             </h:form>
-            <h:form style="padding:20px;">
+            <h:form id="passform" style="padding:20px;">
                 <h3 style="margin-top:0">Change password</h3>
                 <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
                     <p:outputLabel for="oldpsw" value="Confirm old Password"/>
@@ -48,12 +48,12 @@
                                      action="#{userBean.changePassword()}"
                                      value="Change"
                                      ajax="true"
-                                     update="@all"
+                                     update="passmsg"
                                      icon="ui-icon-wrench"/>
                 </h:panelGrid>
-                <h:messages style="color:red"/>
+                <h:message id="passmsg" for="passform" style="color:red"/>
             </h:form>
-            <h:form>
+            <h:form style="padding:20px;">
                 <p:dataTable id="evntable" var="event" value="#{userBean.getUserEvent()}"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}" 
                              paginator="true" rows="1" style="display: none;">
@@ -81,31 +81,32 @@
                     <!-- DA AGGIUNGERE ALTRE INFO -->
                 </p:dataTable>
                 
-                <h3>Export Calendar:</h3>
+                <h3 style="margin-top:0">Export Calendar:</h3>
                 <h:commandLink>
-                    <!--<p:graphicImage name="/resources/images/xls.png" />-->
-                    cazziusXLS
+                    <p:graphicImage library="images" name="xls.png" width="50px" height="50px" alt="xls"/>
+                    
                     <p:dataExporter type="xls" target="evntable" fileName="MeteoCalEvents" pageOnly="true"/>
                 </h:commandLink>
 
                 <h:commandLink>
-                    <p:graphicImage name="/resources/images/pdf.png" />
-                    cazziusPDF
-                    <p:dataExporter type="pdf" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
-                </h:commandLink>
-
-                <h:commandLink>
-                    <p:graphicImage name="/resources/images/csv.png" />
-                    cazziusCSV
+                    <p:graphicImage library="images" name="csv.png" width="50px" height="50px" alt="csv"/>
+                    
                     <p:dataExporter type="csv" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
                 </h:commandLink>
 
                 <h:commandLink>
-                    <p:graphicImage name="/resources/images/xml.png" />
-                    cazziusXML
+                    <h:graphicImage library="images" name="xml.png" width="50px" height="50px" alt="xml"/>
+                    
                     <p:dataExporter type="xml" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
                 </h:commandLink>
                 
+            </h:form>
+            <h:form id="uploadform" enctype="multipart/form-data" style="padding:20px;">
+                <h3 style="margin-top:0">Import Calendar:</h3>
+                <p:fileUpload value="#{userBean.file}" mode="simple" allowTypes="/(\.|\/)(xml|csv|xls)$/"/>
+
+                <p:commandButton value="Submit" ajax="false" actionListener="#{userBean.upload}" update="uploadmsg"/>
+                <p:messages style="color: red;"/>
             </h:form>
             <h:form style="padding:20px;">
                 <h3 style="margin-top:0">Unregister Your Account</h3>
