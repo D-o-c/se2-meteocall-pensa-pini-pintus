@@ -18,7 +18,7 @@
                 <p:watermark for="keyword" value="Search..." id="watermark" />
             </h:form>
             <ul id="landmarks">
-                <li>#{userBean.name}'s Calendar</li>
+                <li><p:link outcome="home" value="#{userBean.name}'s Calendar"/></li>
                 <li><p:link outcome="notifications" value="Notifications (#{userBean.getNumberOfNotifies()})"/></li>
                 <li><p:link outcome="addressbook" value="Addressbook"/></li>
                 <li><p:link outcome="settings" value="Settings"/></li>

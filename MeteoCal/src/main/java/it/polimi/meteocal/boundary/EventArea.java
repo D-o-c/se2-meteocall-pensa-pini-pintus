@@ -6,6 +6,7 @@ import it.polimi.meteocal.entity.Contact;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.User;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -140,6 +141,16 @@ public class EventArea{
         }
         em.merge(currentEvent);
         em.merge(this.getLoggedUser());
+    }
+
+    public List<String> getPartecipants() {
+        List<String> temp = new ArrayList<>();
+        for (int i = 0; i < currentEvent.getInvited().size(); i++){
+            if (currentEvent.getInvited().get(i).getInviteStatus()==1){
+                temp.add(currentEvent.getInvited().get(i).getUserEmail());
+            }
+        }
+        return temp;
     }
 
     

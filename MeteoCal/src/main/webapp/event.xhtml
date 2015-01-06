@@ -13,24 +13,33 @@
         <header>
             <h1 id="title">MeteoCal</h1>
             <h:form id="searchForm" class="float-left">
-                <p:inputText value="#{searchBean.searchInput}"/>
+                <p:inputText value="#{searchBean.searchInput}" id="keyword"/>
                 <p:commandButton style="margin-left: 20px;" action="#{searchBean.findUser()}" value="Search"/>
+                <p:watermark for="keyword" value="Search..." id="watermark" />
             </h:form>
             <ul id="landmarks">
                 <li><p:link outcome="user/home" value="#{userBean.name}'s Calendar"/></li>
-                <li><p:link outcome="user/notifications" value="Notifications"/></li>
+                <li><p:link outcome="user/notifications" value="Notifications (#{userBean.getNumberOfNotifies()})"/></li>
                 <li><p:link outcome="user/addressbook" value="Addressbook"/></li>
                 <li><p:link outcome="user/settings" value="Settings"/></li>
                 <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
             </ul>
         </header>
-        <p>Name: #{scheduleBean.currentEvent.name}</p>
-        <p>Description: #{scheduleBean.currentEvent.description}</p>
-        <p>Begin Time: #{scheduleBean.currentEvent.beginTime}</p>
-        <p>End Time: #{scheduleBean.currentEvent.endTime}</p>
-        <p>Location: #{scheduleBean.currentEvent.location}</p>
-        <p:gmap center="41.381542, 2.122893" zoom="8" type="hybrid" style="width:100%;height:400px" />
-        <p><p:commandButton action="#{eventBean.goToChangeEventInfo()}" value="Change event info" disabled="#{!eventBean.isCreator()}" /></p>
-        <p><p:commandButton action="#{eventBean.removePartecipation()}" value="Delete partecipation" disabled="#{eventBean.isCreator()}" /></p>
+        <section>
+            <p>Name: #{scheduleBean.currentEvent.name}</p>
+            <p>Description: #{scheduleBean.currentEvent.description}</p>
+            <p>Begin Time: #{scheduleBean.currentEvent.beginTime}</p>
+            <p>End Time: #{scheduleBean.currentEvent.endTime}</p>
+            <p>Location: #{scheduleBean.currentEvent.location}</p>
+            <p:gmap center="41.381542, 2.122893" zoom="8" type="hybrid" style="width:100%;height:400px" />
+            <p:dataList value="#{scheduleBean.getPartecipants()}" var="string">
+                <f:facet name="header">
+                    List of partecipants:
+                </f:facet>
+                #{string}
+            </p:dataList>
+            <p><p:commandButton action="#{eventBean.goToChangeEventInfo()}" value="Change event info" disabled="#{!eventBean.isCreator()}" /></p>
+            <p><p:commandButton action="#{eventBean.removePartecipation()}" value="Delete partecipation" disabled="#{eventBean.isCreator()}" /></p>
+        </section>
     </h:body>
 </html>

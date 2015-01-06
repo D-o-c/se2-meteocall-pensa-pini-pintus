@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
@@ -65,5 +66,9 @@ public class ScheduleBean implements Serializable {
 
     public Event getCurrentEvent(){
         return ea.getCurrentEvent();
+    }
+    
+    public List<String> getPartecipants(){
+        return ea.getPartecipants();
     }
 }
