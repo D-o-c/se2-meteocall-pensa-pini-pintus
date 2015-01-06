@@ -68,7 +68,11 @@ public class Event implements Serializable {
     
     @NotNull(message = "May not be empty")
     @Column(name = "PUBLIC_")
-    private boolean pub=true;
+    private boolean pub = true;
+    
+    @NotNull(message = "May not be empty")
+    @Column(name = "OUTDOOR")
+    private boolean outdoor = false;
     
     @NotNull(message = "May not be empty")
     @ManyToOne
@@ -120,6 +124,14 @@ public class Event implements Serializable {
 
     public void setPub(boolean pub) {
         this.pub = pub;
+    }
+
+    public boolean isOutdoor() {
+        return outdoor;
+    }
+
+    public void setOutdoor(boolean outdoor) {
+        this.outdoor = outdoor;
     }
 
     public User getCreator() {

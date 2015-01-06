@@ -71,4 +71,11 @@ public class ScheduleBean implements Serializable {
     public List<String> getPartecipants(){
         return ea.getPartecipants();
     }
+    
+    public String getEventOutdoorStatus(){
+        if (ea.getCurrentEvent().isOutdoor()){
+            return "yes";
+        }
+        return "no";
+    }
 }

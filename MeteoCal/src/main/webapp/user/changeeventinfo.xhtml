@@ -56,6 +56,10 @@ and open the template in the editor.
                         <p:outputLabel value="Public"/>
                         <p:selectBooleanCheckbox value="#{eventBean.getCurrentEvent().pub}"/>
                         <p></p>
+                        
+                        <p:outputLabel value="Outdoor"/>
+                        <p:selectBooleanCheckbox value="#{eventBean.getCurrentEvent().outdoor}"/>
+                        <p></p>
 
                         <p:outputLabel value="Begin time"/>
                         <p:calendar id="beginTime" value="#{eventBean.getCurrentEvent().beginTime}"

@@ -28,6 +28,7 @@
         <section>
             <p>Name: #{scheduleBean.currentEvent.name}</p>
             <p>Description: #{scheduleBean.currentEvent.description}</p>
+            <p>Outdoor: #{scheduleBean.getEventOutdoorStatus()}</p>
             <p>Begin Time: #{scheduleBean.currentEvent.beginTime}</p>
             <p>End Time: #{scheduleBean.currentEvent.endTime}</p>
             <p>Location: #{scheduleBean.currentEvent.location}</p>
