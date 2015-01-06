@@ -2,21 +2,24 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title>Calendar Page</title>
         <h:outputStylesheet library="css" name="stylesheet.css" />
+        
     </h:head>
     <h:body>
         <header>
             <h1 id="title">MeteoCal</h1>
             <h:form id="searchForm" class="float-left">
-                <p:inputText value="#{searchBean.searchInput}"/>
+                <p:inputText value="#{searchBean.searchInput}" id="keyword"/>
                 <p:commandButton style="margin-left: 20px;" action="#{searchBean.findUser()}" value="Search"/>
+                <p:watermark for="keyword" value="Search..." id="watermark" />
             </h:form>
             <ul id="landmarks">
-                <li>#{userBean.name}'s Calendar</li>
-                <li><p:link outcome="notifications" value="Notifications"/></li>
+                <li><p:link outcome="home" value="#{userBean.name}'s Calendar"/></li>
+                <li><p:link outcome="notifications" value="Notifications (#{userBean.getNumberOfNotifies()})"/></li>
                 <li><p:link outcome="addressbook" value="Addressbook"/></li>
                 <li><p:link outcome="settings" value="Settings"/></li>
                 <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
@@ -31,10 +34,43 @@
                           value="Password has been changed!"/><br/>
             <h:outputText rendered="#{param['visibilitychanged']}" style="color: red"
                           value="Calendar visibility has been changed!"/><br/>
-
+            
             <p:commandButton style="margin-left: 20px"
                              action="createevent?faces-redirect=true"
                              value="Create New Event"/>
+            <br/>
+            <p:schedule id="schedule" value="#{scheduleBean.eventModel}" widgetVar="myschedule"
+                        draggable="false" resizable="false" axisFormat="H(:mm)" timeFormat="H(:mm)"
+                        firstHour="0" showWeekends="true" locale="#{userBean.getLocaleDefault()}">
+                
+                
+                <p:ajax event="eventSelect" listener="#{scheduleBean.onEventSelect}"
+                        update="eventDetails" oncomplete="PF('eventDialog').show();" />
+ 
+            </p:schedule>   
+            
+            <p:dialog widgetVar="eventDialog" header="Event Details" showEffect="clip" hideEffect="clip">
+                <h:panelGrid id="eventDetails" columns="2">
+                    
+                    <p:outputLabel value="Name:"/>
+                    <p:outputLabel value="#{scheduleBean.currentEvent.name}"/>
+                                   
+                    <p:outputLabel value="Description"/>
+                    <p:outputLabel value="#{scheduleBean.currentEvent.description}"/>
+                    
+                    <p:outputLabel value="Begin Time:"/>
+                    <p:outputLabel value="#{scheduleBean.currentEvent.beginTime}"/>
+                    
+                    <p:outputLabel value="End Time:"/>
+                    <p:outputLabel value="#{scheduleBean.currentEvent.endTime}"/>
+                    
+                    <p:outputLabel value="Location:"/>
+                    <p:outputLabel value="#{scheduleBean.currentEvent.location}"/>
+                    
+                   <p:commandButton id="goButton" value="Go in Event Page" action="#{scheduleBean.goInEventPage()}"/>
+                </h:panelGrid>
+            </p:dialog>
+            
         </section>
     </h:body>
 </html>

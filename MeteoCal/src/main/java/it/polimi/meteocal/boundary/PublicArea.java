@@ -1,10 +1,13 @@
 package it.polimi.meteocal.boundary;
 
+import it.polimi.meteocal.control.EmailSender;
 import it.polimi.meteocal.entity.Group;
 import it.polimi.meteocal.entity.User;
 import java.security.Principal;
+import java.util.ArrayList;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.mail.MessagingException;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -36,7 +39,7 @@ public class PublicArea {
      * Calls EntityManager.persist(user)
      * @param user 
      */
-    public String register(User user) {
+    public String register(User user) throws MessagingException {
         try {
             String s = em.find(User.class, user.getEmail()).getEmail();
             return "Registration Failed";
@@ -44,6 +47,9 @@ public class PublicArea {
             user.setGroupName(Group.USERS);
             user.setPublic(true);
             em.persist(user);
+            EmailSender.send(user.getEmail() ,
+                        "MeteoCal Registration",
+                        "Congratulations, you signed up on MeteoCal successfully");
             return "Registration Successfull";
         }       
     }

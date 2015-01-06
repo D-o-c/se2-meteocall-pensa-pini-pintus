@@ -20,8 +20,7 @@ public class SearchBean{
     private static final String search_page_url_2 = "user/search?faces-redirect=true";
     private static final String selected_user_page_url = "/usercalendar?faces-redirect=true";
     private static final String addressbok_page_url = "addressbook?faces-redirect=true";
-    private static final String user_addressbook_page_url =
-            "user/addressbook?faces-redirect=true";
+    private static final String user_addressbook_page_url = "user/addressbook?faces-redirect=true";
     
     @EJB
     SearchArea sm;

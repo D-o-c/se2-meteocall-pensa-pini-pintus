@@ -17,6 +17,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -48,11 +49,14 @@ public class Event implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @NotNull(message = "May not be empty")
     @Column(name = "BEGIN_TIME")
+    @Future
     private Date beginTime;
     
     @Temporal(TemporalType.TIMESTAMP)
     @NotNull(message = "May not be empty")
     @Column(name = "END_TIME")
+    
+    @Future
     private Date endTime;
     
     @NotNull(message = "May not be empty")
@@ -65,7 +69,11 @@ public class Event implements Serializable {
     
     @NotNull(message = "May not be empty")
     @Column(name = "PUBLIC_")
-    private boolean pub=true;
+    private boolean pub = true;
+    
+    @NotNull(message = "May not be empty")
+    @Column(name = "OUTDOOR")
+    private boolean outdoor = false;
     
     @NotNull(message = "May not be empty")
     @ManyToOne
@@ -123,6 +131,10 @@ public class Event implements Serializable {
         return creator;
     }
 
+    public boolean isOutdoor() {
+        return outdoor;
+    }
+
     public void setCreator(User creator) {
         this.creator = creator;
     }
@@ -161,7 +173,15 @@ public class Event implements Serializable {
         this.invited.add(calendar);
         user.getEvents().add(calendar);
     }
-    
- 
+
+    public void setPublic(boolean b) {
+        pub = b;
+    }
+
+    public void setOutdoor(boolean outdoor) {
+        this.outdoor = outdoor;
+    }
     
 }
+    
+

@@ -2,7 +2,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title>Notification Page</title>
         <h:outputStylesheet library="css" name="stylesheet.css" />
@@ -11,18 +12,63 @@
         <header>
             <h1 id="title">MeteoCal</h1>
             <h:form id="searchForm" class="float-left">
-                <p:inputText value="#{searchBean.searchInput}"/>
-                <p:commandButton style="margin-left: 20px;" action="#{searchBean.findUser}" value="Search"/>
+                <p:inputText value="#{searchBean.searchInput}" id="keyword"/>
+                <p:commandButton style="margin-left: 20px;" action="#{searchBean.findUser()}" value="Search"/>
+                <p:watermark for="keyword" value="Search..." id="watermark" />
             </h:form>
             <ul id="landmarks">
                 <li><p:link outcome="home" value="#{userBean.name}'s Calendar"/></li>
-                <li>Notifications</li>
+                <li><p:link outcome="notifications" value="Notifications (#{userBean.getNumberOfNotifies()})"/></li>
                 <li><p:link outcome="addressbook" value="Addressbook"/></li>
                 <li><p:link outcome="settings" value="Settings"/></li>
                 <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
             </ul>
         </header>
         <section>
+            <h:form id="form">
+                <p:dataList value="#{userBean.getInvites()}" var="event" type="unordered"
+                            itemType="none" paginator="true" rows="10" styleClass="paginated">
+                    <f:facet name="header">
+                        Invites
+                    </f:facet>
+                    <p:commandLink update=":form:notifyDetail" oncomplete="PF('notifyDialog').show()"
+                                   title="View Detail" styleClass="ui-icon ui-icon-search"
+                                   style="float:left;margin-right:10px">
+                        <f:setPropertyActionListener value="#{event}" target="#{userBean.selectedEvent}" />
+                        <h:outputText value="#{event.name}, #{event.location}" />
+                    </p:commandLink>
+                    <h:outputText value="#{event.name}, #{event.location}" style="display:inline-block"/>
+                </p:dataList>
+            
+            
+                <p:dialog header="Notify Info" widgetVar="notifyDialog" modal="true"
+                          showEffect="blind" hideEffect="explode" resizable="false">
+                    <p:outputPanel id="notifyDetail" style="text-align:center;">
+                        <p:panelGrid  columns="2"  columnClasses="label,value">
+                            <h:outputText value="Name:" />
+                            <h:outputText value="#{userBean.selectedEvent.name}" />
+
+                            <h:outputText value="Description" />
+                            <h:outputText value="#{userBean.selectedEvent.description}" />
+
+                            <h:outputText value="Begin Time" />
+                            <h:outputText value="#{userBean.selectedEvent.beginTime}" />
+
+                            <h:outputText value="End Time" />
+                            <h:outputText value="#{userBean.selectedEvent.endTime}" />
+
+                            <h:outputText value="Location" />
+                            <h:outputText value="#{userBean.selectedEvent.location}" />
+                            
+                            <p></p>
+                            <p:panelGrid columns="2" style="margin: 0 auto;">
+                                <p:commandButton ajax="true" value="Accept" action="#{userBean.accept()}"/>
+                                <p:commandButton value="Deny" action="#{userBean.deny()}" />
+                            </p:panelGrid>
+                        </p:panelGrid>
+                    </p:outputPanel>
+                </p:dialog>
+            </h:form>
         </section>
     </h:body>
 </html>

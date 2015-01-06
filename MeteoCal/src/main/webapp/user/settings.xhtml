@@ -12,27 +12,28 @@
         <header>
             <h1 id="title">MeteoCal</h1>
             <h:form id="searchForm" class="float-left">
-                <p:inputText value="#{searchBean.searchInput}"/>
+                <p:inputText value="#{searchBean.searchInput}" id="keyword"/>
                 <p:commandButton style="margin-left: 20px;" action="#{searchBean.findUser()}" value="Search"/>
+                <p:watermark for="keyword" value="Search..." id="watermark" />
             </h:form>
             <ul id="landmarks">
                 <li><p:link outcome="home" value="#{userBean.name}'s Calendar"/></li>
-                <li><p:link outcome="addressbook" value="Notifications"/></li>
+                <li><p:link outcome="notifications" value="Notifications (#{userBean.getNumberOfNotifies()})"/></li>
                 <li><p:link outcome="addressbook" value="Addressbook"/></li>
-                <li>Settings</li>
+                <li><p:link outcome="settings" value="Settings"/></li>
                 <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
             </ul>
         </header>
         <section>
             <h:form class="clear-left" style="padding:20px;">
-                <h3 style="margin-top:0">Calendar Visibility (Currently is #{userBean.calendarVisibility})</h3>
-                <p:selectOneRadio value="#{userBean.pub}">
-                    <f:selectItem itemLabel="Public" itemValue="true" />
-                    <f:selectItem itemLabel="Private" itemValue="false" />
-                </p:selectOneRadio>
-                <p:commandButton value="Submit"
+                <p:commandButton value="Make calendar public"
                                  action="#{userBean.changeCalendarVisibility()}"
-                                 icon="ui-icon-check"/>
+                                 icon="ui-icon-check"
+                                 disabled="#{userBean.loggedUser.public}"/>
+                <p:commandButton value="Make calendar private"
+                                 action="#{userBean.changeCalendarVisibility()}"
+                                 icon="ui-icon-check"
+                                 disabled="#{!userBean.loggedUser.public}"/>
             </h:form>
             <h:form style="padding:20px;">
                 <h3 style="margin-top:0">Change password</h3>
@@ -51,6 +52,60 @@
                                      icon="ui-icon-wrench"/>
                 </h:panelGrid>
                 <h:messages style="color:red"/>
+            </h:form>
+            <h:form>
+                <p:dataTable id="evntable" var="event" value="#{userBean.getUserEvent()}"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}" 
+                             paginator="true" rows="1" style="display: none;">
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Id" />
+                        </f:facet>
+                        <h:outputText value="#{event.eventId}" />
+                    </p:column>
+
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Name"/>
+                        </f:facet>
+                        <h:outputText value="#{event.name}" />
+                    </p:column>
+
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Description" />
+                        </f:facet>
+                        <h:outputText value="#{event.description}" />
+                    </p:column>
+                    
+                    <!-- DA AGGIUNGERE ALTRE INFO -->
+                </p:dataTable>
+                
+                <h3>Export Calendar:</h3>
+                <h:commandLink>
+                    <!--<p:graphicImage name="/resources/images/xls.png" />-->
+                    cazziusXLS
+                    <p:dataExporter type="xls" target="evntable" fileName="MeteoCalEvents" pageOnly="true"/>
+                </h:commandLink>
+
+                <h:commandLink>
+                    <p:graphicImage name="/resources/images/pdf.png" />
+                    cazziusPDF
+                    <p:dataExporter type="pdf" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
+                </h:commandLink>
+
+                <h:commandLink>
+                    <p:graphicImage name="/resources/images/csv.png" />
+                    cazziusCSV
+                    <p:dataExporter type="csv" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
+                </h:commandLink>
+
+                <h:commandLink>
+                    <p:graphicImage name="/resources/images/xml.png" />
+                    cazziusXML
+                    <p:dataExporter type="xml" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
+                </h:commandLink>
+                
             </h:form>
             <h:form style="padding:20px;">
                 <h3 style="margin-top:0">Unregister Your Account</h3>

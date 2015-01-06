@@ -6,7 +6,7 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <h:head>
-        <title>#{searchBean.selectedUser.name} #{searchBean.selectedUser.surname}</title>
+        <title>#{scheduleBean.currentEvent.name}</title>
         <h:outputStylesheet library="css" name="stylesheet.css" />
     </h:head>
     <h:body>
@@ -26,12 +26,21 @@
             </ul>
         </header>
         <section>
-        <p class="clear-left" style="margin:0;padding:20px;">#{searchBean.selectedUser.name} #{searchBean.selectedUser.surname}</p>
-        <h:form style="margin:0;padding:20px;">
-            <p:commandButton 
-                action="#{searchBean.addContact()}"
-                value="Add To Contacts" disabled="#{searchBean.exist()}"/>
-        </h:form>
+            <p>Name: #{scheduleBean.currentEvent.name}</p>
+            <p>Description: #{scheduleBean.currentEvent.description}</p>
+            <p>Outdoor: #{scheduleBean.getEventOutdoorStatus()}</p>
+            <p>Begin Time: #{scheduleBean.currentEvent.beginTime}</p>
+            <p>End Time: #{scheduleBean.currentEvent.endTime}</p>
+            <p>Location: #{scheduleBean.currentEvent.location}</p>
+            <p:gmap center="41.381542, 2.122893" zoom="8" type="hybrid" style="width:100%;height:400px" />
+            <p:dataList value="#{scheduleBean.getPartecipants()}" var="string">
+                <f:facet name="header">
+                    List of partecipants:
+                </f:facet>
+                #{string}
+            </p:dataList>
+            <p><p:commandButton action="#{eventBean.goToChangeEventInfo()}" value="Change event info" disabled="#{!eventBean.isCreator()}" /></p>
+            <p><p:commandButton action="#{eventBean.removePartecipation()}" value="Delete partecipation" disabled="#{eventBean.isCreator()}" /></p>
         </section>
     </h:body>
 </html>

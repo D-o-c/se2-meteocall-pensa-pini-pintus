@@ -3,13 +3,18 @@ package it.polimi.meteocal.gui;
 import it.polimi.meteocal.entity.Contact;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.boundary.EventArea;
+import it.polimi.meteocal.boundary.UserArea;
+import it.polimi.meteocal.entity.Calendar;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
+import javax.mail.MessagingException;
 
 
 /**
@@ -18,7 +23,7 @@ import javax.inject.Named;
  */
 @Named
 @RequestScoped
-public class EventBean {
+public class EventBean{
     
     private final static String user_home_with_errors =
             "/user/home?faces-redirect=true&eventcreatedwitherror=true";
@@ -26,12 +31,14 @@ public class EventBean {
             "/user/home?faces-redirect=true&eventcreated=true";
     
     @EJB
-    EventArea em;
+    EventArea ea;
+    @EJB
+    UserArea ua;
     
     private Event event;
-    
     private String invites;
     private List<String> invitedUsers;
+    
     
     /**
      * Empty Constructor
@@ -57,20 +64,43 @@ public class EventBean {
     public void setInvites(String invites) {
         this.invites = invites;
     }
+    
+    public List<String> getInvitedUser(){
+        return invitedUsers;
+    }
+    
+    public Event getCurrentEvent(){
+        return ea.getCurrentEvent();
+    }
     /**************************************************************************/
     
     /**
      * Calls updateInviteList() to clean the invitedUsers List
  Calls EventArea.createEvent(event,invitedUsers)
      * @return 
+     * @throws javax.mail.MessagingException 
      */
-    public String createEvent() {
-        updateInviteList();
-        boolean noErrors = em.createEvent(event, invitedUsers);
-        if (noErrors){
-            return user_home;
+    public String createEvent() throws MessagingException {
+        
+        switch (ua.timeConsistency(ea.getCurrentEvent())){
+            case -2:
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "You cannot have more events at the same time!"));
+                return null;
+            case -1:
+                FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "Begin Time must be before End Time"));
+                return null;
+            case 0:
+                updateInviteList();
+                boolean noErrors = ea.createEvent(event, invitedUsers);
+                if (noErrors){
+                    return user_home;
+                }
+                return user_home_with_errors;
+            default:
+                return null;
         }
-        return user_home_with_errors;
     }
     
     /**
@@ -81,7 +111,7 @@ public class EventBean {
      */
     public List<String> complete(String query){
         List<String> invitedEmail = new ArrayList<>();
-        List<Contact> contactList = em.getContacts();
+        List<Contact> contactList = ea.getContacts();
         for (Contact c : contactList) {
             if (c.getEmail().contains(query)) {
                 invitedEmail.add(c.getEmail() + "; ");
@@ -96,6 +126,9 @@ public class EventBean {
      * From ; and " "
      */
     private void updateInviteList(){
+        if (invites == null){
+            invites = "";
+        }
         String[] part = invites.split(";");
         HashSet temp = new HashSet();
         invitedUsers = Arrays.asList(part);
@@ -105,6 +138,58 @@ public class EventBean {
         }
         temp.remove("");
         invitedUsers = new ArrayList<>(temp);
+        
+    }
+    /*
+    private boolean timeConsistency(Event event){
+        if (event.getBeginTime().after(event.getEndTime())){ //beginTime is AFTER endTime
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "Begin Time must be before End Time"));
+            return false;
+        }
+        
+        List<Calendar> c = ua.getLoggedUser().getEvents();
+        for (Calendar c1 : c) {
+            if (event.getBeginTime().before(c1.getEvent().getEndTime()) &&
+                    event.getEndTime().after(c1.getEvent().getBeginTime()) && event.getEventId() != c1.getEventId()){
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "You cannot have more events at the same time!"));
+                return false;
+            }
+        }
+        return true;
+    }
+    */
+    public String goToChangeEventInfo(){
+        return "user/changeeventinfo?faces-redirect=true";
+    }
+    
+    public String saveEvent() throws MessagingException{
+        switch (ua.timeConsistency(ea.getCurrentEvent())){
+            case -2:
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "You cannot have more events at the same time!"));
+                return null;
+            case -1:
+                FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "Begin Time must be before End Time"));
+                return null;
+            case 0:
+                this.updateInviteList();
+                ea.updateCurrentEvent(invitedUsers);
+                return "/event?faces-redirect=true";
+            default:
+                return null;
+        }
+    }
+    
+    public boolean isCreator(){
+        return ea.isCreator();
+    }
+    
+    public String removePartecipation(){
+        ea.removeFromPartecipants();
+        return "/user/home";
     }
     
 }
