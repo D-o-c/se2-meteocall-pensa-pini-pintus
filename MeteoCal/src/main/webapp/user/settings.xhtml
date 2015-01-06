@@ -53,6 +53,60 @@
                 </h:panelGrid>
                 <h:messages style="color:red"/>
             </h:form>
+            <h:form>
+                <p:dataTable id="evntable" var="event" value="#{userBean.getUserEvent()}"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}" 
+                             paginator="true" rows="1" style="display: none;">
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Id" />
+                        </f:facet>
+                        <h:outputText value="#{event.eventId}" />
+                    </p:column>
+
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Name"/>
+                        </f:facet>
+                        <h:outputText value="#{event.name}" />
+                    </p:column>
+
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Description" />
+                        </f:facet>
+                        <h:outputText value="#{event.description}" />
+                    </p:column>
+                    
+                    <!-- DA AGGIUNGERE ALTRE INFO -->
+                </p:dataTable>
+                
+                <h3>Export Calendar:</h3>
+                <h:commandLink>
+                    <!--<p:graphicImage name="/resources/images/xls.png" />-->
+                    cazziusXLS
+                    <p:dataExporter type="xls" target="evntable" fileName="MeteoCalEvents" pageOnly="true"/>
+                </h:commandLink>
+
+                <h:commandLink>
+                    <p:graphicImage name="/resources/images/pdf.png" />
+                    cazziusPDF
+                    <p:dataExporter type="pdf" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
+                </h:commandLink>
+
+                <h:commandLink>
+                    <p:graphicImage name="/resources/images/csv.png" />
+                    cazziusCSV
+                    <p:dataExporter type="csv" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
+                </h:commandLink>
+
+                <h:commandLink>
+                    <p:graphicImage name="/resources/images/xml.png" />
+                    cazziusXML
+                    <p:dataExporter type="xml" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
+                </h:commandLink>
+                
+            </h:form>
             <h:form style="padding:20px;">
                 <h3 style="margin-top:0">Unregister Your Account</h3>
                 <p:commandButton action="#{registrationBean.unregister()}"

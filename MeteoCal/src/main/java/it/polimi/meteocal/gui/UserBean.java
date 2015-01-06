@@ -161,4 +161,12 @@ public class UserBean{
         
     }
     
+    /**
+     * return a list of event to which the user participates, for export them
+     * @return 
+     */
+    public List<Event> getUserEvent(){
+        return ua.getUserEvent();
+    }
+    
 }

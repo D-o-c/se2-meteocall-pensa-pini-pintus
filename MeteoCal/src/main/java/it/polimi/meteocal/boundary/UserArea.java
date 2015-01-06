@@ -5,6 +5,7 @@ import it.polimi.meteocal.entity.Calendar;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.User;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.faces.application.FacesMessage;
@@ -155,6 +156,20 @@ public class UserArea {
         }
         em.merge(selectedEvent);
         em.merge(this.getLoggedUser());
+    }
+
+    /**
+     * return a list of event to which the user participates, for export them
+     * @return 
+     */
+    public List<Event> getUserEvent() {
+        List<Event> temp = new ArrayList<>();
+        for (int i = 0; i < this.getLoggedUser().getEvents().size(); i++){
+            if (this.getLoggedUser().getEvents().get(i).getInviteStatus()==1){
+                temp.add(this.getLoggedUser().getEvents().get(i).getEvent());
+            }
+        }
+        return temp;
     }
     
     
