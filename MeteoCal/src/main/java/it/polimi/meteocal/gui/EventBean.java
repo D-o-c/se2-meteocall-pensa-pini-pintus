@@ -115,7 +115,7 @@ public class EventBean{
         List<String> invitedEmail = new ArrayList<>();
         List<Contact> contactList = ea.getContacts();
         for (Contact c : contactList) {
-            if (c.getEmail().contains(query)) {
+            if (c.getEmail().startsWith(query)){
                 invitedEmail.add(c.getEmail() + "; ");
             }
         }
