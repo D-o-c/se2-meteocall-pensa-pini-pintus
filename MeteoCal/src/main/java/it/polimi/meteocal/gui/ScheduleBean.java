@@ -3,6 +3,7 @@ package it.polimi.meteocal.gui;
 import it.polimi.meteocal.boundary.EventArea;
 import it.polimi.meteocal.boundary.UserArea;
 import it.polimi.meteocal.entity.Event;
+import it.polimi.meteocal.entity.User;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -69,7 +70,7 @@ public class ScheduleBean implements Serializable {
         return ea.getCurrentEvent();
     }
     
-    public List<String> getPartecipants(){
+    public List<User> getPartecipants(){
         return ea.getPartecipants();
     }
     
@@ -79,4 +80,26 @@ public class ScheduleBean implements Serializable {
         }
         return "no";
     }
+    
+    /**
+     * Called By event.xhtml
+     * @return
+     */
+    public String getGoogleMap() {
+       
+        String str = getCurrentEvent().getLocation();
+        //creates an array of address-city-state
+        String[] parts = str.split(",");
+       
+        String address = parts[0].replaceAll(" ","+");
+        String city = parts[1].replaceAll(" ","");
+        String state = parts[2].replaceAll(" ","");
+       
+        String  location = address+","+city+"+"+state;
+       
+        return "https://www.google.com/maps/embed/v1/place?key=AIzaSyDDm0i7Jy_achXhFjVg8LcT1kbmi8wmdV4&q="
+                +location;
+       
+    }
+
 }

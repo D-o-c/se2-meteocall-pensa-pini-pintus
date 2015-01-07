@@ -148,11 +148,11 @@ public class EventArea{
         em.merge(this.getLoggedUser());
     }
 
-    public List<String> getPartecipants() {
-        List<String> temp = new ArrayList<>();
+    public List<User> getPartecipants() {
+        List<User> temp = new ArrayList<>();
         for (int i = 0; i < currentEvent.getInvited().size(); i++){
             if (currentEvent.getInvited().get(i).getInviteStatus()==1){
-                temp.add(currentEvent.getInvited().get(i).getUserEmail());
+                temp.add(currentEvent.getInvited().get(i).getUser());
             }
         }
         return temp;
