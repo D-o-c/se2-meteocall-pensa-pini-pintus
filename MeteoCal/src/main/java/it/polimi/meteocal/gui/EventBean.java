@@ -75,16 +75,15 @@ public class EventBean{
  Calls EventArea.createEvent(event,invitedUsers)
      * @return 
      */
-    public String createEvent() {
-        
+    public String createEvent() throws MessagingException {
         switch (ua.timeConsistency(event)){
             case -2:
                 FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "You cannot have more events at the same time!"));
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "You cannot have more events at the same time!",null));
                 return null;
             case -1:
                 FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "Begin Time must be before End Time"));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Begin Time must be before End Time",null));
                 return null;
             case 0:
                 updateInviteList();
@@ -95,7 +94,7 @@ public class EventBean{
                 context.getExternalContext().getFlash().setKeepMessages(true);
                 if (noErrors){
                     return user_home;
-                }   
+                }  
                 context.addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_WARN,"Warning", "Some Invited Users Not Found!"));
                 context.getExternalContext().getFlash().setKeepMessages(true);
@@ -104,6 +103,7 @@ public class EventBean{
                 return null;
         }
     }
+
     
     /**
      * Method to suggest contacts during form compilation

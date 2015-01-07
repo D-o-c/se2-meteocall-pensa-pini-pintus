@@ -168,5 +168,8 @@ public class SearchBean{
         if (selectedEvent.getDescription()==null){
             privateEvent = true;
         }
+        else{
+            privateEvent = false;
+        }
     }
 }
