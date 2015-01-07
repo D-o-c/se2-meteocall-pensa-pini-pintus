@@ -165,11 +165,6 @@ public class SearchBean{
     public void onEventSelect(SelectEvent selectEvent) {
         selectedEvent = (ScheduleEvent) selectEvent.getObject();
         ea.setCurrentEvent(selectedEvent.getDescription());
-        if (selectedEvent.getDescription()==null){
-            privateEvent = true;
-        }
-        else{
-            privateEvent = false;
-        }
+        privateEvent = selectedEvent.getDescription() == null;
     }
 }
