@@ -3,6 +3,7 @@ package it.polimi.meteocal.gui;
 import it.polimi.meteocal.boundary.EventArea;
 import it.polimi.meteocal.boundary.UserArea;
 import it.polimi.meteocal.entity.Event;
+import it.polimi.meteocal.entity.User;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -68,7 +69,7 @@ public class ScheduleBean implements Serializable {
         return ea.getCurrentEvent();
     }
     
-    public List<String> getPartecipants(){
+    public List<User> getPartecipants(){
         return ea.getPartecipants();
     }
     

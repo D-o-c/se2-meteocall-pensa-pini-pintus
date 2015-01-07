@@ -7,6 +7,21 @@
     <h:head>
         <title>#{scheduleBean.currentEvent.name}</title>
         <h:outputStylesheet library="css" name="stylesheet.css" />
+        <script>
+            function wellFormatString(str) {
+                var array = str.split(",");
+                var address = array[0].split(" ").join("+");
+                var city = array[1].split(" ").join("");
+                var state = array[2].split(" ").join("");
+                var cs = city+"+"+state;
+                return (address+","+cs);
+            }
+            window.onload = function getLocation() {
+                var location = wellFormatString(${scheduleBean.currentEvent.location});
+                var s = "https://www.google.com/maps/embed/v1/place?key=AIzaSyDDm0i7Jy_achXhFjVg8LcT1kbmi8wmdV4&amp;q="+location;
+                document.getElementById("gmap").src = s;
+            };
+        </script>
     </h:head>
     <h:body>
         <header>
@@ -25,18 +40,30 @@
             </ul>
         </header>
         <section>
-            <p>Name: #{scheduleBean.currentEvent.name}</p>
-            <p>Description: #{scheduleBean.currentEvent.description}</p>
-            <p>Outdoor: #{scheduleBean.getEventOutdoorStatus()}</p>
-            <p>Begin Time: #{scheduleBean.currentEvent.beginTime}</p>
-            <p>End Time: #{scheduleBean.currentEvent.endTime}</p>
-            <p>Location: #{scheduleBean.currentEvent.location}</p>
-            <p:gmap center="41.381542, 2.122893" zoom="8" type="hybrid" style="width:100%;height:400px" />
-            <p:dataList value="#{scheduleBean.getPartecipants()}" var="string">
+            <p:fieldset legend="#{scheduleBean.currentEvent.name}" style="position:relative;top:20px;">
+                <h:panelGrid columns="1">
+                    <h:outputText value="Name: #{scheduleBean.currentEvent.name}" />
+                    <h:outputText value="Description: #{scheduleBean.currentEvent.description}" />
+                    <h:outputText value="Outdoor: #{scheduleBean.getEventOutdoorStatus()}" />
+                    <h:outputText value="Begin Time: #{scheduleBean.currentEvent.beginTime}" />
+                    <h:outputText value="End Time: #{scheduleBean.currentEvent.endTime}" />
+                    <h:outputText value="Location: #{scheduleBean.currentEvent.location}" />
+                </h:panelGrid>
+            </p:fieldset>
+            <iframe
+                id="gmap"
+                width="600"
+                height="450"
+                frameborder="0"
+                style="margin:50px;"
+                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyDDm0i7Jy_achXhFjVg8LcT1kbmi8wmdV4&amp;q=Via+Parri,Rho+italia"
+            >
+            </iframe>
+            <p:dataList value="#{scheduleBean.getPartecipants()}" var="user">
                 <f:facet name="header">
                     List of partecipants:
                 </f:facet>
-                #{string}
+                #{user.name} #{user.surname}
             </p:dataList>
             <p><p:commandButton action="#{eventBean.goToChangeEventInfo()}" value="Change event info" disabled="#{!eventBean.isCreator()}" /></p>
             <p><p:commandButton action="#{eventBean.removePartecipation()}" value="Delete partecipation" disabled="#{eventBean.isCreator()}" /></p>

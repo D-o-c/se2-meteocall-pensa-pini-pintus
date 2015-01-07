@@ -4,6 +4,10 @@ body {
     min-width:1038px;
 }
 
+p {
+    margin:0px;
+}
+
 header,footer {
     background-color: #FF0000;
     height:50px;
