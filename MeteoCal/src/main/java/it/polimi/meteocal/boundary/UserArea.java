@@ -189,7 +189,7 @@ public class UserArea {
         return temp;
     }
 
-    public void importXLScalendar(UploadedFile file) {
+    public int importXLScalendar(UploadedFile file) {
         HashSet<Event> tempEvent = new HashSet<>();
         Workbook w;
         try{
@@ -207,7 +207,7 @@ public class UserArea {
                         tempEvent.add(em.find(Event.class, Long.parseLong(id)));
                     }
                     catch(Exception e){
-
+                        return -1;
                     }
                 }
 
@@ -215,13 +215,13 @@ public class UserArea {
             
         }
         catch(IOException | BiffException | IndexOutOfBoundsException | NullPointerException e){
-            
+            return -1;
         }
         
-        this.importCalendar(tempEvent);
+        return this.importCalendar(tempEvent);
     }
 
-    public void importCSVcalendar(UploadedFile file) {
+    public int importCSVcalendar(UploadedFile file) {
         HashSet<Event> tempEvent = new HashSet<>();
         BufferedReader br;
         String line;
@@ -235,18 +235,18 @@ public class UserArea {
                     tempEvent.add(em.find(Event.class, Long.parseLong(id)));
                 }
                 catch(Exception e){
-                    
+                    return -1;
                 }
             }
             
         }
         catch(Exception e){
-            
+            return -1;
         }
-        this.importCalendar(tempEvent);
+        return this.importCalendar(tempEvent);
     }
 
-    public void importXMLcalendar(UploadedFile file) {
+    public int importXMLcalendar(UploadedFile file) {
         HashSet<Event> tempEvent = new HashSet<>();
         try {
  
@@ -277,8 +277,9 @@ public class UserArea {
             
  
         } catch (ParserConfigurationException | IOException | SAXException e) {
+            return -1;
         }
-        this.importCalendar(tempEvent);
+        return this.importCalendar(tempEvent);
     }
     
     
@@ -300,7 +301,8 @@ public class UserArea {
         return em.find(Event.class, id); 
     }
     
-    private void importCalendar(HashSet<Event> e){
+    private int importCalendar(HashSet<Event> e){
+        int status = 0;
         for (int i=0;i<this.getLoggedUser().getEvents().size();i++){
             if (!this.getLoggedUser().getEvents().get(i).getEvent().getCreator().getEmail().equals(this.getLoggedUser().getEmail())){
                 this.getLoggedUser().getEvents().get(i).setInviteStatus(-1);
@@ -325,7 +327,12 @@ public class UserArea {
                 em.merge(event);
                 em.merge(this.getLoggedUser());
             }
+            else{
+                status = -2;
+            }
         }
+        
+        return status;
     }
         
     

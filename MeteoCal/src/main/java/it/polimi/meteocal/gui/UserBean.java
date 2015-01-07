@@ -190,23 +190,44 @@ public class UserBean{
         return ua.getUserEvent();
     }
      
-    public void upload() {
+    public String upload() {
+        FacesContext context = FacesContext.getCurrentInstance();
         String extension = file.getFileName().substring(file.getFileName().length()-3).toLowerCase();
+        int status = 0;
         switch (extension) {
             case "xls":
-                ua.importXLScalendar(file);
+                status = ua.importXLScalendar(file);
                 break;
             case "csv":
-                ua.importCSVcalendar(file);
+                status = ua.importCSVcalendar(file);
                 break;
             case "xml":
-                ua.importXMLcalendar(file);
+                status = ua.importXMLcalendar(file);
                 break;
             default:
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR",
                         "Upload only xls, csv or xml file");
                 FacesContext.getCurrentInstance().addMessage(null, message);
-                break;
+                return null;
+        }
+        
+        switch (status){
+            case -1:
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR",
+                        "Verify that the file is well conformed");
+                FacesContext.getCurrentInstance().addMessage(null, message);
+                return null;
+            case -2:
+                context.addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO,"Info",
+                                "Calendar not completely imported because same event has problem with time consistency"));
+                context.getExternalContext().getFlash().setKeepMessages(true);
+                return "/user/home";
+            default:
+                context.addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO,"Info", "Calendar imported succesfully"));
+                context.getExternalContext().getFlash().setKeepMessages(true);
+                return "/user/home";
         }
     }
     
