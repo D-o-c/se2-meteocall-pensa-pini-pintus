@@ -49,14 +49,11 @@ public class Event implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @NotNull(message = "May not be empty")
     @Column(name = "BEGIN_TIME")
-    @Future
     private Date beginTime;
     
     @Temporal(TemporalType.TIMESTAMP)
     @NotNull(message = "May not be empty")
     @Column(name = "END_TIME")
-    
-    @Future
     private Date endTime;
     
     @NotNull(message = "May not be empty")

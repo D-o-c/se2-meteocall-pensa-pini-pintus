@@ -5,11 +5,8 @@ import it.polimi.meteocal.entity.Calendar;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.User;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.StringWriter;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -25,13 +22,17 @@ import org.primefaces.model.UploadedFile;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import jxl.Cell;
+import jxl.CellType;
+import jxl.LabelCell;
+import jxl.NumberCell;
+import jxl.Sheet;
+import jxl.Workbook;
+import jxl.read.biff.BiffException;
 
 /**
  *
@@ -189,7 +190,35 @@ public class UserArea {
     }
 
     public void importXLScalendar(UploadedFile file) {
+        HashSet<Event> tempEvent = new HashSet<>();
+        Workbook w;
+        try{
+            w=Workbook.getWorkbook(file.getInputstream());
+            Sheet sheet = w.getSheet(0);
+            
+            for (int i = 1; i < sheet.getRows(); i++) {
+
+                String id;
+                Cell cell = sheet.getCell(0, i);
+                if (cell.getType() == CellType.LABEL) {
+                    LabelCell temp = (LabelCell) cell;
+                    id = temp.getString();
+                    try{
+                        tempEvent.add(em.find(Event.class, Long.parseLong(id)));
+                    }
+                    catch(Exception e){
+
+                    }
+                }
+
+            }
+            
+        }
+        catch(IOException | BiffException | IndexOutOfBoundsException | NullPointerException e){
+            
+        }
         
+        this.importCalendar(tempEvent);
     }
 
     public void importCSVcalendar(UploadedFile file) {
@@ -201,18 +230,20 @@ public class UserArea {
             br = new BufferedReader(new InputStreamReader(file.getInputstream(), "UTF-8"));
             while ((line = br.readLine()) != null){
                 String[] singleLine = line.split(",");
-                if (singleLine[0].equals("\"id\"")){
-                    continue;
-                }
                 String id = singleLine[0].substring(1, singleLine[0].length()-1);
-                tempEvent.add(em.find(Event.class, Long.parseLong(id)));
+                try{
+                    tempEvent.add(em.find(Event.class, Long.parseLong(id)));
+                }
+                catch(Exception e){
+                    
+                }
             }
             
         }
         catch(Exception e){
             
         }
-        
+        this.importCalendar(tempEvent);
     }
 
     public void importXMLcalendar(UploadedFile file) {
@@ -247,8 +278,9 @@ public class UserArea {
  
         } catch (ParserConfigurationException | IOException | SAXException e) {
         }
-        
+        this.importCalendar(tempEvent);
     }
+    
     
     /**
      * Get event from xml Element
@@ -267,6 +299,36 @@ public class UserArea {
         id = Long.parseLong(temp);
         return em.find(Event.class, id); 
     }
+    
+    private void importCalendar(HashSet<Event> e){
+        for (int i=0;i<this.getLoggedUser().getEvents().size();i++){
+            if (!this.getLoggedUser().getEvents().get(i).getEvent().getCreator().getEmail().equals(this.getLoggedUser().getEmail())){
+                this.getLoggedUser().getEvents().get(i).setInviteStatus(-1);
+            }
+        }
+        List<Event> events = new ArrayList<>(e);
+        //Event[] events = (Event[]) e.toArray();
+        for (Event event : events) {
+            if (this.timeConsistency(event)==0){
+                for (int j = 0; j < event.getInvited().size(); j++) {
+                    if (event.getInvited().get(j).getUser().getEmail().equals(this.getLoggedUser().getEmail())) {
+                        event.getInvited().get(j).setInviteStatus(1);
+                        
+                    }
+                }
+
+                for (int i = 0; i < this.getLoggedUser().getEvents().size(); i++){
+                    if (this.getLoggedUser().getEvents().get(i).getEventId()==event.getEventId()){
+                        this.getLoggedUser().getEvents().get(i).setInviteStatus(1);
+                    }
+                }
+                em.merge(event);
+                em.merge(this.getLoggedUser());
+            }
+        }
+    }
+        
+    
     
     
     
