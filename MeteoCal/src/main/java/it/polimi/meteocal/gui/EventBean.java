@@ -78,7 +78,7 @@ public class EventBean{
      */
     public String createEvent() throws MessagingException {
         
-        switch (ua.timeConsistency(ea.getCurrentEvent())){
+        switch (ua.timeConsistency(event)){
             case -2:
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "You cannot have more events at the same time!"));
@@ -180,6 +180,10 @@ public class EventBean{
             case 0:
                 this.updateInviteList();
                 ea.updateCurrentEvent(invitedUsers);
+                FacesContext context = FacesContext.getCurrentInstance();
+                context.addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO,"Info", "Event info changed succesfully"));
+                context.getExternalContext().getFlash().setKeepMessages(true);
                 return "/event?faces-redirect=true";
             default:
                 return null;
@@ -192,6 +196,11 @@ public class EventBean{
     
     public String removePartecipation(){
         ea.removeFromPartecipants();
+        FacesContext context = FacesContext.getCurrentInstance();
+                context.addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO,"Info", "Succesfully removed from partecipants"));
+        context.getExternalContext().getFlash().setKeepMessages(true);
+                        
         return "/user/home";
     }
     

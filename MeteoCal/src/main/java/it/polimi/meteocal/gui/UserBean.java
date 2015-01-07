@@ -13,10 +13,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 import org.primefaces.context.RequestContext;
-import org.primefaces.event.SelectEvent;
-import org.primefaces.model.DefaultScheduleEvent;
-import org.primefaces.model.ScheduleEvent;
-import org.primefaces.model.ScheduleModel;
 import org.primefaces.model.UploadedFile;
 
 /**
@@ -169,11 +165,19 @@ public class UserBean{
             return null;
         }
         ua.accept();
+        FacesContext context = FacesContext.getCurrentInstance();
+                context.addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO,"Info", "Invitation accepted"));
+                context.getExternalContext().getFlash().setKeepMessages(true);
         return "home?faces-redirect=true";
     }
     
     public String deny(){
         ua.deny();
+        FacesContext context = FacesContext.getCurrentInstance();
+                context.addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO,"Info", "Invitation refused"));
+                context.getExternalContext().getFlash().setKeepMessages(true);
         return "home";
         
     }

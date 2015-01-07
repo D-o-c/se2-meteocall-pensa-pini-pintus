@@ -48,10 +48,10 @@
                                      action="#{userBean.changePassword()}"
                                      value="Change"
                                      ajax="true"
-                                     update="passmsg"
+                                     update="@all"
                                      icon="ui-icon-wrench"/>
                 </h:panelGrid>
-                <p:messages style="width:800px;" showDetail="true" autoUpdate="true" closable="true" />
+                <p:messages style="width:800px;" showDetail="true"  autoUpdate="true" closable="true"/>
             </h:form>
             <h:form style="padding:20px;">
                 <p:dataTable id="evntable" var="event" value="#{userBean.getUserEvent()}"

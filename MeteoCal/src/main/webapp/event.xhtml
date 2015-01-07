@@ -9,6 +9,7 @@
         <h:outputStylesheet library="css" name="stylesheet.css" />
     </h:head>
     <h:body>
+        
         <header>
             <h1 id="title">MeteoCal</h1>
             <h:form id="searchForm" class="float-left">
@@ -25,6 +26,9 @@
             </ul>
         </header>
         <section>
+            <h:form>
+                <p:growl id="growl" showDetail="true" life="3000"/>
+            </h:form>
             <p>Name: #{scheduleBean.currentEvent.name}</p>
             <p>Description: #{scheduleBean.currentEvent.description}</p>
             <p>Outdoor: #{scheduleBean.getEventOutdoorStatus()}</p>
@@ -38,8 +42,10 @@
                 </f:facet>
                 #{string}
             </p:dataList>
-            <p><p:commandButton action="#{eventBean.goToChangeEventInfo()}" value="Change event info" disabled="#{!eventBean.isCreator()}" /></p>
-            <p><p:commandButton action="#{eventBean.removePartecipation()}" value="Delete partecipation" disabled="#{eventBean.isCreator()}" /></p>
+            <h:form>
+                <p:commandButton action="#{eventBean.goToChangeEventInfo()}" value="Change event info" disabled="#{!eventBean.isCreator()}" />
+                <p:commandButton action="#{eventBean.removePartecipation()}" value="Delete partecipation" disabled="#{eventBean.isCreator()}" />
+            </h:form>
         </section>
     </h:body>
 </html>
