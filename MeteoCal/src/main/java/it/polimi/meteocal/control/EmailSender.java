@@ -22,7 +22,7 @@ public class EmailSender {
     }
     public static void send(List<String> recipients, String subject, String body) throws NoSuchProviderException, MessagingException {
 
-        final String username = "PPPmeteocal@gmail.com";
+        /*final String username = "PPPmeteocal@gmail.com";
         final String password = "meteocalPPP";
 
         Properties props = new Properties();
@@ -56,6 +56,6 @@ public class EmailSender {
 
         } finally{
             t.close();
-        }
+        }*/
     }
 }

@@ -34,8 +34,7 @@ public class EventBean{
     private Event event;
     private String invites;
     private List<String> invitedUsers;
-    
-    
+   
     /**
      * Empty Constructor
      */
@@ -68,6 +67,7 @@ public class EventBean{
     public Event getCurrentEvent(){
         return ea.getCurrentEvent();
     }
+
     /**************************************************************************/
     
     /**
@@ -77,15 +77,14 @@ public class EventBean{
      * @throws javax.mail.MessagingException 
      */
     public String createEvent() throws MessagingException {
-        
-        switch (ua.timeConsistency(ea.getCurrentEvent())){
+        switch (ua.timeConsistency(event)){
             case -2:
                 FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "You cannot have more events at the same time!"));
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "You cannot have more events at the same time!",null));
                 return null;
             case -1:
                 FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "Begin Time must be before End Time"));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Begin Time must be before End Time",null));
                 return null;
             case 0:
                 updateInviteList();

@@ -7,21 +7,6 @@
     <h:head>
         <title>#{scheduleBean.currentEvent.name}</title>
         <h:outputStylesheet library="css" name="stylesheet.css" />
-        <script>
-            function wellFormatString(str) {
-                var array = str.split(",");
-                var address = array[0].split(" ").join("+");
-                var city = array[1].split(" ").join("");
-                var state = array[2].split(" ").join("");
-                var cs = city+"+"+state;
-                return (address+","+cs);
-            }
-            window.onload = function getLocation() {
-                var location = wellFormatString(${scheduleBean.currentEvent.location});
-                var s = "https://www.google.com/maps/embed/v1/place?key=AIzaSyDDm0i7Jy_achXhFjVg8LcT1kbmi8wmdV4&amp;q="+location;
-                document.getElementById("gmap").src = s;
-            };
-        </script>
     </h:head>
     <h:body>
         <header>
@@ -50,15 +35,16 @@
                     <h:outputText value="Location: #{scheduleBean.currentEvent.location}" />
                 </h:panelGrid>
             </p:fieldset>
-            <iframe
-                id="gmap"
-                width="600"
-                height="450"
-                frameborder="0"
-                style="margin:50px;"
-                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyDDm0i7Jy_achXhFjVg8LcT1kbmi8wmdV4&amp;q=Via+Parri,Rho+italia"
-            >
-            </iframe>
+            <h:form>
+                <iframe
+                    id="gmap"
+                    width="600"
+                    height="450"
+                    frameborder="0"
+                    style="margin:50px;"
+                    src="#{scheduleBean.googleMap}">
+                </iframe>
+            </h:form>
             <p:dataList value="#{scheduleBean.getPartecipants()}" var="user">
                 <f:facet name="header">
                     List of partecipants:

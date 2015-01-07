@@ -47,23 +47,23 @@ public class Event implements Serializable {
     
     
     @Temporal(TemporalType.TIMESTAMP)
-    @NotNull(message = "May not be empty")
+    @NotNull(message = "Begin Time may not be empty")
     @Column(name = "BEGIN_TIME")
     @Future
     private Date beginTime;
     
     @Temporal(TemporalType.TIMESTAMP)
-    @NotNull(message = "May not be empty")
+    @NotNull(message = "End Time may not be empty")
     @Column(name = "END_TIME")
     
     @Future
     private Date endTime;
     
-    @NotNull(message = "May not be empty")
+    @NotNull(message = "Name may not be empty")
     @Column(name = "NAME")
     private String name;
     
-    @NotNull(message = "May not be empty")
+    @NotNull(message = "Description may not be empty")
     @Column(name = "DESCRIPTION")
     private String description;
     
@@ -82,7 +82,7 @@ public class Event implements Serializable {
     
     @Pattern(regexp="[\\w*[ ]*]*[,][\\w*[ ]*]*[,][\\w*[ ]*]*",
              message="write \"address, city, state\"")
-    @NotNull(message = "May not be empty")
+    @NotNull(message = "Location may not be empty")
     @Column(name = "LOCATION")
     private String location;
     

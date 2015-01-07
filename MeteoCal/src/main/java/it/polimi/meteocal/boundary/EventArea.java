@@ -28,6 +28,7 @@ public class EventArea{
     Principal principal;
     
     Event currentEvent;
+    
 
     /**
      * Calls EntityManager.find(User.class, principal.getName())
