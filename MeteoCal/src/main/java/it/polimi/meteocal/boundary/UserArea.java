@@ -4,18 +4,34 @@ import it.polimi.meteocal.control.PasswordEncrypter;
 import it.polimi.meteocal.entity.Calendar;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.User;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import javax.ejb.Stateless;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.primefaces.model.DefaultScheduleEvent;
 import org.primefaces.model.DefaultScheduleModel;
 import org.primefaces.model.ScheduleModel;
+import org.primefaces.model.UploadedFile;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.apache.commons.io.IOUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -170,6 +186,86 @@ public class UserArea {
             }
         }
         return temp;
+    }
+
+    public void importXLScalendar(UploadedFile file) {
+        
+    }
+
+    public void importCSVcalendar(UploadedFile file) {
+        HashSet<Event> tempEvent = new HashSet<>();
+        BufferedReader br;
+        String line;
+        
+        try{
+            br = new BufferedReader(new InputStreamReader(file.getInputstream(), "UTF-8"));
+            while ((line = br.readLine()) != null){
+                String[] singleLine = line.split(",");
+                if (singleLine[0].equals("\"id\"")){
+                    continue;
+                }
+                String id = singleLine[0].substring(1, singleLine[0].length()-1);
+                tempEvent.add(em.find(Event.class, Long.parseLong(id)));
+            }
+            
+        }
+        catch(Exception e){
+            
+        }
+        
+    }
+
+    public void importXMLcalendar(UploadedFile file) {
+        HashSet<Event> tempEvent = new HashSet<>();
+        try {
+ 
+            DocumentBuilder dBuilder = DocumentBuilderFactory.newInstance()
+                                 .newDocumentBuilder();
+
+            Document dom = dBuilder.parse(file.getInputstream());
+            
+            //get the root element
+            Element docEle = dom.getDocumentElement();
+
+            //get a nodelist of elements
+            NodeList nl = docEle.getElementsByTagName("event");
+            
+            if(nl != null && nl.getLength() > 0) {
+			for(int i = 0 ; i < nl.getLength();i++) {
+
+				//get the event element
+				Element el = (Element)nl.item(i);
+
+				//get the Event object
+				Event e = getEvent(el);
+
+				//add it to list
+				tempEvent.add(e);
+			}
+		}
+            
+ 
+        } catch (ParserConfigurationException | IOException | SAXException e) {
+        }
+        
+    }
+    
+    /**
+     * Get event from xml Element
+     * @param e
+     * @return 
+     */
+    private Event getEvent(Element e){
+        long id;
+        String temp = null;
+        
+        NodeList nl = e.getElementsByTagName("id");
+        if(nl != null && nl.getLength() > 0) {
+            Element el = (Element)nl.item(0);
+            temp = el.getFirstChild().getNodeValue();
+        }
+        id = Long.parseLong(temp);
+        return em.find(Event.class, id); 
     }
     
     

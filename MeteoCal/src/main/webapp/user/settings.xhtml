@@ -35,7 +35,7 @@
                                  icon="ui-icon-check"
                                  disabled="#{!userBean.loggedUser.public}"/>
             </h:form>
-            <h:form style="padding:20px;">
+            <h:form id="passform" style="padding:20px;">
                 <h3 style="margin-top:0">Change password</h3>
                 <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
                     <p:outputLabel for="oldpsw" value="Confirm old Password"/>
@@ -48,7 +48,7 @@
                                      action="#{userBean.changePassword()}"
                                      value="Change"
                                      ajax="true"
-                                     update="@all"
+                                     update="passmsg"
                                      icon="ui-icon-wrench"/>
                 </h:panelGrid>
                 <p:messages style="width:800px;" showDetail="true" autoUpdate="true" closable="true" />
@@ -56,7 +56,7 @@
             <h:form style="padding:20px;">
                 <p:dataTable id="evntable" var="event" value="#{userBean.getUserEvent()}"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}" 
-                             paginator="true" rows="1" style="display: none;">
+                             paginator="true" rows="10" style="display: none;">
                     <p:column>
                         <f:facet name="header">
                             <h:outputText value="Id" />
@@ -81,7 +81,8 @@
                     <!-- DA AGGIUNGERE ALTRE INFO -->
                 </p:dataTable>
                 
-                <h3>Export Calendar</h3>
+
+                <h3 style="margin-top:0">Export Calendar:</h3>
                 <h:commandLink>
                     <h:graphicImage library="images" name="xls.png" width="50px" height="50px" />
                     <p:dataExporter type="xls" target="evntable" fileName="MeteoCalEvents" pageOnly="true"/>
@@ -101,7 +102,15 @@
                     <h:graphicImage library="images" name="xml.png" width="50px" height="50px" />
                     <p:dataExporter type="xml" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
                 </h:commandLink>
+
                 
+            </h:form>
+            <h:form id="uploadform" enctype="multipart/form-data" style="padding:20px;">
+                <h3 style="margin-top:0">Import Calendar:</h3>
+                <p:fileUpload value="#{userBean.file}" mode="simple" allowTypes="/(\.|\/)(xml|csv|xls)$/"/>
+
+                <p:commandButton value="Submit" ajax="false" actionListener="#{userBean.upload}" update="uploadmsg"/>
+                <p:messages style="color: red;"/>
             </h:form>
             <h:form style="padding:20px;">
                 <h3 style="margin-top:0">Unregister Your Account</h3>
@@ -112,4 +121,3 @@
         </section>
     </h:body>
 </html>
-
