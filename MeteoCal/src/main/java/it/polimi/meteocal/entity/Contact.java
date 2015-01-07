@@ -1,44 +1,44 @@
-package it.polimi.meteocal.business.security.entity;
+package it.polimi.meteocal.entity;
 
+import it.polimi.meteocal.entity.primarykeys.ContactPK;
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
 /**
  *
  * @author aldo
  */
-@Entity(name = "CONTACT")
+@Entity(name = "CONTACT")/*
 @NamedQueries({
     @NamedQuery(name = Contact.findByUserEmail, 
                     query = "SELECT c FROM CONTACT c WHERE c.user.email = ?1 ORDER BY c.surname")
-})
+})*/
 @IdClass(ContactPK.class)
 public class Contact implements Serializable {
     private static final long serialVersionUID = 1L;
-    public static final String findByUserEmail = "Contact.findByUserEmail";
+   // public static final String findByUserEmail = "Contact.findByUserEmail";
     
     @Id
+    @Column(name="CONTACT_EMAIL")
     private String email;
     
     @ManyToOne
     @Id
-    @JoinColumn(name="USER_EMAIL")
+    @JoinColumn(name="EMAIL")
     private User user;
     
     @NotNull(message = "May not be empty")
+    @Column(name="CONTACT_NAME")
     private String name;
+    
     @NotNull(message = "May not be empty")
+    @Column(name="CONTACT_SURNAME")
     private String surname;
     
     public Contact() {

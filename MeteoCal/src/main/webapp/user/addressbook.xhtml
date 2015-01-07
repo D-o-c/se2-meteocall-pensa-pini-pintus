@@ -9,29 +9,42 @@
         <h:outputStylesheet library="css" name="stylesheet.css" />
     </h:head>
     <h:body>
-        <h1>MeteoCal</h1>
-        <h:form id="searchForm" class="float-left">
-            <p:inputText value="#{searchBean.searchInput}"/>
-            <p:commandButton action="#{searchBean.findUser}" value="Search"/>
-        </h:form>
-        <ul id="landmarks">
-            <li><p:link outcome="home" value="#{userBean.name}'s Calendar"/></li>
-            <li><p:link outcome="notifications" value="Notifications"/></li>
-            <li>Addressbook</li>
-            <li><p:link outcome="settings" value="Settings"/></li>
-            <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
-        </ul>
-        <h:form class="clear-left">
-            <h3 style="margin-top:0">Contact List</h3>
-            <p:outputLabel value="#{userBean.results()}"/>
-            <ul>
-                <ui:repeat value="#{userBean.contacts}" var="contact">    
-                    <li>#{contact.name} #{contact.surname} #{contact.email}</li>
-                    <p:commandButton action="#{userBean.deleteContact(contact.email)}"
-                                     value="Delete"/>
-                </ui:repeat>
+        <header>
+            <h1 id="title">MeteoCal</h1>
+            <h:form id="searchForm" class="float-left">
+                <p:inputText value="#{searchBean.searchInput}"/>
+                <p:commandButton style="margin-left: 20px;" action="#{searchBean.findUser}" value="Search"/>
+            </h:form>
+            <ul id="landmarks">
+                <li><p:link outcome="home" value="#{userBean.name}'s Calendar"/></li>
+                <li><p:link outcome="notifications" value="Notifications"/></li>
+                <li>Addressbook</li>
+                <li><p:link outcome="settings" value="Settings"/></li>
+                <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
             </ul>
-        </h:form>
+        </header>
+        <section>
+            <h:form class="clear-left">
+                <p:dataTable var="contact" value="#{searchBean.contacts}">
+                    <p:column headerText="Name">
+                        <h:outputText value="#{contact.name}" />
+                    </p:column>
+
+                    <p:column headerText="Surname">
+                        <h:outputText value="#{contact.surname}" />
+                    </p:column>
+
+                    <p:column headerText="Email">
+                        <h:outputText value="#{contact.email}" />
+                    </p:column>
+
+                    <p:column headerText="Delete">
+                        <p:commandButton action="#{searchBean.deleteContact(contact.email)}"
+                                         value="Delete"/>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </section>
     </h:body>
 </html>
 

@@ -1,62 +1,77 @@
-	
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin:0px;
+    min-width:1038px;
+}
 
-    body {
-        font-family: Arial, Helvetica, sans-serif;
-        margin:0px;
-    }
-     
-    header,footer {
-        background-color: #FF0000;
-        height:50px;
-    }
-     
-    section {
-        background-color: #FFFFCC;
-    }
-     
-    header {
-        border-bottom: 1px solid #000000;
-        box-shadow:0px 3px 1px #888888;
-    }
-     
-    footer {
-        border-top: 1px solid #000000;
-        box-shadow:0px -3px 1px #888888;
-    }
-     
-    #mainTitle {
-        margin:0px;
-        padding:0px;
-        text-align:center;
-        line-height: 50px;
-        color:#FFFFFF;
-        text-shadow: 1px 1px #000000;
-    }
-     
-    h1 {
-       
-    }
-     
-    ul, #landmarks {
-        list-style:none;
-        padding:0px;
-        margin:0px;
-    }
-     
-    #landmarks li {
-        float:left;
-        padding: 14px 0px 0px 20px;
-    }
-     
-    .clear-left {
-        clear:left;
-    }
-     
-    .float-left {
-        float:left;
-    }
-     
-    #searchForm {
-        margin-bottom:20px;
-    }
+header,footer {
+    background-color: #FF0000;
+    height:50px;
+}
+
+section {
+    background-color: #FFFFCC;
+    min-height:600px;
+}
+
+header {
+    border-bottom: 1px solid #000000;
+}
+
+footer {
+    border-top: 1px solid #000000;
+    
+}
+
+#mainTitle {
+    margin:0px;
+    padding:0px;
+    text-align:center;
+    line-height: 50px;
+    color:#FFFFFF;
+    text-shadow: 1px 1px #000000;
+}
+
+#title {
+    margin:0px;
+    padding: 0px 20px 0px 20px;
+    display: inline;
+    line-height: 50px;
+    float: left;
+    color:#FFFFFF;
+    text-shadow: 1px 1px #000000; 
+}
+
+ul, #landmarks {
+    list-style:none;
+    padding:0px;
+    margin:0px;
+}
+
+#landmarks li {
+    float:left;
+    padding: 14px 0px 0px 20px;
+}
+
+#landmarks li a {
+    color:#FFFFFF;
+    text-decoration:none;
+}
+
+#landmarks li a:visited {
+    color:#FFFFFF;
+    text-decoration:none;
+}
+
+.clear-left {
+    clear:left;
+}
+
+.float-left {
+    float:left;
+}
+
+#searchForm {
+    margin-top: 7px;
+}
 

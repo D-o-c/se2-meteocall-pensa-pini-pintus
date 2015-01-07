@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package it.polimi.meteocal.business.security.entity;
+package it.polimi.meteocal.entity.primarykeys;
 
 import java.io.Serializable;
 
@@ -17,8 +12,8 @@ public class ContactPK implements Serializable{
 
     public ContactPK() {
     }
+    
     /**
-     * 
      * @param email: email del contatto
      * @param user : email dell'utente che possiede il contatto
      */
