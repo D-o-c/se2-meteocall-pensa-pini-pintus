@@ -5,15 +5,21 @@
  */
 package it.polimi.meteocal.business.security.control;
 
-import it.polimi.meteocal.business.security.entity.Event;
+import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.business.security.entity.WeatherCondition;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Schedule;
+import javax.ejb.Singleton;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
@@ -26,23 +32,32 @@ import org.w3c.dom.NodeList;
  * @author Anton
  */
 
+@Singleton
+@Lock(LockType.READ) // allows timers to execute in parallel
+@Stateless
 public class WeatherManager {
     
+    @PersistenceContext
     EntityManager em;
     
     
     private List<Event> eventList;
     Date toDate;
-    @Schedule(dayOfWeek="*", hour="12")
+    
+    @Schedule(minute="*", hour="*")
     public void weatherCreation() throws IOException{
         toDate=new Date();
     eventList=findAll();
     for(int i=0;i<eventList.size();i++){
         if (eventList.get(i).getBeginTime().getYear()==(toDate).getYear()^
                 eventList.get(i).getBeginTime().getMonth()==(toDate).getMonth()^
-                eventList.get(i).getBeginTime().getDay()<=(toDate).getDay()+5){ 
-                
-                Document doc = generateXML(eventList.get(i).getLocation());
+                eventList.get(i).getBeginTime().getDate()<=(toDate).getDate()+5){ 
+                int first=eventList.get(i).getLocation().indexOf(",");
+                int second=eventList.get(i).getLocation().lastIndexOf(",");        
+                String città =eventList.get(i).getLocation().substring(first+1,second) ;
+            
+            
+                Document doc = generateXML(città);
                 
                 getCondition(doc,eventList.get(i));
     }
@@ -121,37 +136,58 @@ public class WeatherManager {
 
                             Element e = (Element) n;
                             city = e.getAttribute("city");
-                            System.out.println("The City Is : " + city);
+                            
 
                         }
                    } 
                                 
                     
                     		NodeList n15 =eElement.getElementsByTagName("yweather:forecast");
-                            for(int i=0;i<(event.getEndTime().getDay()-event.getBeginTime().getDay());i++){
+                                int daysNumber;
+                                if (event.getBeginTime().getDate()<event.getEndTime().getDate()){
+                                    daysNumber=event.getEndTime().getDate()-event.getBeginTime().getDate()+1;
+                                    }else{
+                                    daysNumber=event.getEndTime().getDate()+32-event.getBeginTime().getDate();
+                                }
+                                
+                            for(int i=0;i<daysNumber;i++){
                     		for (int tempr=0;tempr< n15.getLength();tempr++){
                     			Node n5 =n15.item(tempr);
-                                        Date day=new Date(event.getBeginTime().getDay()+i,event.getBeginTime().getMonth(),event.getBeginTime().getYear());
+                                        
+                                        
                                         
                     			if(nNode.getNodeType() ==Node.ELEMENT_NODE){
                     				Element e5 =(Element) n5;
                     				
-                    			WeatherCondition weather = new WeatherCondition();
-                                        weather.setEventId(event);
-                                       // it creates the WeatherCondition
-                                        if(day.getDay()==(Integer.parseInt(e5.getAttribute("date").substring(0,1))) ){
-                                            if(day.getDay()==toDate.getDay()+5){
-                                        weather.setType(e5.getAttribute("text"));
-                                        weather.setTime(day);
-                                        em.persist(weather);
-                                        event.addWeatherCondition(weather);
-                                            }
-                                        for(int j=0;j<(event.getEndTime().getDay()-event.getBeginTime().getDay());j++){
-                                        if(event.getWeatherConditions().get(j).getTime().getDay()==day.getDay()) {
-                                            event.getWeatherConditions().get(j).setType(e5.getAttribute("text"));
-                                        }
+                                        Date day=new Date(event.getBeginTime().getYear(),event.getBeginTime().getMonth(),event.getBeginTime().getDate()+i);//giorno dell'evento
+                                                
+                    			
                                         
-                                        }
+                                        int giornoGiusto=tempr+toDate.getDate();//oggi+tempr 
+                                        if(day.getDate()==giornoGiusto ){
+                                          
+                                                    
+                                        WeatherCondition weather = new WeatherCondition(day,event,e5.getAttribute("text"));
+                              
+                                        int yet=0;
+                                           for(int k=0;k<event.getWeatherConditions().size();k++){
+                                            if(event.getWeatherConditions().get(k).getTime().getDate()==giornoGiusto){
+                                                event.getWeatherConditions().get(k).setType(weather.getType());
+                                                yet=1;
+                                            }
+                                        }    
+       
+                                         if(yet==0){
+                                           event.addWeatherCondition(new WeatherCondition(day,event,e5.getAttribute("text")));
+                                                    
+                                                    }
+                                        //em.persist(event.getWeatherConditions().get(event.getWeatherConditions().size()-1));
+                                           em.merge(event);
+                                        
+                                       
+                                        //}
+                                            
+                                       
                                         }
                                         }
                                 }

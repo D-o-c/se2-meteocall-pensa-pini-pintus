@@ -22,9 +22,9 @@ import javax.persistence.PersistenceContext;
  *
  * @author doc
  */
-@Singleton
-@Lock(LockType.READ) // allows timers to execute in parallel
-@Stateless
+//@Singleton
+//@Lock(LockType.READ) // allows timers to execute in parallel
+//@Stateless
 public class ScheduleTest {
     
     @PersistenceContext
@@ -33,7 +33,7 @@ public class ScheduleTest {
     @Inject
     Principal principal;
     
-    @Schedule(minute = "*", hour = "*")
+    //@Schedule(minute = "*", hour = "*")
     private void test(){
         
         em.find(Event.class, (long) 1).setPublic(false);

@@ -5,10 +5,12 @@
  */
 package it.polimi.meteocal.business.security.entity;
 
+import it.polimi.meteocal.entity.Event;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
@@ -18,8 +20,10 @@ import javax.persistence.TemporalType;
  *
  * @author Anton
  */
-@Entity (name= "WEATHERCONDITION")
+@Entity (name= "WEATHER_CONDITION")
+@IdClass(WeatherConditionPK.class)
 public class WeatherCondition implements Serializable {
+    private static final long serialVersionUID = 1L;
     
     @Id
     @Temporal(TemporalType.DATE)
@@ -28,10 +32,22 @@ public class WeatherCondition implements Serializable {
     @ManyToOne
     @Id
     @JoinColumn(name="ID")
-    private Event eventId;
+    private Event event;
     
+   
     private String type;
-
+    
+    public WeatherCondition(){
+    }
+    
+    
+    public WeatherCondition(Date time, Event event,String type){
+        this.event=event;
+        this.time=time;
+        this.type=type;
+    }
+    
+    
     public Date getTime() {
         return time;
      //   return null;
@@ -41,12 +57,12 @@ public class WeatherCondition implements Serializable {
         this.time = time;
     }
 
-    public Event getEventId() {
-        return eventId;
+    public Event getEvent() {
+        return event;
     }
 
-    public void setEventId(Event eventId) {
-        this.eventId = eventId;
+    public void setEvent(Event event) {
+        this.event = event;
     }
 
     public String getType() {

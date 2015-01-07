@@ -13,14 +13,14 @@ import java.util.Date;
  * @author aldo
  */
 public class WeatherConditionPK implements Serializable{
-    private long eventId;
+    private long event;
     private Date time;
 
     public WeatherConditionPK() {
     }
 
-    public WeatherConditionPK(long eventId, Date time) {
-        this.eventId = eventId;
+    public WeatherConditionPK(long event, Date time) {
+        this.event = event;
         this.time = time;
     }
     
@@ -28,14 +28,14 @@ public class WeatherConditionPK implements Serializable{
     public boolean equals(Object object) {
         if (object instanceof WeatherConditionPK) {
             WeatherConditionPK pk = (WeatherConditionPK)object;
-            return eventId==pk.eventId && time.equals(pk.time);
+            return event==pk.event && time.equals(pk.time);
         } else {
             return false;
         }
     }
 
     public int hashCode() {
-         return (int)(eventId + time.hashCode());
+         return (int)(event + time.hashCode());
     }
     
     
