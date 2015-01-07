@@ -74,9 +74,8 @@ public class EventBean{
      * Calls updateInviteList() to clean the invitedUsers List
  Calls EventArea.createEvent(event,invitedUsers)
      * @return 
-     * @throws javax.mail.MessagingException 
      */
-    public String createEvent() throws MessagingException {
+    public String createEvent() {
         
         switch (ua.timeConsistency(event)){
             case -2:
@@ -167,7 +166,7 @@ public class EventBean{
         return "user/changeeventinfo?faces-redirect=true";
     }
     
-    public String saveEvent() throws MessagingException{
+    public String saveEvent(){
         switch (ua.timeConsistency(ea.getCurrentEvent())){
             case -2:
                 FacesContext.getCurrentInstance().addMessage(null,

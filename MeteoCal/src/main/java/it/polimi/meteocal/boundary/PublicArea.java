@@ -39,7 +39,7 @@ public class PublicArea {
      * Calls EntityManager.persist(user)
      * @param user 
      */
-    public boolean register(User user) throws MessagingException {
+    public boolean register(User user) {
         try {
             String s = em.find(User.class, user.getEmail()).getEmail();
             return false;

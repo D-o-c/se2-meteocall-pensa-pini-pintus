@@ -60,7 +60,7 @@ public class EventArea{
      * @param invitedUsers
      * @return if all invited users exist in the database
      */
-    public boolean createEvent(Event event, List<String> invitedUsers) throws MessagingException {
+    public boolean createEvent(Event event, List<String> invitedUsers){
         boolean noErrors = true;
         //Logged user is the creator of the event
         User creator = getLoggedUser();
@@ -77,12 +77,12 @@ public class EventArea{
         return noErrors;
     }
     
-    public void updateCurrentEvent(List<String> invitedUsers) throws MessagingException{
+    public void updateCurrentEvent(List<String> invitedUsers){
         sendInvite(currentEvent, invitedUsers);
         em.merge(currentEvent);
     }
     
-    private boolean sendInvite(Event e, List<String> iu) throws MessagingException{
+    private boolean sendInvite(Event e, List<String> iu){
         //delete people already invited
         List<Calendar> temp = e.getInvited();
         for (Calendar temp1 : temp) {
