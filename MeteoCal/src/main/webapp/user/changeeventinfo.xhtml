@@ -2,14 +2,14 @@
 <!--
 To change this license header, choose License Headers in Project Properties.
 To change this template file, choose Tools | Templates
-and open the template in the editor.
+and open the template in the editor. 
 -->
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <title>Create new event</title>
+        <title>Change #{eventBean.getCurrentEvent().name} info</title>
         <h:outputStylesheet library="css" name="stylesheet.css" />
     </h:head>
     <h:body>
@@ -29,57 +29,62 @@ and open the template in the editor.
             </ul>
         </header>
         <section>
-            <h:form id="createeventform" class="clear-left">
-                <p:growl id="growl"/>
-                <p:panel header="New Event Form">
+            <h:form id="modifyeventform" class="clear-left">
+                <p:panel header="Change Event Info Form"  visible="#{eventBean.isCreator()}">
                     <p:panelGrid columns="3">
-                       
                         <p:outputLabel value="Event Name"/>
-                        <p:inputText id="name" value="#{eventBean.event.name}"/>
-                        <p:outputLabel value=""/>
-                       
+                        <p:inputText id="name" value="#{eventBean.getCurrentEvent().name}" 
+                                     required="true">
+                            <p:ajax update="namemsg"/>
+                        </p:inputText>
+                        <p:message id="namemsg" for="name" />
+
                         <p:outputLabel value="Description"/>
-                        <p:inputTextarea id="description" value="#{eventBean.event.description}"
+                        <p:inputTextarea id="description" value="#{eventBean.getCurrentEvent().description}"
                                          rows="5" cols="30" counter="display" maxlength="100"
-                                         counterTemplate="{0} characters remaining." autoResize="false"/>
+                                         counterTemplate="{0} characters remaining." autoResize="false" 
+                                         required="true"/>
                         <h:outputText id="display" />
 
+                        <p:outputLabel value="Location, write &quot;address, city, state&quot;" />
+                        <p:inputText id="location" value="#{eventBean.getCurrentEvent().location}"
+                                     required="true">
+                            <p:ajax update="locationmsg"/>
+                        </p:inputText>
+                        <p:message id="locationmsg" for="location" />
+
                         <p:outputLabel value="Public"/>
-                        <p:selectBooleanCheckbox value="#{eventBean.event.pub}"/>
-                        <p:outputLabel value=""/>
-                       
+                        <p:selectBooleanCheckbox value="#{eventBean.getCurrentEvent().pub}"/>
+                        <p></p>
+                        
                         <p:outputLabel value="Outdoor"/>
-                        <p:selectBooleanCheckbox value="#{eventBean.event.outdoor}"/>
-                        <p:outputLabel value=""/>
+                        <p:selectBooleanCheckbox value="#{eventBean.getCurrentEvent().outdoor}"/>
+                        <p></p>
 
                         <p:outputLabel value="Begin time"/>
-                        <p:calendar id="beginTime" value="#{eventBean.event.beginTime}"
+                        <p:calendar id="beginTime" value="#{eventBean.getCurrentEvent().beginTime}"
                                     pages="3" effect="fold" mindate="#{scheduleBean.today()}"
-                                    pattern="dd/MM/yyyy HH:mm"/>
-                        <p:outputLabel value=""/>    
-                       
+                                    pattern="dd/MM/yyyy HH:mm">
+                            <p:ajax update="beginTimemsg"/>
+                        </p:calendar>
+                        <p:message id="beginTimemsg" for="beginTime" />
+
+
                         <p:outputLabel value="End time"/>
-                        <p:calendar id="endTime" value="#{eventBean.event.endTime}"
+                        <p:calendar id="endTime" value="#{eventBean.getCurrentEvent().endTime}"
                                     pages="3" effect="fold" mindate="#{scheduleBean.today()}"
-                                    pattern="dd/MM/yyyy HH:mm"/>
-                        <p:outputLabel value=""/>
+                                    pattern="dd/MM/yyyy HH:mm">
+                        </p:calendar>
+                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
 
-                        <p:outputLabel value="Location, write &quot;address, city, state&quot;" />
-                        <p:inputText id="location" value="#{eventBean.event.location}"/>
-
-                        <p:outputLabel value=""/>
-                        <p:outputLabel value="Insert email of invited users separated by &quot;;&quot;" />
+                        <p>Insert email of invited users separated by ";"</p>
                         <p:inputTextarea value="#{eventBean.invites}" rows="10" cols="50"
                                          completeMethod="#{eventBean.complete}"
                                          queryDelay="500" minQueryLength="2"/>
-                        <p:outputLabel value=""/>
 
-                        <p:outputLabel value=""/>
-                        <p:commandButton value="Create Event"
-                                         action="#{eventBean.createEvent()}"
-                                         update="@all"
-                                         ajax="true" />
-                        <p:outputLabel value=""/>
+
+                        <p:commandButton id="submit" value="save Event" update="@all" ajax="true"
+                                        action="#{eventBean.saveEvent()}" />
                        </p:panelGrid>
                 </p:panel>
             </h:form>

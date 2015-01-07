@@ -1,23 +1,19 @@
 package it.polimi.meteocal.gui;
 
-import it.polimi.meteocal.boundary.EventArea;
 import it.polimi.meteocal.boundary.UserArea;
-import it.polimi.meteocal.control.EmailSender;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.User;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.PostConstruct;
+import java.util.Locale;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
-import javax.mail.MessagingException;
-import org.primefaces.event.SelectEvent;
-import org.primefaces.model.DefaultScheduleEvent;
-import org.primefaces.model.ScheduleEvent;
-import org.primefaces.model.ScheduleModel;
+import org.primefaces.context.RequestContext;
+import org.primefaces.model.UploadedFile;
 
 /**
  *
@@ -25,10 +21,10 @@ import org.primefaces.model.ScheduleModel;
  */
 @Named
 @RequestScoped
+@ManagedBean
 public class UserBean{
 
-    private static final String home_page_url_pub = "home?faces-redirect=true&visibilitychanged=true";
-    private static final String home_page_url_psw = "home?faces-redirect=true&passwordchanged=true";
+    private static final String home_page = "home?faces-redirect=true";
     
     @EJB
     UserArea ua;
@@ -36,7 +32,10 @@ public class UserBean{
     private String newEmail;
     private String newPassword;
     private String password;
-    private EmailSender se;
+    private List<Event> invites;
+    private UploadedFile file;
+ 
+    
 
     
     /**
@@ -78,16 +77,62 @@ public class UserBean{
     public User getLoggedUser(){
         return ua.getLoggedUser();
     }
+    
+    public Locale getLocaleDefault(){
+        return Locale.getDefault();
+    }
+
+    public List<Event> getInvites() {
+        invites = new ArrayList<>();
+        for (int i = 0; i < ua.getLoggedUser().getEvents().size(); i++){
+            if (ua.getLoggedUser().getEvents().get(i).getInviteStatus() == 0){
+                invites.add(ua.getLoggedUser().getEvents().get(i).getEvent());
+            }
+        }
+        return invites;
+    }
+    
+    public int getNumberOfNotifies(){
+        invites = new ArrayList<>();
+        for (int i = 0; i < ua.getLoggedUser().getEvents().size(); i++){
+            if (ua.getLoggedUser().getEvents().get(i).getInviteStatus() == 0){
+                invites.add(ua.getLoggedUser().getEvents().get(i).getEvent());
+            }
+        }
+        return invites.size();
+    }
+    
+    public Event getSelectedEvent() {
+        return ua.getSelectedEvent();
+    }
+
+    public void setSelectedEvent(Event selectedEvent) {
+        ua.setSelectedEvent(selectedEvent);
+    }
+    public UploadedFile getFile() {
+        return file;
+    }
+ 
+    public void setFile(UploadedFile file) {
+        this.file = file;
+    }
     /**************************************************************************/
     
     /**
      * Calls UserArea to set the visibility of the calendar
-     * @param pub
      * @return user home page
      */
     public String changeCalendarVisibility() {
         ua.changeCalendarVisibility();
-        return home_page_url_pub;
+        
+        String message = "";
+        if(getLoggedUser().isPublic()) message = "public";
+        else message = "private";
+        
+        FacesContext context = FacesContext.getCurrentInstance();
+        context.addMessage(null, new FacesMessage("Info", "Now your calendar is " + message));
+        context.getExternalContext().getFlash().setKeepMessages(true);
+        return home_page;
     }
     
     /**
@@ -97,21 +142,93 @@ public class UserBean{
     public String changePassword() {
         boolean changeIsOk = ua.changePassword(password,newPassword);
         if(changeIsOk) {
-            return home_page_url_psw;
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO,"Info", "Password Successfully Changed"));
+            context.getExternalContext().getFlash().setKeepMessages(true);
+            return home_page;
         }
         else {
             FacesContext.getCurrentInstance()
                     .addMessage(null, new FacesMessage(
-                            FacesMessage.SEVERITY_ERROR,"Please Try Again",null));
+                            FacesMessage.SEVERITY_ERROR,"Password Change Failure!","Please Try Again"));
             return null;
         }
     }
     
-    public void sendEmail() throws MessagingException{
-        List<String> lista = new ArrayList<>();
-        lista.add("mpini91@gmail.com");
-        lista.add("aldo.pintus@gmail.com");
-        lista.add("pensa.dario@gmail.com");
-        EmailSender.send(lista, "viva lo spam", "prova invio più destinatari");
+    public String accept(){
+        if (ua.timeConsistency(ua.getSelectedEvent()) == -2){
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Another Event",
+                                            "You already have another event at the same time! Delete it before!");
+         
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+            return null;
+        }
+        ua.accept();
+        FacesContext context = FacesContext.getCurrentInstance();
+                context.addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO,"Info", "Invitation accepted"));
+                context.getExternalContext().getFlash().setKeepMessages(true);
+        return "home?faces-redirect=true";
     }
+    
+    public String deny(){
+        ua.deny();
+        FacesContext context = FacesContext.getCurrentInstance();
+                context.addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO,"Info", "Invitation refused"));
+                context.getExternalContext().getFlash().setKeepMessages(true);
+        return "home";
+        
+    }
+    
+    /**
+     * return a list of event to which the user participates, for export them
+     * @return 
+     */
+    public List<Event> getUserEvent(){
+        return ua.getUserEvent();
+    }
+     
+    public String upload() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        String extension = file.getFileName().substring(file.getFileName().length()-3).toLowerCase();
+        int status = 0;
+        switch (extension) {
+            case "xls":
+                status = ua.importXLScalendar(file);
+                break;
+            case "csv":
+                status = ua.importCSVcalendar(file);
+                break;
+            case "xml":
+                status = ua.importXMLcalendar(file);
+                break;
+            default:
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR",
+                        "Upload only xls, csv or xml file");
+                FacesContext.getCurrentInstance().addMessage(null, message);
+                return null;
+        }
+        
+        switch (status){
+            case -1:
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR",
+                        "Verify that the file is well conformed");
+                FacesContext.getCurrentInstance().addMessage(null, message);
+                return null;
+            case -2:
+                context.addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO,"Info",
+                                "Calendar not completely imported because same event has problem with time consistency"));
+                context.getExternalContext().getFlash().setKeepMessages(true);
+                return "/user/home";
+            default:
+                context.addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO,"Info", "Calendar imported succesfully"));
+                context.getExternalContext().getFlash().setKeepMessages(true);
+                return "/user/home";
+        }
+    }
+    
 }

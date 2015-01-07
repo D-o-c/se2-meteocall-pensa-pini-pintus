@@ -3,8 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title>#{scheduleBean.currentEvent.name}</title>
         <h:outputStylesheet library="css" name="stylesheet.css" />
@@ -13,23 +12,47 @@
         <header>
             <h1 id="title">MeteoCal</h1>
             <h:form id="searchForm" class="float-left">
-                <p:inputText value="#{searchBean.searchInput}"/>
-                <p:commandButton style="margin-left: 20px;" action="#{searchBean.findUser()}" value="Search"/>
+                <p:inputText value="#{searchBean.searchInput}" id="keyword"/>
+                <p:commandButton style="margin-left: 20px;" action="#{searchBean.findUser2()}" value="Search"/>
+                <p:watermark for="keyword" value="Search..." id="watermark" />
             </h:form>
             <ul id="landmarks">
                 <li><p:link outcome="user/home" value="#{userBean.name}'s Calendar"/></li>
-                <li><p:link outcome="user/notifications" value="Notifications"/></li>
+                <li><p:link outcome="user/notifications" value="Notifications (#{userBean.getNumberOfNotifies()})"/></li>
                 <li><p:link outcome="user/addressbook" value="Addressbook"/></li>
                 <li><p:link outcome="user/settings" value="Settings"/></li>
                 <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
             </ul>
         </header>
-        <p>Event's Name: #{scheduleBean.currentEvent.name}</p>
-        <p>#{scheduleBean.currentEvent.description}</p>
-        <p>#{scheduleBean.currentEvent.beginTime}</p>
-        <p>#{scheduleBean.currentEvent.endTime}</p>
-        <p>#{scheduleBean.currentEvent.location}</p>
-        <p:gmap center="41.381542, 2.122893" zoom="15" type="HYBRID" style="width:100%;height:400px" />
-        <p><p:commandButton action="#{eventBean.changeEventInfo()}" value="Change event info"/></p>
+        <section>
+            <p:fieldset legend="#{scheduleBean.currentEvent.name}" style="position:relative;top:20px;">
+                <h:panelGrid columns="1">
+                    <h:outputText value="Name: #{scheduleBean.currentEvent.name}" />
+                    <h:outputText value="Description: #{scheduleBean.currentEvent.description}" />
+                    <h:outputText value="Outdoor: #{scheduleBean.getEventOutdoorStatus()}" />
+                    <h:outputText value="Begin Time: #{scheduleBean.currentEvent.beginTime}" />
+                    <h:outputText value="End Time: #{scheduleBean.currentEvent.endTime}" />
+                    <h:outputText value="Location: #{scheduleBean.currentEvent.location}" />
+                </h:panelGrid>
+            </p:fieldset>
+            <h:form>
+                <iframe
+                    id="gmap"
+                    width="600"
+                    height="450"
+                    frameborder="0"
+                    style="margin:50px;"
+                    src="#{scheduleBean.googleMap}">
+                </iframe>
+            </h:form>
+            <p:dataList value="#{scheduleBean.getPartecipants()}" var="user">
+                <f:facet name="header">
+                    List of partecipants:
+                </f:facet>
+                #{user.name} #{user.surname}
+            </p:dataList>
+            <p><p:commandButton action="#{eventBean.goToChangeEventInfo()}" value="Change event info" disabled="#{!eventBean.isCreator()}" /></p>
+            <p><p:commandButton action="#{eventBean.removePartecipation()}" value="Delete partecipation" disabled="#{eventBean.isCreator()}" /></p>
+        </section>
     </h:body>
 </html>

@@ -34,51 +34,56 @@ import javax.validation.constraints.Pattern;
                 query = "SELECT e FROM EVENT e")
 })
 public class Event implements Serializable {
-    
+   
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
     private long eventId;
-    
+   
     public static final String findAll = "Event.findAll";
-    
-    
+   
+   
     @OneToMany(mappedBy="event", cascade = CascadeType.PERSIST)
     private List<Calendar> invited;
-    
-    
+   
+   
     @Temporal(TemporalType.TIMESTAMP)
-    @NotNull(message = "May not be empty")
+    @NotNull(message = "Begin Time may not be empty")
     @Column(name = "BEGIN_TIME")
     @Future
     private Date beginTime;
-    
+   
     @Temporal(TemporalType.TIMESTAMP)
-    @NotNull(message = "May not be empty")
+    @NotNull(message = "End Time may not be empty")
     @Column(name = "END_TIME")
+   
     @Future
     private Date endTime;
-    
-    @NotNull(message = "May not be empty")
+   
+    @NotNull(message = "Name may not be empty")
     @Column(name = "NAME")
     private String name;
-    
-    @NotNull(message = "May not be empty")
+   
+    @NotNull(message = "Description may not be empty")
     @Column(name = "DESCRIPTION")
     private String description;
-    
+   
     @NotNull(message = "May not be empty")
     @Column(name = "PUBLIC_")
-    private boolean pub=true;
-    
+    private boolean pub = true;
+   
+    @NotNull(message = "May not be empty")
+    @Column(name = "OUTDOOR")
+    private boolean outdoor = false;
+   
     @NotNull(message = "May not be empty")
     @ManyToOne
     @JoinColumn(name = "EMAIL")
     private User creator;
-    
+   
     @Pattern(regexp="[\\w*[ ]*]*[,][\\w*[ ]*]*[,][\\w*[ ]*]*",
              message="write \"address, city, state\"")
-    @NotNull(message = "May not be empty")
+    @NotNull(message = "Location may not be empty")
     @Column(name = "LOCATION")
     private String location;
     
@@ -138,6 +143,10 @@ public class Event implements Serializable {
         return creator;
     }
 
+    public boolean isOutdoor() {
+        return outdoor;
+    }
+
     public void setCreator(User creator) {
         this.creator = creator;
     }
@@ -178,14 +187,20 @@ public class Event implements Serializable {
     }
 
     public void setPublic(boolean b) {
-        pub=b;
+        pub = b;
+    }
+
+    public void setOutdoor(boolean outdoor) {
+        this.outdoor = outdoor;
     }
     
+
     public void addWeatherCondition(WeatherCondition wc){
         weatherConditions.add(wc);
         
     }
     
- 
-    
 }
+    
+    
+

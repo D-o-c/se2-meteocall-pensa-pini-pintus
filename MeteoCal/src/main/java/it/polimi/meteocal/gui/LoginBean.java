@@ -64,7 +64,7 @@ public class LoginBean {
         } catch (ServletException e) {
             context.addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            "Login Failed","Login Failed"));
+                            "Error","Login Failed"));
             logger.log(Level.SEVERE,"Login Failed");
             return null;
         }

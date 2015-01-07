@@ -51,7 +51,8 @@ public class WeatherManager {
     for(int i=0;i<eventList.size();i++){
         if (eventList.get(i).getBeginTime().getYear()==(toDate).getYear()^
                 eventList.get(i).getBeginTime().getMonth()==(toDate).getMonth()^
-                eventList.get(i).getBeginTime().getDate()<=(toDate).getDate()+5){ 
+                eventList.get(i).getBeginTime().getDate()<=(toDate).getDate()+5^
+                eventList.get(i).isOutdoor()==true ){ 
                 int first=eventList.get(i).getLocation().indexOf(",");
                 int second=eventList.get(i).getLocation().lastIndexOf(",");        
                 String città =eventList.get(i).getLocation().substring(first+1,second) ;
@@ -201,4 +202,7 @@ public class WeatherManager {
         }
         } 
     
+        public Event update(){
+            return null; 
+        }
 }

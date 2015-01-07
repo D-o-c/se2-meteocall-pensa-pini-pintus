@@ -23,7 +23,7 @@
                                     required="true" />
                         <p:commandButton id="submit" value="Login" ajax="true" update="logGrid"
                                          action="#{loginBean.login()}"/>
-                        <h:messages style="color: red"/>
+                        <p:growl id="growl" showDetail="true" life="3000"/>
                     </h:panelGrid>
                 </p:panel>
             </h:form>
@@ -59,7 +59,7 @@
                         <h:outputLabel/>
                         <p:commandButton id="submit" value="Register" ajax="true" update="regGrid"
                                      action="#{registrationBean.register()}"/>
-                        <h:messages style="color: red"/>
+                        <p:growl id="growl" showDetail="true" life="3000"/>
                     </h:panelGrid>
                 </p:panel>
             </h:form>

@@ -47,11 +47,18 @@ public class RegistrationBean {
     /**
      * Calls PublicArea.register(User user) 
      */
-    public void register() throws MessagingException {
-        String result = sm.register(user);
-        FacesContext.getCurrentInstance()
-            .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    result, null));
+    public void register() {
+        boolean ok = sm.register(user);
+        if(ok) {
+            FacesContext.getCurrentInstance()
+                .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+                        "Info", "Registration Successfull"));
+        }
+        else {
+            FacesContext.getCurrentInstance()
+                .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                        "Error", "Registration Failed"));
+        }
         
     }
     
@@ -64,6 +71,11 @@ public class RegistrationBean {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
         request.getSession().invalidate();
+        
+        context.addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO,"Info", "Unregistration Successfull"));
+        context.getExternalContext().getFlash().setKeepMessages(true);
+        
         return index_page_url;
     }
 

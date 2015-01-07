@@ -39,18 +39,18 @@ public class PublicArea {
      * Calls EntityManager.persist(user)
      * @param user 
      */
-    public String register(User user) throws MessagingException {
+    public boolean register(User user) {
         try {
             String s = em.find(User.class, user.getEmail()).getEmail();
-            return "Registration Failed";
+            return false;
         } catch(NullPointerException e) {
             user.setGroupName(Group.USERS);
             user.setPublic(true);
             em.persist(user);
-            EmailSender.send(user.getEmail() ,
-                        "MeteoCal Registration",
-                        "Congratulations, you signed up on MeteoCal successfully");
-            return "Registration Successfull";
+            //EmailSender.send(user.getEmail() ,
+            //            "MeteoCal Registration",
+            //            "Congratulations, you signed up on MeteoCal successfully");
+            return true;
         }       
     }
 
