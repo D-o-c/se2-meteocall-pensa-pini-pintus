@@ -51,12 +51,12 @@
                                      update="passmsg"
                                      icon="ui-icon-wrench"/>
                 </h:panelGrid>
-                <h:message id="passmsg" for="passform" style="color:red"/>
+                <p:messages style="width:800px;" showDetail="true" autoUpdate="true" closable="true" />
             </h:form>
             <h:form style="padding:20px;">
                 <p:dataTable id="evntable" var="event" value="#{userBean.getUserEvent()}"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}" 
-                             paginator="true" rows="1" style="display: none;">
+                             paginator="true" rows="10" style="display: none;">
                     <p:column>
                         <f:facet name="header">
                             <h:outputText value="Id" />
@@ -81,24 +81,28 @@
                     <!-- DA AGGIUNGERE ALTRE INFO -->
                 </p:dataTable>
                 
+
                 <h3 style="margin-top:0">Export Calendar:</h3>
                 <h:commandLink>
-                    <p:graphicImage library="images" name="xls.png" width="50px" height="50px" alt="xls"/>
-                    
+                    <h:graphicImage library="images" name="xls.png" width="50px" height="50px" />
                     <p:dataExporter type="xls" target="evntable" fileName="MeteoCalEvents" pageOnly="true"/>
                 </h:commandLink>
 
                 <h:commandLink>
-                    <p:graphicImage library="images" name="csv.png" width="50px" height="50px" alt="csv"/>
-                    
+                    <h:graphicImage library="images" name="pdf.png" width="50px" height="50px" />
+                    <p:dataExporter type="pdf" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
+                </h:commandLink>
+
+                <h:commandLink>
+                    <h:graphicImage library="images" name="csv.png" width="50px" height="50px" />
                     <p:dataExporter type="csv" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
                 </h:commandLink>
 
                 <h:commandLink>
-                    <h:graphicImage library="images" name="xml.png" width="50px" height="50px" alt="xml"/>
-                    
+                    <h:graphicImage library="images" name="xml.png" width="50px" height="50px" />
                     <p:dataExporter type="xml" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
                 </h:commandLink>
+
                 
             </h:form>
             <h:form id="uploadform" enctype="multipart/form-data" style="padding:20px;">
@@ -117,4 +121,3 @@
         </section>
     </h:body>
 </html>
-

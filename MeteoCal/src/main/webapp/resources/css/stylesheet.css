@@ -58,6 +58,10 @@ ul, #landmarks {
     text-decoration:none;
 }
 
+#landmarks li a:hover {
+    text-decoration:underline;
+}
+
 #landmarks li a:visited {
     color:#FFFFFF;
     text-decoration:none;

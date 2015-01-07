@@ -55,6 +55,7 @@ public class Event implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @NotNull(message = "May not be empty")
     @Column(name = "END_TIME")
+    
     @Future
     private Date endTime;
     
@@ -126,16 +127,12 @@ public class Event implements Serializable {
         this.pub = pub;
     }
 
-    public boolean isOutdoor() {
-        return outdoor;
-    }
-
-    public void setOutdoor(boolean outdoor) {
-        this.outdoor = outdoor;
-    }
-
     public User getCreator() {
         return creator;
+    }
+
+    public boolean isOutdoor() {
+        return outdoor;
     }
 
     public void setCreator(User creator) {
@@ -178,9 +175,13 @@ public class Event implements Serializable {
     }
 
     public void setPublic(boolean b) {
-        pub=b;
+        pub = b;
+    }
+
+    public void setOutdoor(boolean outdoor) {
+        this.outdoor = outdoor;
     }
     
- 
-    
 }
+    
+
