@@ -1,5 +1,6 @@
 package it.polimi.meteocal.entity;
 
+import it.polimi.meteocal.business.security.entity.WeatherCondition;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -85,7 +86,17 @@ public class Event implements Serializable {
     @NotNull(message = "Location may not be empty")
     @Column(name = "LOCATION")
     private String location;
+    
+    @OneToMany(mappedBy="event", orphanRemoval=true)
+    private List<WeatherCondition> weatherConditions;
 
+    public List<WeatherCondition> getWeatherConditions() {
+        return weatherConditions;
+    }
+
+    public void setWeatherConditions(List<WeatherCondition> weatherConditions) {
+        this.weatherConditions = weatherConditions;
+    }
     
     
     public String getName() {
@@ -183,6 +194,13 @@ public class Event implements Serializable {
         this.outdoor = outdoor;
     }
     
+
+    public void addWeatherCondition(WeatherCondition wc){
+        weatherConditions.add(wc);
+        
+    }
+    
 }
+    
     
 
