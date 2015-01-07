@@ -29,7 +29,6 @@ import org.xml.sax.SAXException;
 import jxl.Cell;
 import jxl.CellType;
 import jxl.LabelCell;
-import jxl.NumberCell;
 import jxl.Sheet;
 import jxl.Workbook;
 import jxl.read.biff.BiffException;
@@ -97,19 +96,31 @@ public class UserArea {
         }
     }
     
-    public ScheduleModel getCalendar(){
+    public ScheduleModel getCalendar(User u){
         ScheduleModel calendar = new DefaultScheduleModel();
-        List<Calendar> temp = getLoggedUser().getEvents();
-        for (Calendar temp1 : temp) {
-            if (temp1.getInviteStatus() == 1) {
-                Event evntTemp = temp1.getEvent();
-                DefaultScheduleEvent dse = new DefaultScheduleEvent(evntTemp.getName(),
-                                                                    evntTemp.getBeginTime(),
-                                                                    evntTemp.getEndTime());
-                dse.setDescription(Long.toString(evntTemp.getEventId()));
-                calendar.addEvent(dse);
-                
+        try{
+            
+            List<Calendar> temp = u.getEvents();
+            for (Calendar temp1 : temp) {
+                if (temp1.getInviteStatus() == 1) {
+                    Event evntTemp = temp1.getEvent();
+                    DefaultScheduleEvent dse = new DefaultScheduleEvent(evntTemp.getName(),
+                                                                        evntTemp.getBeginTime(),
+                                                                        evntTemp.getEndTime());
+                    if (u.getEmail().equals(this.getLoggedUser().getEmail()) || evntTemp.isPub()){
+                        dse.setDescription(Long.toString(evntTemp.getEventId()));
+                    }
+                    else{
+                        dse.setTitle("Private event!");
+                        dse.setDescription(null);
+                    }
+                    calendar.addEvent(dse);
+
+                }
             }
+        }
+        catch (Exception e){
+            
         }
         
         

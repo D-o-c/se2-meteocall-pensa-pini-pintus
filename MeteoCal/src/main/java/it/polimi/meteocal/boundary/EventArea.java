@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -117,8 +116,14 @@ public class EventArea{
     }
 
     
-    public void setCurrentEvent(long eventId) {
-        currentEvent = em.find(Event.class, eventId);
+    public void setCurrentEvent(String id) {
+        if (id == null){
+            currentEvent = new Event();
+            
+        }
+        else{
+            currentEvent = em.find(Event.class, Long.parseLong(id));
+        }
     }
 
     public Event findEvent(long id) {

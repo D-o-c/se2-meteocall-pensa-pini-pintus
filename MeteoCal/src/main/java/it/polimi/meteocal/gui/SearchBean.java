@@ -1,19 +1,28 @@
 package it.polimi.meteocal.gui;
 
+import it.polimi.meteocal.boundary.EventArea;
 import it.polimi.meteocal.boundary.SearchArea;
+import it.polimi.meteocal.boundary.UserArea;
 import it.polimi.meteocal.entity.Contact;
 import it.polimi.meteocal.entity.User;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.inject.Named;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.model.DefaultScheduleEvent;
+import org.primefaces.model.ScheduleEvent;
+import org.primefaces.model.ScheduleModel;
 
 /**
  *
  * @author aldo
  */
-@Named
-@RequestScoped
+@ManagedBean
+@ViewScoped
 public class SearchBean{
 
     private static final String search_page_url = "search?faces-redirect=true";
@@ -24,6 +33,10 @@ public class SearchBean{
     
     @EJB
     SearchArea sm;
+    @EJB
+    UserArea ua;
+    @EJB
+    EventArea ea;
     
     private String searchInput;
     
@@ -124,5 +137,36 @@ public class SearchBean{
      */
     public boolean exist(){
         return sm.exist(getSelectedUser().getEmail());
+    }
+    
+    
+    ScheduleEvent selectedEvent = new DefaultScheduleEvent();
+    private ScheduleModel eventModel;
+    private boolean privateEvent = false;
+
+    public boolean isPrivateEvent() {
+        return privateEvent;
+    }
+
+    public void setPrivateEvent(boolean privateEvent) {
+        this.privateEvent = privateEvent;
+    }
+    
+    @PostConstruct
+    public void init() {
+        eventModel = ua.getCalendar(sm.getSelectedUser());
+       
+    }
+    
+    public ScheduleModel getEventModel() {
+        return eventModel;
+    }
+    
+    public void onEventSelect(SelectEvent selectEvent) {
+        selectedEvent = (ScheduleEvent) selectEvent.getObject();
+        ea.setCurrentEvent(selectedEvent.getDescription());
+        if (selectedEvent.getDescription()==null){
+            privateEvent = true;
+        }
     }
 }

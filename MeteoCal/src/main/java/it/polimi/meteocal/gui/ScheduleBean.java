@@ -33,7 +33,7 @@ public class ScheduleBean implements Serializable {
  
     @PostConstruct
     public void init() {
-        eventModel = ua.getCalendar();
+        eventModel = ua.getCalendar(ua.getLoggedUser());
        
     }
      
@@ -49,9 +49,10 @@ public class ScheduleBean implements Serializable {
         return dateFormat.format(date);
     }
     
-    public String onEventSelect(SelectEvent selectEvent) {
+    public void onEventSelect(SelectEvent selectEvent) {
         selectedEvent = (ScheduleEvent) selectEvent.getObject();
-        return goInEventPage();
+        ea.setCurrentEvent(selectedEvent.getDescription());
+        //return goInEventPage();
     }
     
        
@@ -59,8 +60,8 @@ public class ScheduleBean implements Serializable {
         String title = selectedEvent.getTitle();
         int pos = title.lastIndexOf("$")+1;
         String id = title.substring(pos);*/
-        String id = selectedEvent.getDescription();
-        ea.setCurrentEvent(Long.parseLong(id));
+        //String id = selectedEvent.getDescription();
+        //ea.setCurrentEvent(Long.parseLong(id));
         return "/event?faces-redirect=true";
     }
 

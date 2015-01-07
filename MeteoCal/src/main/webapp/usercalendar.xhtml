@@ -26,12 +26,49 @@
             </ul>
         </header>
         <section>
-        <p class="clear-left" style="margin:0;padding:20px;">#{searchBean.selectedUser.name} #{searchBean.selectedUser.surname}</p>
-        <h:form style="margin:0;padding:20px;">
-            <p:commandButton 
-                action="#{searchBean.addContact()}"
-                value="Add To Contacts" disabled="#{searchBean.exist()}"/>
-        </h:form>
+            <p class="clear-left" style="margin:0;padding:20px;">#{searchBean.selectedUser.name} #{searchBean.selectedUser.surname}</p>
+            <h:form style="margin:0;padding:20px;">
+                <p:commandButton 
+                    action="#{searchBean.addContact()}"
+                    value="Add To Contacts" disabled="#{searchBean.exist()}"/>
+            </h:form>
+
+
+            <h:form id="scheduleform">
+                <p:schedule id="schedule" value="#{searchBean.eventModel}" widgetVar="myschedule"
+                            draggable="false" resizable="false" axisFormat="H(:mm)" timeFormat="H(:mm)"
+                            firstHour="0" showWeekends="true" locale="#{userBean.getLocaleDefault()}">
+
+
+                    <p:ajax event="eventSelect" listener="#{searchBean.onEventSelect}"
+                            update="eventDetails" oncomplete="PF('eventDialog').show();" />
+
+                </p:schedule>
+
+                <p:dialog widgetVar="eventDialog" header="Event Details" showEffect="clip" hideEffect="clip">
+                    <h:panelGrid id="eventDetails" columns="2">
+
+                        <p:outputLabel value="Name:"/>
+                        <p:outputLabel value="#{scheduleBean.currentEvent.name}"/>
+
+                        <p:outputLabel value="Description"/>
+                        <p:outputLabel value="#{scheduleBean.currentEvent.description}"/>
+
+                        <p:outputLabel value="Begin Time:"/>
+                        <p:outputLabel value="#{scheduleBean.currentEvent.beginTime}"/>
+
+                        <p:outputLabel value="End Time:"/>
+                        <p:outputLabel value="#{scheduleBean.currentEvent.endTime}"/>
+
+                        <p:outputLabel value="Location:"/>
+                        <p:outputLabel value="#{scheduleBean.currentEvent.location}"/>
+
+                        <p:commandButton id="goButton" value="Go in Event Page"
+                                         action="#{scheduleBean.goInEventPage()}"
+                                         disabled="#{searchBean.privateEvent}"/>
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
         </section>
     </h:body>
 </html>
