@@ -4,7 +4,6 @@ import it.polimi.meteocal.entity.Contact;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.boundary.EventArea;
 import it.polimi.meteocal.boundary.UserArea;
-import it.polimi.meteocal.entity.Calendar;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -25,10 +24,7 @@ import javax.mail.MessagingException;
 @RequestScoped
 public class EventBean{
     
-    private final static String user_home_with_errors =
-            "/user/home?faces-redirect=true&eventcreatedwitherror=true";
-    private final static String user_home = 
-            "/user/home?faces-redirect=true&eventcreated=true";
+    private final static String user_home = "/user/home?faces-redirect=true";
     
     @EJB
     EventArea ea;
@@ -94,10 +90,17 @@ public class EventBean{
             case 0:
                 updateInviteList();
                 boolean noErrors = ea.createEvent(event, invitedUsers);
+                FacesContext context = FacesContext.getCurrentInstance();
+                context.addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO,"Info", "Event Successfully Created"));
+                context.getExternalContext().getFlash().setKeepMessages(true);
                 if (noErrors){
                     return user_home;
-                }
-                return user_home_with_errors;
+                }   
+                context.addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_WARN,"Warning", "Some Invited Users Not Found!"));
+                context.getExternalContext().getFlash().setKeepMessages(true);
+                return user_home;
             default:
                 return null;
         }

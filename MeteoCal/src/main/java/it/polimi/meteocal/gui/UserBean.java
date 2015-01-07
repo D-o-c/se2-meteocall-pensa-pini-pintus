@@ -1,22 +1,17 @@
 package it.polimi.meteocal.gui;
 
-import it.polimi.meteocal.boundary.EventArea;
 import it.polimi.meteocal.boundary.UserArea;
-import it.polimi.meteocal.control.EmailSender;
-import it.polimi.meteocal.entity.Calendar;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
-import javax.mail.MessagingException;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultScheduleEvent;
@@ -33,8 +28,7 @@ import org.primefaces.model.UploadedFile;
 @ManagedBean
 public class UserBean{
 
-    private static final String home_page_url_pub = "home?faces-redirect=true&visibilitychanged=true";
-    private static final String home_page_url_psw = "home?faces-redirect=true&passwordchanged=true";
+    private static final String home_page = "home?faces-redirect=true";
     
     @EJB
     UserArea ua;
@@ -134,7 +128,15 @@ public class UserBean{
      */
     public String changeCalendarVisibility() {
         ua.changeCalendarVisibility();
-        return home_page_url_pub;
+        
+        String message = "";
+        if(getLoggedUser().isPublic()) message = "public";
+        else message = "private";
+        
+        FacesContext context = FacesContext.getCurrentInstance();
+        context.addMessage(null, new FacesMessage("Info", "Now your calendar is " + message));
+        context.getExternalContext().getFlash().setKeepMessages(true);
+        return home_page;
     }
     
     /**
@@ -144,12 +146,16 @@ public class UserBean{
     public String changePassword() {
         boolean changeIsOk = ua.changePassword(password,newPassword);
         if(changeIsOk) {
-            return home_page_url_psw;
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO,"Info", "Password Successfully Changed"));
+            context.getExternalContext().getFlash().setKeepMessages(true);
+            return home_page;
         }
         else {
             FacesContext.getCurrentInstance()
                     .addMessage(null, new FacesMessage(
-                            FacesMessage.SEVERITY_ERROR,"Please Try Again",null));
+                            FacesMessage.SEVERITY_ERROR,"Password Change Failure!","Please Try Again"));
             return null;
         }
     }
