@@ -3,13 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package it.polimi.meteocal.business.security.control;
+package it.polimi.meteocal.control;
 
+import it.polimi.meteocal.entity.WeatherCondition;
 import it.polimi.meteocal.entity.Event;
-import it.polimi.meteocal.business.security.entity.WeatherCondition;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Lock;
@@ -17,7 +18,6 @@ import javax.ejb.LockType;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.xml.parsers.DocumentBuilder;
@@ -46,37 +46,25 @@ public class WeatherManager {
     
     @Schedule(minute="*", hour="*")
     public void weatherCreation() throws IOException{
-        toDate=new Date();
-    eventList=findAll();
-    for(int i=0;i<eventList.size();i++){
-        if (eventList.get(i).getBeginTime().getYear()==(toDate).getYear()^
-                eventList.get(i).getBeginTime().getMonth()==(toDate).getMonth()^
-                eventList.get(i).getBeginTime().getDate()<=(toDate).getDate()+5^
-                eventList.get(i).isOutdoor()==true ){ 
-                int first=eventList.get(i).getLocation().indexOf(",");
-                int second=eventList.get(i).getLocation().lastIndexOf(",");        
-                String città =eventList.get(i).getLocation().substring(first+1,second) ;
-            
-            
-                Document doc = generateXML(città);
-                
-                getCondition(doc,eventList.get(i));
-    }
-      //  if(eventList.get(i).getBeginTime()!=eventList.get(i).getEndTime()){}
-            
-        
-    }
-    }
-    
-    public List<Event> findAll(){
-        return em.createNamedQuery(Event.findAll, Event.class)
-                                .getResultList();
+        toDate = new Date();
+        eventList = em.createNamedQuery(Event.findAll, Event.class).getResultList();;
+        for (Event eventList1 : eventList) {
+            if (eventList1.getBeginTime().getTime() >= toDate.getTime() + 432000000&& 
+                    eventList1.isOutdoor() == true) {
+                int first = eventList1.getLocation().indexOf(",");
+                int second = eventList1.getLocation().lastIndexOf(",");
+                String city = eventList1.getLocation().substring(first+1, second);
+                city = city.replaceAll(" ", "+");
+                Document doc = generateXML(city);
+                getCondition(doc, eventList1);
+            }
+        }
+
     }
     
     public static Document generateXML(String name) throws IOException {
 
-            String url = null;
-            String XmlData = null;
+            String url;
 
             // creating the URL
             //"http://weather.yahooapis.com/forecastrss?w=" 
@@ -104,14 +92,12 @@ public class WeatherManager {
 
                 doc = builder.parse(is);
             } catch (Exception ex) {
-                System.err.println("unable to load XML: " + ex);
             }
             return doc;
         }
         
         public void getCondition(Document doc,Event event){
             String city = null;
-            String unit = null;
             try {
 
             doc.getDocumentElement().normalize();
@@ -198,7 +184,6 @@ public class WeatherManager {
             }
             
         } catch (Exception e) {
-            e.printStackTrace();
         }
         } 
     

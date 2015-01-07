@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package it.polimi.meteocal.business.security.entity;
+package it.polimi.meteocal.entity;
 
+import it.polimi.meteocal.entity.primarykeys.WeatherConditionPK;
 import it.polimi.meteocal.entity.Event;
 import java.io.Serializable;
 import java.util.Date;

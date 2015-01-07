@@ -47,9 +47,9 @@ public class PublicArea {
             user.setGroupName(Group.USERS);
             user.setPublic(true);
             em.persist(user);
-            //EmailSender.send(user.getEmail() ,
-            //            "MeteoCal Registration",
-            //            "Congratulations, you signed up on MeteoCal successfully");
+            EmailSender.send(user.getEmail() ,
+                        "MeteoCal Registration",
+                        "Congratulations, you signed up on MeteoCal successfully");
             return true;
         }       
     }

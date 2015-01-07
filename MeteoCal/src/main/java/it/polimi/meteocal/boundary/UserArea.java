@@ -167,7 +167,6 @@ public class UserArea {
                 this.getLoggedUser().getEvents().get(i).setInviteStatus(1);
             }
         }
-        //e.addInvited(this.getLoggedUser(), 1);
         em.merge(selectedEvent);
         em.merge(this.getLoggedUser());
     }

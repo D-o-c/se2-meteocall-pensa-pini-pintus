@@ -1,6 +1,5 @@
 package it.polimi.meteocal.entity;
 
-import it.polimi.meteocal.business.security.entity.WeatherCondition;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
