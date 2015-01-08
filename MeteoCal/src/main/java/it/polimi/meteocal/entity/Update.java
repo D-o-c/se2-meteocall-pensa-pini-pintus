@@ -10,30 +10,69 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
 /**
  *
  * @author Anton
  */
-@Entity (name = "UPDATE")
+@Entity (name = "UPDATE_")
 @IdClass(UpdatePK.class)
 public class Update implements Serializable {
     private static final long serialVersionUID = 1L;
+    
+    @Id
+    @Column(name = "EVENT_ID")
+    private long eventId;
+    
+    @ManyToOne
+    @PrimaryKeyJoinColumn(name="EVENT_ID", referencedColumnName="ID")
+    private Event event;
    
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Id
     @Column(name = "UPDATE_NUMBER")
     private long number;
     
-    @Id
-    @ManyToOne
-    @JoinColumn(name = "ID")
-    private Event eventId;
-    
     @NotNull
     @Column(name = "DESCRIPTION")
     private String description;
+    
+    @ManyToOne
+    @JoinColumn(name="USER_EMAIL", referencedColumnName="EMAIL")
+    private User user;
+    
+    @Column(name = "READ_")
+    private boolean read;
+
+    public Update() {
+    }
+    
+    
+    public Update (Event e, User u, String d){
+        this.event = e;
+        this.eventId = e.getEventId();
+        this.description = d;
+        this.user = u;
+        this.read = false;
+    }
+
+    public long getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(long eventId) {
+        this.eventId = eventId;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
 
     public long getNumber() {
         return number;
@@ -43,14 +82,6 @@ public class Update implements Serializable {
         this.number = number;
     }
 
-    public Event getEventId() {
-        return eventId;
-    }
-
-    public void setEventId(Event event) {
-        this.eventId = event;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -58,10 +89,23 @@ public class Update implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
-    
-    
-    
 
+    public User getUser() {
+        return user;
+    }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public boolean isRead() {
+        return read;
+    }
+
+    public void setRead(boolean read) {
+        this.read = read;
+    }
+
+    
     
 }

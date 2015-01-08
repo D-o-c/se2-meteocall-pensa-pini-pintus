@@ -47,9 +47,9 @@ public class WeatherManager {
     @Schedule(minute="*", hour="*")
     public void weatherCreation() throws IOException{
         toDate = new Date();
-        eventList = em.createNamedQuery(Event.findAll, Event.class).getResultList();;
+        eventList = em.createNamedQuery(Event.findAll, Event.class).getResultList();
         for (Event eventList1 : eventList) {
-            if (eventList1.getBeginTime().getTime() >= toDate.getTime() + 432000000&& 
+            if (eventList1.getBeginTime().getTime() <= toDate.getTime() + 432000000 && 
                     eventList1.isOutdoor() == true) {
                 int first = eventList1.getLocation().indexOf(",");
                 int second = eventList1.getLocation().lastIndexOf(",");
@@ -64,41 +64,41 @@ public class WeatherManager {
     
     public static Document generateXML(String name) throws IOException {
 
-            String url;
+        String url;
 
-            // creating the URL
-            //"http://weather.yahooapis.com/forecastrss?w=" 
-            url =  "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22"+name+"%2C%20ak%22)&format=xml&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
-            URL xmlUrl = new URL(url);
-            InputStream in = xmlUrl.openStream();
+        // creating the URL
+        //"http://weather.yahooapis.com/forecastrss?w=" 
+        url =  "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22"+name+"%2C%20ak%22)&format=xml&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+        URL xmlUrl = new URL(url);
+        InputStream in = xmlUrl.openStream();
 
-            // parsing the XmlUrl
-            Document doc = parse(in);
+        // parsing the XmlUrl
+        Document doc = parse(in);
 
-            return doc;
+        return doc;
 
+    }
+
+    public static Document parse(InputStream is) {
+        Document doc = null;
+        DocumentBuilderFactory domFactory;
+        DocumentBuilder builder;
+
+        try {
+            domFactory = DocumentBuilderFactory.newInstance();
+            domFactory.setValidating(false);
+            domFactory.setNamespaceAware(false);
+            builder = domFactory.newDocumentBuilder();
+
+            doc = builder.parse(is);
+        } catch (Exception ex) {
         }
+        return doc;
+    }
 
-        public static Document parse(InputStream is) {
-            Document doc = null;
-            DocumentBuilderFactory domFactory;
-            DocumentBuilder builder;
-
-            try {
-                domFactory = DocumentBuilderFactory.newInstance();
-                domFactory.setValidating(false);
-                domFactory.setNamespaceAware(false);
-                builder = domFactory.newDocumentBuilder();
-
-                doc = builder.parse(is);
-            } catch (Exception ex) {
-            }
-            return doc;
-        }
-        
-        public void getCondition(Document doc,Event event){
-            String city = null;
-            try {
+    public void getCondition(Document doc,Event event){
+        String city = null;
+        try {
 
             doc.getDocumentElement().normalize();
 
@@ -123,71 +123,64 @@ public class WeatherManager {
 
                             Element e = (Element) n;
                             city = e.getAttribute("city");
-                            
+
 
                         }
-                   } 
-                                
-                    
-                    		NodeList n15 =eElement.getElementsByTagName("yweather:forecast");
-                                int daysNumber;
-                                if (event.getBeginTime().getDate()<event.getEndTime().getDate()){
-                                    daysNumber=event.getEndTime().getDate()-event.getBeginTime().getDate()+1;
-                                    }else{
-                                    daysNumber=event.getEndTime().getDate()+32-event.getBeginTime().getDate();
+                    } 
+
+
+                    NodeList n15 =eElement.getElementsByTagName("yweather:forecast");
+                    int daysNumber;
+                    if (event.getBeginTime().getDate()<event.getEndTime().getDate()){
+                        daysNumber=event.getEndTime().getDate()-event.getBeginTime().getDate()+1;
+                    }else{
+                        daysNumber=event.getEndTime().getDate()+32-event.getBeginTime().getDate();
+                    }
+
+                    for(int i=0;i<daysNumber;i++){
+                        for (int tempr=0;tempr< n15.getLength();tempr++){
+                            Node n5 =n15.item(tempr);
+
+                            if(nNode.getNodeType() ==Node.ELEMENT_NODE){
+                                    Element e5 =(Element) n5;
+
+                            Date day=new Date(event.getBeginTime().getYear(),event.getBeginTime().getMonth(),event.getBeginTime().getDate()+i);//giorno dell'evento
+
+                            int giornoGiusto=tempr+toDate.getDate();//oggi+tempr 
+                            if(day.getDate()==giornoGiusto ){
+
+                                WeatherCondition weather = new WeatherCondition(day,
+                                                                event,
+                                                                e5.getAttribute("text"),
+                                                                Integer.parseInt(e5.getAttribute("code")));
+
+                                int yet=0;
+                                for(int k=0;k<event.getWeatherConditions().size();k++){
+                                    if(event.getWeatherConditions().get(k).getTime().getDate()==giornoGiusto){
+                                        int tempCode = event.getWeatherConditions().get(k).getOldCode();
+                                        event.getWeatherConditions().set(k,weather);
+                                        event.getWeatherConditions().get(k).setOldCode(tempCode);
+                                        yet=1;
+                                 }
+                                }    
+
+                                if(yet==0){
+                                    //event.addWeatherCondition(new WeatherCondition(day,event,e5.getAttribute("text")));
+                                    event.addWeatherCondition(weather);
+
                                 }
-                                
-                            for(int i=0;i<daysNumber;i++){
-                    		for (int tempr=0;tempr< n15.getLength();tempr++){
-                    			Node n5 =n15.item(tempr);
-                                        
-                                        
-                                        
-                    			if(nNode.getNodeType() ==Node.ELEMENT_NODE){
-                    				Element e5 =(Element) n5;
-                    				
-                                        Date day=new Date(event.getBeginTime().getYear(),event.getBeginTime().getMonth(),event.getBeginTime().getDate()+i);//giorno dell'evento
-                                                
-                    			
-                                        
-                                        int giornoGiusto=tempr+toDate.getDate();//oggi+tempr 
-                                        if(day.getDate()==giornoGiusto ){
-                                          
-                                                    
-                                        WeatherCondition weather = new WeatherCondition(day,event,e5.getAttribute("text"));
-                              
-                                        int yet=0;
-                                           for(int k=0;k<event.getWeatherConditions().size();k++){
-                                            if(event.getWeatherConditions().get(k).getTime().getDate()==giornoGiusto){
-                                                event.getWeatherConditions().get(k).setType(weather.getType());
-                                                yet=1;
-                                            }
-                                        }    
-       
-                                         if(yet==0){
-                                           event.addWeatherCondition(new WeatherCondition(day,event,e5.getAttribute("text")));
-                                                    
-                                                    }
-                                        //em.persist(event.getWeatherConditions().get(event.getWeatherConditions().size()-1));
-                                           em.merge(event);
-                                        
-                                       
-                                        //}
-                                            
-                                       
-                                        }
-                                        }
+
+                                em.merge(event);
                                 }
-                    		}
-                    
+                            }
+                        }
+                    }
+
                 }
             }
-            
-        } catch (Exception e) {
+
         }
-        } 
-    
-        public Event update(){
-            return null; 
+        catch (Exception e) {
         }
+    }
 }

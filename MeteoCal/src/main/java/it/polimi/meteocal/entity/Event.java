@@ -44,6 +44,9 @@ public class Event implements Serializable {
    
     @OneToMany(mappedBy="event", cascade = CascadeType.PERSIST)
     private List<Calendar> invited;
+    
+    @OneToMany(mappedBy="event", cascade = CascadeType.PERSIST)
+    private List<Update> update;
    
    
     @Temporal(TemporalType.TIMESTAMP)
@@ -198,7 +201,18 @@ public class Event implements Serializable {
         weatherConditions.add(wc);
         
     }
+
+    public List<Update> getUpdate() {
+        return update;
+    }
+
+    public void setUpdate(List<Update> update) {
+        this.update = update;
+    }
     
+    public void addUpdate(Update u){
+        this.update.add(u);
+    }
 }
     
     

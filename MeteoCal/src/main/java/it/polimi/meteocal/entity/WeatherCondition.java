@@ -6,9 +6,9 @@
 package it.polimi.meteocal.entity;
 
 import it.polimi.meteocal.entity.primarykeys.WeatherConditionPK;
-import it.polimi.meteocal.entity.Event;
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
@@ -28,6 +28,7 @@ public class WeatherCondition implements Serializable {
     
     @Id
     @Temporal(TemporalType.DATE)
+    @Column(name="TIME_")
     private Date time;
     
     @ManyToOne
@@ -35,17 +36,27 @@ public class WeatherCondition implements Serializable {
     @JoinColumn(name="ID")
     private Event event;
     
-   
+    @Column(name="CODE")
+    private int code;
+    
+    @Column(name="TEMPERATURE")
+    private int temp;
+    
+    @Column(name="OLD_CODE")
+    private int oldCode;
+    
+    @Column(name="TYPE")
     private String type;
     
     public WeatherCondition(){
     }
     
     
-    public WeatherCondition(Date time, Event event,String type){
+    public WeatherCondition(Date time, Event event,String type, int code){
         this.event=event;
         this.time=time;
         this.type=type;
+        this.code=this.oldCode=code;
     }
     
     
@@ -72,6 +83,30 @@ public class WeatherCondition implements Serializable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public int getTemp() {
+        return temp;
+    }
+
+    public void setTemp(int temp) {
+        this.temp = temp;
+    }
+
+    public int getOldCode() {
+        return oldCode;
+    }
+
+    public void setOldCode(int oldCode) {
+        this.oldCode = oldCode;
     }
     
 }
