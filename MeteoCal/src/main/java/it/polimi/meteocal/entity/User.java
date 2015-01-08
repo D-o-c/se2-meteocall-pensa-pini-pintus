@@ -132,5 +132,8 @@ public class User implements Serializable {
         return contacts;
     }
     
+    public boolean equals(User user) {
+        return this.email.equals(user.email);
+    }
     
 }

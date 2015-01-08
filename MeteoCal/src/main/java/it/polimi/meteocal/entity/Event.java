@@ -30,10 +30,14 @@ import javax.validation.constraints.Pattern;
 @Entity (name="EVENT")
 @NamedQueries({
         @NamedQuery(name = Event.findAll, 
-                query = "SELECT e FROM EVENT e")
+                query = "SELECT e FROM EVENT e"),
+        @NamedQuery(name = Event.findByCreator, 
+                    query = "SELECT e FROM EVENT e WHERE e.creator.email = ?1")
 })
 public class Event implements Serializable {
    
+    public final static String findByCreator = "Event.findByCreator";
+    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
@@ -181,6 +185,10 @@ public class Event implements Serializable {
 
     public void setOutdoor(boolean outdoor) {
         this.outdoor = outdoor;
+    }
+    
+    public boolean equals(Event event) {
+        return this.eventId == event.eventId;
     }
     
 }

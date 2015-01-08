@@ -112,6 +112,10 @@
                 <p:commandButton value="Submit" ajax="false" actionListener="#{userBean.upload}" update="uploadmsg"/>
                 <p:messages style="color: red;"/>
             </h:form>
+            <h:form style="padding:20px;">
+                <h3 style="margin-top:0">Unregister Your Account</h3>
+                <p:commandButton value="Unregister" action="#{registrationBean.unregister()}"/>
+            </h:form>
         </section>
     </h:body>
 </html>
