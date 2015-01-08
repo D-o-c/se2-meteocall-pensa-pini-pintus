@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor. 
--->
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
@@ -11,13 +6,25 @@ and open the template in the editor.
     <h:head>
         <title>Change #{eventBean.getCurrentEvent().name} info</title>
         <h:outputStylesheet library="css" name="stylesheet.css" />
+        <script>
+            function myFunction() {
+                PF('gmap').show();
+                var str = document.getElementById("modifyeventform:location").value;
+                var parts = str.split(",");
+                var address = parts[0].split(" ").join("+");
+                var city = parts[1].split(" ").join("");
+                var state = parts[2].split(" ").join("");
+                var location = address+","+city+"+"+state;
+                document.getElementById("gmap").src = "https://www.google.com/maps/embed/v1/place?key=AIzaSyDDm0i7Jy_achXhFjVg8LcT1kbmi8wmdV4&amp;q="+location;
+            }
+        </script>
     </h:head>
     <h:body>
         <header>
             <h1 id="title">MeteoCal</h1>
             <h:form id="searchForm" class="float-left">
                 <p:inputText value="#{searchBean.searchInput}" id="keyword"/>
-                <p:commandButton style="margin-left: 20px;" action="#{searchBean.findUser()}" value="Search"/>
+                <p:commandButton class="searchUsersButton" action="#{searchBean.findUser()}" icon="ui-icon-search"/>
                 <p:watermark for="keyword" value="Search..." id="watermark" />
             </h:form>
             <ul id="landmarks">
@@ -30,64 +37,68 @@ and open the template in the editor.
         </header>
         <section>
             <h:form id="modifyeventform" class="clear-left">
-                <p:panel header="Change Event Info Form"  visible="#{eventBean.isCreator()}">
+                <p:growl id="growl" life="3000"/>
+                <p:panel header="Change Event Info Form" visible="#{eventBean.isCreator()}">
                     <p:panelGrid columns="3">
+                       
                         <p:outputLabel value="Event Name"/>
-                        <p:inputText id="name" value="#{eventBean.getCurrentEvent().name}" 
-                                     required="true">
-                            <p:ajax update="namemsg"/>
-                        </p:inputText>
-                        <p:message id="namemsg" for="name" />
-
+                        <p:inputText id="name" value="#{eventBean.getCurrentEvent().name}"/>
+                        <p:outputLabel value=""/>
+                       
                         <p:outputLabel value="Description"/>
                         <p:inputTextarea id="description" value="#{eventBean.getCurrentEvent().description}"
                                          rows="5" cols="30" counter="display" maxlength="100"
-                                         counterTemplate="{0} characters remaining." autoResize="false" 
-                                         required="true"/>
+                                         counterTemplate="{0} characters remaining." autoResize="false"/>
                         <h:outputText id="display" />
-
-                        <p:outputLabel value="Location, write &quot;address, city, state&quot;" />
-                        <p:inputText id="location" value="#{eventBean.getCurrentEvent().location}"
-                                     required="true">
-                            <p:ajax update="locationmsg"/>
-                        </p:inputText>
-                        <p:message id="locationmsg" for="location" />
 
                         <p:outputLabel value="Public"/>
                         <p:selectBooleanCheckbox value="#{eventBean.getCurrentEvent().pub}"/>
-                        <p></p>
-                        
+                        <p:outputLabel value=""/>
+                       
                         <p:outputLabel value="Outdoor"/>
                         <p:selectBooleanCheckbox value="#{eventBean.getCurrentEvent().outdoor}"/>
-                        <p></p>
+                        <p:outputLabel value=""/>
 
                         <p:outputLabel value="Begin time"/>
                         <p:calendar id="beginTime" value="#{eventBean.getCurrentEvent().beginTime}"
                                     pages="3" effect="fold" mindate="#{scheduleBean.today()}"
-                                    pattern="dd/MM/yyyy HH:mm">
-                            <p:ajax update="beginTimemsg"/>
-                        </p:calendar>
-                        <p:message id="beginTimemsg" for="beginTime" />
-
-
+                                    pattern="dd/MM/yyyy HH:mm"/>
+                        <p:outputLabel value=""/>    
+                       
                         <p:outputLabel value="End time"/>
                         <p:calendar id="endTime" value="#{eventBean.getCurrentEvent().endTime}"
                                     pages="3" effect="fold" mindate="#{scheduleBean.today()}"
-                                    pattern="dd/MM/yyyy HH:mm">
-                        </p:calendar>
-                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                                    pattern="dd/MM/yyyy HH:mm"/>
+                        <p:outputLabel value=""/>
 
-                        <p>Insert email of invited users separated by ";"</p>
+                        <p:outputLabel value="Location, write &quot;address, city, state&quot;" />
+                        <p:inputText id="location" value="#{eventBean.getCurrentEvent().location}" />
+                        <p:commandButton value="Check" type="button" onclick="myFunction()" />
+                        
+                        <p:outputLabel value="Insert email of invited users separated by &quot;;&quot;" />
                         <p:inputTextarea value="#{eventBean.invites}" rows="10" cols="50"
                                          completeMethod="#{eventBean.complete}"
                                          queryDelay="500" minQueryLength="2"/>
+                        <p:outputLabel value=""/>
 
-
-                        <p:commandButton id="submit" value="save Event" update="@all" ajax="true"
-                                        action="#{eventBean.saveEvent()}" />
+                        <p:outputLabel value=""/>
+                        <p:commandButton value="Save Event"
+                                         action="#{eventBean.saveEvent()}"
+                                         update="@all"
+                                         ajax="true" />
+                        <p:outputLabel value=""/>
                        </p:panelGrid>
                 </p:panel>
             </h:form>
+            <p:dialog header="Google Map" widgetVar="gmap" modal="true" height="450">
+                <iframe
+                    id="gmap"
+                    width="600"
+                    height="450"
+                    frameborder="0" 
+                    src="">
+                </iframe>
+            </p:dialog>
         </section>
     </h:body>
 </html>
