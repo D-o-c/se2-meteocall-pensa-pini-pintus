@@ -69,6 +69,58 @@
                     </p:outputPanel>
                 </p:dialog>
             </h:form>
+            
+            
+            
+            
+            <h:form>
+                <p:dataList value="#{userBean.getUpdate()}" var="update" type="unordered"
+                            itemType="none" paginator="true" rows="10" styleClass="paginated">
+                    <f:facet name="header">
+                        Notifies
+                    </f:facet>
+                    <!--<p:commandLink update=":form:notifyDetail" oncomplete="PF('notifyDialog').show()"
+                                   title="View Detail" styleClass="ui-icon ui-icon-search"
+                                   style="float:left;margin-right:10px">
+                        <f:setPropertyActionListener value="#{event}" target="#{userBean.selectedEvent}" />
+                        <h:outputText value="#{event.name}, #{event.location}" />
+                    </p:commandLink>-->
+                    <p:commandLink title="Set read">
+                        <f:setPropertyActionListener value="#{update}" target="#{userBean.setNotifyRead}"/>
+                        <h:outputText value="#{update.event.name}, #{update.description}"/>
+                    </p:commandLink>
+                    <h:outputText value="#{update.event.name}, #{update.description}" style="display:inline-block"/>
+                </p:dataList>
+            
+            
+                <p:dialog header="Notify Info" widgetVar="notifyDialog" modal="true"
+                          showEffect="blind" hideEffect="explode" resizable="false">
+                    <p:outputPanel id="notifyDetail" style="text-align:center;">
+                        <p:panelGrid  columns="2"  columnClasses="label,value">
+                            <h:outputText value="Name:" />
+                            <h:outputText value="#{userBean.selectedEvent.name}" />
+
+                            <h:outputText value="Description" />
+                            <h:outputText value="#{userBean.selectedEvent.description}" />
+
+                            <h:outputText value="Begin Time" />
+                            <h:outputText value="#{userBean.selectedEvent.beginTime}" />
+
+                            <h:outputText value="End Time" />
+                            <h:outputText value="#{userBean.selectedEvent.endTime}" />
+
+                            <h:outputText value="Location" />
+                            <h:outputText value="#{userBean.selectedEvent.location}" />
+                            
+                            <p></p>
+                            <p:panelGrid columns="2" style="margin: 0 auto;">
+                                <p:commandButton ajax="true" value="Accept" action="#{userBean.accept()}"/>
+                                <p:commandButton value="Deny" action="#{userBean.deny()}" />
+                            </p:panelGrid>
+                        </p:panelGrid>
+                    </p:outputPanel>
+                </p:dialog>
+            </h:form>
         </section>
     </h:body>
 </html>

@@ -2,6 +2,7 @@ package it.polimi.meteocal.gui;
 
 import it.polimi.meteocal.boundary.UserArea;
 import it.polimi.meteocal.entity.Event;
+import it.polimi.meteocal.entity.Update;
 import it.polimi.meteocal.entity.User;
 import java.util.ArrayList;
 import java.util.List;
@@ -99,7 +100,17 @@ public class UserBean{
                 invites.add(ua.getLoggedUser().getEvents().get(i).getEvent());
             }
         }
-        return invites.size();
+        int count=0;
+        for (Update u : ua.getLoggedUser().getNotifies()){
+            if (!u.isRead()){
+                count++;
+            }
+        }
+        return invites.size() + count;
+    }
+    
+    public void setNotifyRead(Update u){
+        u.setRead(true);
     }
     
     public Event getSelectedEvent() {
