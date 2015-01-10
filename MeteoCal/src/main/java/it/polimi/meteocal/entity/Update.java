@@ -48,15 +48,6 @@ public class Update implements Serializable {
 
     public Update() {
     }
-    
-    
-    public Update (Event e, User u, String d){
-        this.event = e;
-        this.eventId = e.getEventId();
-        this.description = d;
-        this.user = u;
-        this.read = false;
-    }
 
     public long getEventId() {
         return eventId;

@@ -39,6 +39,7 @@ public class PublicArea {
      * Sets the user to public
      * Calls EntityManager.persist(user)
      * @param user 
+     * @return  
      */
     public boolean register(User user) {
         try {

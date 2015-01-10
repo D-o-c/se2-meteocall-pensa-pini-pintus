@@ -28,6 +28,8 @@ import javax.persistence.PersistenceContext;
 @Lock(LockType.READ) // allows timers to execute in parallel
 @Stateless
 public class UpdateManager {
+
+    
     
     @PersistenceContext
     EntityManager em;
@@ -39,6 +41,7 @@ public class UpdateManager {
     public void sendNotifies(){
         
         List<Event> events = em.createNamedQuery(Event.findAll, Event.class).getResultList();
+        
         
         //Bad weather one day before (for all partecipants):
         for (Event event : events) {
@@ -58,7 +61,12 @@ public class UpdateManager {
                                 EmailSender.send(c.getUserEmail(),
                                     "Bad weather for you event",
                                     desc);
-                                Update u = new Update(event, c.getUser(), desc);
+                                Update u = new Update();
+                                u.setEvent(event);
+                                u.setUser(c.getUser());
+                                u.setDescription(desc);
+                                u.setEventId(event.getEventId());
+                                u.setRead(false);
                                 event.addUpdate(u);
                                 c.getUser().addNotify(u);
                                 em.merge(event);
@@ -67,6 +75,7 @@ public class UpdateManager {
                         }
                         
                         bwodb.add(event.getEventId());
+                        break;
                     }
                 }
             }
@@ -89,12 +98,18 @@ public class UpdateManager {
                         EmailSender.send(event.getCreator().getEmail(),
                                 "Bad weather for you event",
                                 desc);
-                        Update u = new Update(event, event.getCreator(), desc);
+                        Update u = new Update();
+                        u.setEvent(event);
+                        u.setUser(event.getCreator());
+                        u.setDescription(desc);
+                        u.setEventId(event.getEventId());
+                        u.setRead(false);
                         event.addUpdate(u);
                         event.getCreator().addNotify(u);
                         em.merge(event);
                         em.merge(event.getCreator());
                         bwtdb.add(event.getEventId());
+                        break;
                     }
                 }
             }
@@ -117,16 +132,48 @@ public class UpdateManager {
                             EmailSender.send(c.getUserEmail(),
                                 "Weather changed",
                                 desc);
-                            Update u = new Update(event, c.getUser(), desc);
+                            Update u = new Update();
+                            u.setEvent(event);
+                            u.setUser(c.getUser());
+                            u.setDescription(desc);
+                            u.setEventId(event.getEventId());
+                            u.setRead(false);
                             event.addUpdate(u);
                             c.getUser().addNotify(u);
                             em.merge(event);
                             em.merge(c.getUser());
                         }
                     }
+                    break;
                 }
             }
             
+        }
+        
+    }
+    
+    public void updateFromEventUpdate(Event event) {
+        for (Calendar c : event.getInvited()){
+            if (c.getInviteStatus()==1){
+                String desc = "The info for this event is just changed\n\n" + 
+                        "Name: " + event.getName() + "\n" + 
+                        "Description: " + event.getDescription() +
+                        "Begin Time: " + event.getBeginTime() +
+                        "Location: " + event.getLocation();
+                EmailSender.send(c.getUserEmail(),
+                    "Event info changed",
+                    desc);
+                Update u = new Update();
+                u.setEvent(event);
+                u.setUser(c.getUser());
+                u.setDescription(desc);
+                u.setEventId(event.getEventId());
+                u.setRead(false);
+                event.addUpdate(u);
+                c.getUser().addNotify(u);
+                em.merge(event);
+                em.merge(c.getUser());
+            }
         }
         
     }

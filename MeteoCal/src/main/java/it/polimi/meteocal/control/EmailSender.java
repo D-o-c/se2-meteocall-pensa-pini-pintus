@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Properties;
  
 import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.NoSuchProviderException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -56,7 +54,7 @@ public class EmailSender {
 
             } finally{
                 t.close();
-            }
+            } 
         }
         catch(Exception e){
             

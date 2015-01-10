@@ -1,6 +1,7 @@
 package it.polimi.meteocal.boundary;
 
 import it.polimi.meteocal.control.EmailSender;
+import it.polimi.meteocal.control.UpdateManager;
 import it.polimi.meteocal.entity.Calendar;
 import it.polimi.meteocal.entity.Contact;
 import it.polimi.meteocal.entity.Event;
@@ -22,6 +23,8 @@ public class EventArea{
     
     @PersistenceContext
     EntityManager em;
+    
+    UpdateManager um;
     
     @Inject
     Principal principal;
@@ -79,6 +82,7 @@ public class EventArea{
     public void updateCurrentEvent(List<String> invitedUsers){
         sendInvite(currentEvent, invitedUsers);
         em.merge(currentEvent);
+        um.updateFromEventUpdate(currentEvent);
     }
     
     private boolean sendInvite(Event e, List<String> iu){
