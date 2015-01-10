@@ -155,5 +155,8 @@ public class User implements Serializable {
         this.public_ = public_;
     }
     
+    public boolean equals(User user) {
+        return this.email.equals(user.email);
+    }
     
 }

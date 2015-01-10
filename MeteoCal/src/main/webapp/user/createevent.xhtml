@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
@@ -11,13 +6,25 @@ and open the template in the editor.
     <h:head>
         <title>Create new event</title>
         <h:outputStylesheet library="css" name="stylesheet.css" />
+        <script>
+            function myFunction() {
+                PF('gmap').show();
+                var str = document.getElementById("createeventform:location").value;
+                var parts = str.split(",");
+                var address = parts[0].split(" ").join("+");
+                var city = parts[1].split(" ").join("");
+                var state = parts[2].split(" ").join("");
+                var location = address+","+city+"+"+state;
+                document.getElementById("gmap").src = "https://www.google.com/maps/embed/v1/place?key=AIzaSyDDm0i7Jy_achXhFjVg8LcT1kbmi8wmdV4&amp;q="+location;
+            }
+        </script>
     </h:head>
     <h:body>
         <header>
             <h1 id="title">MeteoCal</h1>
             <h:form id="searchForm" class="float-left">
                 <p:inputText value="#{searchBean.searchInput}" id="keyword"/>
-                <p:commandButton style="margin-left: 20px;" action="#{searchBean.findUser()}" value="Search"/>
+                <p:commandButton class="searchUsersButton" action="#{searchBean.findUser()}" icon="ui-icon-search"/>
                 <p:watermark for="keyword" value="Search..." id="watermark" />
             </h:form>
             <ul id="landmarks">
@@ -30,7 +37,7 @@ and open the template in the editor.
         </header>
         <section>
             <h:form id="createeventform" class="clear-left">
-                <p:growl id="growl"/>
+                <p:growl id="growl" life="3000"/>
                 <p:panel header="New Event Form">
                     <p:panelGrid columns="3">
                        
@@ -65,9 +72,9 @@ and open the template in the editor.
                         <p:outputLabel value=""/>
 
                         <p:outputLabel value="Location, write &quot;address, city, state&quot;" />
-                        <p:inputText id="location" value="#{eventBean.event.location}"/>
-
-                        <p:outputLabel value=""/>
+                        <p:inputText id="location" value="#{eventBean.event.location}" />
+                        <p:commandButton value="Check" type="button" onclick="myFunction()" />
+                        
                         <p:outputLabel value="Insert email of invited users separated by &quot;;&quot;" />
                         <p:inputTextarea value="#{eventBean.invites}" rows="10" cols="50"
                                          completeMethod="#{eventBean.complete}"
@@ -83,6 +90,15 @@ and open the template in the editor.
                        </p:panelGrid>
                 </p:panel>
             </h:form>
+            <p:dialog header="Google Map" widgetVar="gmap" modal="true" height="450">
+                <iframe
+                    id="gmap"
+                    width="600"
+                    height="450"
+                    frameborder="0" 
+                    src="">
+                </iframe>
+            </p:dialog>
         </section>
     </h:body>
 </html>
