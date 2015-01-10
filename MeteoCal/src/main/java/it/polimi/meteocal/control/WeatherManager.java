@@ -45,13 +45,13 @@ public class WeatherManager {
     private List<Event> eventList;
     Date toDate;
     
- //  @Schedule(minute="*", hour="*")
+    @Schedule(minute="*", hour="*")
     public void weatherCreation() throws IOException{
         toDate = new Date();
         eventList = em.createNamedQuery(Event.findAll, Event.class).getResultList();
         for (Event eventList1 : eventList) {
             if (eventList1.getBeginTime().getTime() <= toDate.getTime() + 432000000 && 
-                    eventList1.isOutdoor() == true) {
+                    eventList1.isOutdoor() == true  && eventList1.getEndTime().after(toDate)) {
                 int first = eventList1.getLocation().indexOf(",");
                 int second = eventList1.getLocation().lastIndexOf(",");
                 String city = eventList1.getLocation().substring(first+1, second);
@@ -98,7 +98,7 @@ public class WeatherManager {
     }
 
     public void getCondition(Document doc,Event event){
-        String city = null;
+       // String city = null;
         try {
 
             doc.getDocumentElement().normalize();
@@ -123,7 +123,7 @@ public class WeatherManager {
                         if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 
                             Element e = (Element) n;
-                            city = e.getAttribute("city");
+                          //  city = e.getAttribute("city");
 
 
                         }
@@ -149,6 +149,8 @@ public class WeatherManager {
 
                             int giornoGiusto=tempr+toDate.getDate();//oggi+tempr 
                             if(day.getDate()==giornoGiusto ){
+                                
+                                String prova = e5.getAttribute("temp");
 
                                 WeatherCondition weather = new WeatherCondition(day,
                                                                 event,

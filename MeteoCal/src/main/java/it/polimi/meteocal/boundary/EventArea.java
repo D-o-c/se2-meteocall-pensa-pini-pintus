@@ -85,6 +85,8 @@ public class EventArea{
         User creator = getLoggedUser();
         event.setCreator(creator);
         //persists the event into the database
+        event.setBwodb(false);
+        event.setBwtdb(false);
         em.persist(event);
         
         //adds the event to creator's calendar
@@ -98,6 +100,9 @@ public class EventArea{
     
     public void updateCurrentEvent(List<String> invitedUsers){
         sendInvite(currentEvent, invitedUsers);
+        currentEvent.setWeatherConditions(new ArrayList<WeatherCondition>());
+        //currentEvent.setBwodb(false);
+        //currentEvent.setBwtdb(false);
         currentEvent.setWeatherConditions(new ArrayList<WeatherCondition>());
         em.merge(currentEvent);
         um.updateFromEventUpdate(currentEvent);

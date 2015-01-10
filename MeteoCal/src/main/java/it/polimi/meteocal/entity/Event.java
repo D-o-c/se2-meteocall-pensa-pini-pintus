@@ -93,6 +93,12 @@ public class Event implements Serializable {
     @Column(name = "LOCATION")
     private String location;
     
+    @Column(name="BWODB")
+    private boolean bwodb; //BadWeatherOneDayBefore
+    
+    @Column(name="BWTDB")
+    private boolean bwtdb; //BadWeatherThreeDayBefore
+    
     @OneToMany(mappedBy="event", orphanRemoval=true)
     private List<WeatherCondition> weatherConditions;
 
@@ -220,6 +226,23 @@ public class Event implements Serializable {
     public boolean equals(Event event) {
         return this.eventId == event.eventId;
     }
+
+    public boolean isBwodb() {
+        return bwodb;
+    }
+
+    public void setBwodb(boolean bwodb) {
+        this.bwodb = bwodb;
+    }
+
+    public boolean isBwtdb() {
+        return bwtdb;
+    }
+
+    public void setBwtdb(boolean bwtdb) {
+        this.bwtdb = bwtdb;
+    }
+    
     
 }
     

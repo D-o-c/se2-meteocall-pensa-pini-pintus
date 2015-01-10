@@ -34,11 +34,10 @@ public class UpdateManager {
     @PersistenceContext
     EntityManager em;
     
-    private final List<Long> bwodb = new ArrayList<>();
-    private final List<Long> bwtdb = new ArrayList<>();
-    
     @Schedule(minute="*", hour="*")
     public void sendNotifies(){
+        Date today = new Date();
+        em.flush();
         
         List<Event> events = em.createNamedQuery(Event.findAll, Event.class).getResultList();
         
@@ -46,7 +45,7 @@ public class UpdateManager {
         //Bad weather one day before (for all partecipants):
         for (Event event : events) {
             if(event.getBeginTime().getTime() - 86400000 <= (new Date()).getTime() &&
-                    !bwodb.contains(event.getEventId())){
+                    !event.isBwodb() && event.getBeginTime().after(today)){
                 
                 List<WeatherCondition> wcs = event.getWeatherConditions();
                 for (WeatherCondition wc : wcs){
@@ -70,13 +69,12 @@ public class UpdateManager {
                                 u.setRead(false);
                                 event.addUpdate(u);
                                 c.getUser().addNotify(u);
+                                event.setBwodb(true);
                                 em.persist(u);
                                 em.merge(event);
                                 em.merge(c.getUser());
                             }
                         }
-                        
-                        bwodb.add(event.getEventId());
                         break;
                     }
                 }
@@ -87,16 +85,18 @@ public class UpdateManager {
         
         for (Event event : events) {
             if(event.getBeginTime().getTime() - 259200000 <= (new Date()).getTime() &&
-                    !bwtdb.contains(event.getEventId())){
+                    !event.isBwtdb()  && event.getBeginTime().after(today)){
                 
                 List<WeatherCondition> wcs = event.getWeatherConditions();
                 for (WeatherCondition wc : wcs){
                     if (wc.getCode()<=15){
+                        String sunnyDay = findSunnyDay(event);
                         String desc = "For one of your next events bad weather is expected\n\n" + 
                                     "Name: " + event.getName() + "\n" + 
                                     "Description: " + event.getDescription() + "\n" +
                                     "Begin Time: " + event.getBeginTime() + "\n" +
-                                    "Location: " + event.getLocation();
+                                    "Location: " + event.getLocation() + "\n\n" +
+                                    "The first sunny day is: " + sunnyDay;
                         EmailSender.send(event.getCreator().getEmail(),
                                 "Bad weather for you event",
                                 desc);
@@ -109,10 +109,10 @@ public class UpdateManager {
                         u.setRead(false);
                         event.addUpdate(u);
                         event.getCreator().addNotify(u);
+                        event.setBwtdb(true);
                         em.persist(u);
                         em.merge(event);
                         em.merge(event.getCreator());
-                        bwtdb.add(event.getEventId());
                         break;
                     }
                 }
@@ -121,6 +121,10 @@ public class UpdateManager {
         
         //Update if weather changes
         for (Event event : events){
+            
+            if (!event.getBeginTime().after(today)){
+                break;
+            }
             List<WeatherCondition> wcs = event.getWeatherConditions();
             
             for (WeatherCondition wc : wcs){
@@ -185,6 +189,32 @@ public class UpdateManager {
                 em.merge(c.getUser());
             }
         }
+        
+    }
+    
+    private String findSunnyDay(Event e){
+        //List<WeatherCondition> wcs = e.getWeatherConditions();
+        List<Date> possibleDate = new ArrayList<>();
+        
+        for (WeatherCondition wc : e.getWeatherConditions()){
+            if (wc.getCode() >= 20){
+                possibleDate.add(wc.getTime());
+            }
+        }
+        if (possibleDate.isEmpty()){
+            return "very hard to find it";
+        }
+        
+        int choosed = 0;
+        long between = possibleDate.get(0).getTime() - e.getBeginTime().getTime();
+        for (int i = 1; i < possibleDate.size(); i++){
+            if (possibleDate.get(i).getTime() - e.getBeginTime().getTime() < between){
+                between = possibleDate.get(i).getTime() - e.getBeginTime().getTime();
+                choosed = i;
+            }
+        }
+        
+        return possibleDate.get(choosed).toString();
         
     }
     
