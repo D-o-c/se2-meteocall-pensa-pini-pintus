@@ -7,6 +7,7 @@ package it.polimi.meteocal.control;
 
 import it.polimi.meteocal.entity.WeatherCondition;
 import it.polimi.meteocal.entity.Event;
+import it.polimi.meteocal.entity.primarykeys.WeatherConditionPK;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -33,7 +34,7 @@ import org.w3c.dom.NodeList;
  */
 
 @Singleton
-@Lock(LockType.READ) // allows timers to execute in parallel
+@Lock(LockType.WRITE) // not allows timers to execute in parallel
 @Stateless
 public class WeatherManager {
     
@@ -44,7 +45,7 @@ public class WeatherManager {
     private List<Event> eventList;
     Date toDate;
     
-    @Schedule(minute="*", hour="*")
+ //  @Schedule(minute="*", hour="*")
     public void weatherCreation() throws IOException{
         toDate = new Date();
         eventList = em.createNamedQuery(Event.findAll, Event.class).getResultList();
@@ -157,20 +158,37 @@ public class WeatherManager {
                                 int yet=0;
                                 for(int k=0;k<event.getWeatherConditions().size();k++){
                                     if(event.getWeatherConditions().get(k).getTime().getDate()==giornoGiusto){
-                                        int tempCode = event.getWeatherConditions().get(k).getOldCode();
+                                        /*int tempCode = event.getWeatherConditions().get(k).getCode();
                                         event.getWeatherConditions().set(k,weather);
                                         event.getWeatherConditions().get(k).setOldCode(tempCode);
+                                        weather.setOldCode(tempCode);*/
+                                        
+                                        int tempCode = event.getWeatherConditions().get(k).getCode();
+                                        event.getWeatherConditions().remove(k);
+                                        WeatherConditionPK pk = new WeatherConditionPK(event.getEventId(), day);
+                                        WeatherCondition w = em.find(WeatherCondition.class, pk);
+                                        em.remove(w);
+                                        em.flush();
+                                        weather.setOldCode(tempCode);
+                                        em.persist(weather);
+                                        event.addWeatherCondition(weather);
+                                        em.merge(event);
+                                       // em.merge(event);
                                         yet=1;
-                                 }
+                                    }
                                 }    
 
                                 if(yet==0){
                                     //event.addWeatherCondition(new WeatherCondition(day,event,e5.getAttribute("text")));
+                                    em.persist(weather);
                                     event.addWeatherCondition(weather);
+                                    em.merge(event);
 
                                 }
 
-                                em.merge(event);
+                                //em.merge(event);
+                                //em.flush();
+                                
                                 }
                             }
                         }

@@ -25,12 +25,8 @@ public class Update implements Serializable {
     @Id
     @Column(name = "EVENT_ID")
     private long eventId;
-    
-    @ManyToOne
-    @PrimaryKeyJoinColumn(name="EVENT_ID", referencedColumnName="ID")
-    private Event event;
    
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     @Column(name = "UPDATE_NUMBER")
     private long number;
@@ -42,6 +38,10 @@ public class Update implements Serializable {
     @ManyToOne
     @JoinColumn(name="USER_EMAIL", referencedColumnName="EMAIL")
     private User user;
+    
+    @ManyToOne
+    @PrimaryKeyJoinColumn(name="EVENT_ID", referencedColumnName="ID")
+    private Event event;
     
     @Column(name = "READ_")
     private boolean read;

@@ -91,6 +91,7 @@ public class SearchArea {
        Contact contact = new Contact(email, name, surname, getLoggedUser());
        em.persist(contact);
        getLoggedUser().addContact(contact);
+       em.merge(getLoggedUser());
     }
     
     /**

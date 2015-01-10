@@ -6,9 +6,11 @@ import it.polimi.meteocal.entity.Calendar;
 import it.polimi.meteocal.entity.Contact;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.User;
+import it.polimi.meteocal.entity.WeatherCondition;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -24,6 +26,7 @@ public class EventArea{
     @PersistenceContext
     EntityManager em;
     
+    @Inject
     UpdateManager um;
     
     @Inject
@@ -50,8 +53,22 @@ public class EventArea{
         return currentEvent;
     }
     
+    /**
+     * Return true if logged user is creator
+     * @return 
+     */
     public boolean isCreator(){
-        return currentEvent.getCreator().getEmail().equals(this.getLoggedUser().getEmail());
+        return currentEvent.getCreator().equals(this.getLoggedUser());
+    }
+    
+    public boolean isPartecipants() {
+        List<String> partecipants = new ArrayList<>();
+        for (Calendar c : currentEvent.getInvited()){
+            if (c.getInviteStatus() == 1){
+                partecipants.add(c.getUser().getEmail());
+            }
+        }
+        return partecipants.contains(this.getLoggedUser().getEmail());
     }
     
     /**
@@ -81,6 +98,7 @@ public class EventArea{
     
     public void updateCurrentEvent(List<String> invitedUsers){
         sendInvite(currentEvent, invitedUsers);
+        currentEvent.setWeatherConditions(new ArrayList<WeatherCondition>());
         em.merge(currentEvent);
         um.updateFromEventUpdate(currentEvent);
     }
@@ -161,6 +179,8 @@ public class EventArea{
         }
         return temp;
     }
+
+  
 
     
     

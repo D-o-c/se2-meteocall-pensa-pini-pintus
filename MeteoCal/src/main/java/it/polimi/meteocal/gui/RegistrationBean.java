@@ -48,9 +48,7 @@ public class RegistrationBean {
      * Calls PublicArea.register(User user) 
      */
     public void register() {
-        FacesContext.getCurrentInstance()
-                .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-                        "Info", "Trying to register..."));
+       
         boolean ok = sm.register(user);
         if(ok) {
             FacesContext.getCurrentInstance()

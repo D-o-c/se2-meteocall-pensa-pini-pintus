@@ -68,8 +68,8 @@ public class PublicArea {
                 .setParameter(1, loggedUser.getEmail())
                 .getResultList();
         //rimozione dalle tuple dalla tabella Calendario
-        for(int i = 0; i < calendars.size(); i++) {
-            em.remove(calendars.get(i));
+        for (Calendar calendar : calendars) {
+            em.remove(calendar);
         }
         //tuple della tabella Evento con creatore il loggedUser
         List<Event> events = em.createNamedQuery(Event.findByCreator)
@@ -92,19 +92,15 @@ public class PublicArea {
         }
         //update del creator degli eventi del loggedUser
         //il creator diventa "undefined" e l'evento viene salvato
-        for(int i = 0; i < events.size(); i++) {
-            Event e = events.get(i);
-                       
+        for (Event e : events) {
             e.setCreator(u);
             
             em.persist(e);
         }
         //tutte le tuple della tabella Evento
         List<Event> allEvents = em.createNamedQuery(Event.findAll).getResultList();
-        for(int i = 0; i < allEvents.size(); i++) {
-            
-            List<Calendar> invited = allEvents.get(i).getInvited();
-            
+        for (Event allEvent : allEvents) {
+            List<Calendar> invited = allEvent.getInvited();
             for(int j = 0; j < invited.size(); j++) {
                 //singola tupla di calendar
                 Calendar c = invited.get(j);

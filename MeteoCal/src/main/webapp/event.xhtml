@@ -34,6 +34,15 @@
                     <h:outputText value="End Time: #{scheduleBean.currentEvent.endTime}" />
                     <h:outputText value="Location: #{scheduleBean.currentEvent.location}" />
                 </h:panelGrid>
+                <p:dataTable var="wc" value="#{eventBean.getWeather()}">
+                    <p:column headerText="Date:">
+                        <h:outputText value="#{wc.time}" />
+                    </p:column>
+
+                    <p:column headerText="Weather:">
+                        <h:outputText value="#{wc.type}" />
+                    </p:column>
+                </p:dataTable>
             </p:fieldset>
             <h:form>
                 <iframe
@@ -52,7 +61,7 @@
                 #{user.name} #{user.surname}
             </p:dataList>
             <p><p:commandButton action="#{eventBean.goToChangeEventInfo()}" value="Change event info" disabled="#{!eventBean.isCreator()}" /></p>
-            <p><p:commandButton action="#{eventBean.removePartecipation()}" value="Delete partecipation" disabled="#{eventBean.isCreator()}" /></p>
+            <p><p:commandButton action="#{eventBean.removePartecipation()}" value="Delete partecipation" disabled="#{eventBean.isPartecipants()}" /></p>
         </section>
     </h:body>
 </html>

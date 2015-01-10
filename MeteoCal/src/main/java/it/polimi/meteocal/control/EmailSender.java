@@ -14,9 +14,9 @@ public class EmailSender {
 
 
     public static void send (String recipient, String subject, String body){
-        List<String> temp = new ArrayList<>();
+        /*List<String> temp = new ArrayList<>();
         temp.add(recipient);
-        EmailSender.send(temp, subject, body);
+        EmailSender.send(temp, subject, body);*/
     }
     public static void send(List<String> recipients, String subject, String body){
         try{

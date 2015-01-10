@@ -25,7 +25,7 @@ import javax.persistence.PersistenceContext;
  * @author doc
  */
 @Singleton
-@Lock(LockType.READ) // allows timers to execute in parallel
+@Lock(LockType.WRITE) //not allows timers to execute in parallel
 @Stateless
 public class UpdateManager {
 
@@ -55,12 +55,13 @@ public class UpdateManager {
                             if (c.getInviteStatus()==1){
                                 String desc = "For your tomorrow event bad weather is expected\n\n" + 
                                     "Name: " + event.getName() + "\n" + 
-                                    "Description: " + event.getDescription() +
-                                    "Begin Time: " + event.getBeginTime() +
+                                    "Description: " + event.getDescription() + "\n" +
+                                    "Begin Time: " + event.getBeginTime() + "\n" +
                                     "Location: " + event.getLocation();
                                 EmailSender.send(c.getUserEmail(),
                                     "Bad weather for you event",
                                     desc);
+                                desc = desc.replace("\n", "<br/>");
                                 Update u = new Update();
                                 u.setEvent(event);
                                 u.setUser(c.getUser());
@@ -69,6 +70,7 @@ public class UpdateManager {
                                 u.setRead(false);
                                 event.addUpdate(u);
                                 c.getUser().addNotify(u);
+                                em.persist(u);
                                 em.merge(event);
                                 em.merge(c.getUser());
                             }
@@ -90,14 +92,15 @@ public class UpdateManager {
                 List<WeatherCondition> wcs = event.getWeatherConditions();
                 for (WeatherCondition wc : wcs){
                     if (wc.getCode()<=15){
-                        String desc = "For your tomorrow event bad weather is expected\n\n" + 
+                        String desc = "For one of your next events bad weather is expected\n\n" + 
                                     "Name: " + event.getName() + "\n" + 
-                                    "Description: " + event.getDescription() +
-                                    "Begin Time: " + event.getBeginTime() +
+                                    "Description: " + event.getDescription() + "\n" +
+                                    "Begin Time: " + event.getBeginTime() + "\n" +
                                     "Location: " + event.getLocation();
                         EmailSender.send(event.getCreator().getEmail(),
                                 "Bad weather for you event",
                                 desc);
+                        desc = desc.replace("\n", "<br/>");
                         Update u = new Update();
                         u.setEvent(event);
                         u.setUser(event.getCreator());
@@ -106,6 +109,7 @@ public class UpdateManager {
                         u.setRead(false);
                         event.addUpdate(u);
                         event.getCreator().addNotify(u);
+                        em.persist(u);
                         em.merge(event);
                         em.merge(event.getCreator());
                         bwtdb.add(event.getEventId());
@@ -126,12 +130,13 @@ public class UpdateManager {
                         if (c.getInviteStatus()==1){
                             String desc = "The weather for this event is just changed\n\n" + 
                                     "Name: " + event.getName() + "\n" + 
-                                    "Description: " + event.getDescription() +
-                                    "Begin Time: " + event.getBeginTime() +
+                                    "Description: " + event.getDescription() + "\n" +
+                                    "Begin Time: " + event.getBeginTime() + "\n" +
                                     "Location: " + event.getLocation();
                             EmailSender.send(c.getUserEmail(),
                                 "Weather changed",
                                 desc);
+                            desc = desc.replace("\n", "<br/>");
                             Update u = new Update();
                             u.setEvent(event);
                             u.setUser(c.getUser());
@@ -140,6 +145,9 @@ public class UpdateManager {
                             u.setRead(false);
                             event.addUpdate(u);
                             c.getUser().addNotify(u);
+                            wc.setOldCode(wc.getCode());
+                            em.persist(u);
+                            em.merge(wc);
                             em.merge(event);
                             em.merge(c.getUser());
                         }
@@ -157,12 +165,13 @@ public class UpdateManager {
             if (c.getInviteStatus()==1){
                 String desc = "The info for this event is just changed\n\n" + 
                         "Name: " + event.getName() + "\n" + 
-                        "Description: " + event.getDescription() +
-                        "Begin Time: " + event.getBeginTime() +
+                        "Description: " + event.getDescription() + "\n"+
+                        "Begin Time: " + event.getBeginTime() + "\n" +
                         "Location: " + event.getLocation();
                 EmailSender.send(c.getUserEmail(),
                     "Event info changed",
                     desc);
+                desc = desc.replace("\n", "<br/>");
                 Update u = new Update();
                 u.setEvent(event);
                 u.setUser(c.getUser());
@@ -171,6 +180,7 @@ public class UpdateManager {
                 u.setRead(false);
                 event.addUpdate(u);
                 c.getUser().addNotify(u);
+                em.persist(u);
                 em.merge(event);
                 em.merge(c.getUser());
             }

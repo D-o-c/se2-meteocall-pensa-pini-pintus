@@ -4,6 +4,7 @@ import it.polimi.meteocal.entity.Contact;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.boundary.EventArea;
 import it.polimi.meteocal.boundary.UserArea;
+import it.polimi.meteocal.entity.WeatherCondition;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -67,6 +68,10 @@ public class EventBean{
     
     public Event getCurrentEvent(){
         return ea.getCurrentEvent();
+    }
+    
+    public List<WeatherCondition> getWeather(){
+        return ea.getCurrentEvent().getWeatherConditions();
     }
     /**************************************************************************/
     
@@ -191,6 +196,14 @@ public class EventBean{
     
     public boolean isCreator(){
         return ea.isCreator();
+    }
+    
+    public boolean isPartecipants(){
+        boolean uno = ea.isCreator();
+        boolean due = ea.isPartecipants();
+        boolean disable = uno || !due;
+        return disable;
+       // return ea.isCreator() || ea.isPartecipants();
     }
     
     public String removePartecipation(){
