@@ -155,6 +155,8 @@ public class WeatherManager {
                                                                 event,
                                                                 e5.getAttribute("text"),
                                                                 Integer.parseInt(e5.getAttribute("code")));
+                                int temperature= (Integer.parseInt(e5.getAttribute("high"))-32)*5/9;
+                                                                weather.setTemp(temperature);
 
                                 int yet=0;
                                 for(int k=0;k<event.getWeatherConditions().size();k++){
