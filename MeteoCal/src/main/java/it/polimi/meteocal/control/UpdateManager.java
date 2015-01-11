@@ -91,7 +91,7 @@ public class UpdateManager {
                 List<WeatherCondition> wcs = event.getWeatherConditions();
                 for (WeatherCondition wc : wcs){
                     if (wc.getCode()<=15){
-                        String sunnyDay = findSunnyDay(event);
+                        String sunnyDay = findSunnyDay(event, wc.getTime());
                         String desc = "For one of your next events bad weather is expected\n\n" + 
                                     "Name: " + event.getName() + "\n" + 
                                     "Description: " + event.getDescription() + "\n" +
@@ -193,12 +193,11 @@ public class UpdateManager {
         
     }
     
-    private String findSunnyDay(Event e){
-        //List<WeatherCondition> wcs = e.getWeatherConditions();
+    private String findSunnyDay(Event e, Date d){
         List<Date> possibleDate = new ArrayList<>();
         
         for (WeatherCondition wc : e.getWeatherConditions()){
-            if (wc.getCode() >= 20){
+            if (wc.getCode() >= 20 && wc.getTime().after(d)){
                 possibleDate.add(wc.getTime());
             }
         }
@@ -207,10 +206,10 @@ public class UpdateManager {
         }
         
         int choosed = 0;
-        long between = possibleDate.get(0).getTime() - e.getBeginTime().getTime();
+        long between = possibleDate.get(0).getTime() - d.getTime();
         for (int i = 1; i < possibleDate.size(); i++){
-            if (possibleDate.get(i).getTime() - e.getBeginTime().getTime() < between){
-                between = possibleDate.get(i).getTime() - e.getBeginTime().getTime();
+            if (possibleDate.get(i).getTime() - d.getTime() < between){
+                between = possibleDate.get(i).getTime() - d.getTime();
                 choosed = i;
             }
         }
