@@ -159,18 +159,25 @@ public class EventBean{
         switch (ua.timeConsistency(ea.getCurrentEvent())){
             case -2:
                 FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "You cannot have more events at the same time!"));
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "You cannot have more events at the same time!",null));
                 return null;
             case -1:
                 FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "Begin Time must be before End Time"));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Begin Time must be before End Time",null));
                 return null;
             case 0:
                 this.updateInviteList();
-                ea.updateCurrentEvent(invitedUsers);
+                boolean noErrors = ea.updateCurrentEvent(invitedUsers);
+                
                 FacesContext context = FacesContext.getCurrentInstance();
                 context.addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_INFO,"Info", "Event info changed succesfully"));
+                context.getExternalContext().getFlash().setKeepMessages(true);
+                if (noErrors){
+                    return "/event?faces-redirect=true";
+                }  
+                context.addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_WARN,"Warning", "Some Invited Users Not Found!"));
                 context.getExternalContext().getFlash().setKeepMessages(true);
                 return "/event?faces-redirect=true";
             default:

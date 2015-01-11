@@ -80,7 +80,7 @@ public class EventArea{
      * @return if all invited users exist in the database
      */
     public boolean createEvent(Event event, List<String> invitedUsers){
-        boolean noErrors = true;
+        boolean noErrors;
         //Logged user is the creator of the event
         User creator = getLoggedUser();
         event.setCreator(creator);
@@ -98,14 +98,15 @@ public class EventArea{
         return noErrors;
     }
     
-    public void updateCurrentEvent(List<String> invitedUsers){
-        sendInvite(currentEvent, invitedUsers);
+    public boolean updateCurrentEvent(List<String> invitedUsers){
+        boolean noErrors = sendInvite(currentEvent, invitedUsers);
         currentEvent.setWeatherConditions(new ArrayList<WeatherCondition>());
         //currentEvent.setBwodb(false);
         //currentEvent.setBwtdb(false);
         currentEvent.setWeatherConditions(new ArrayList<WeatherCondition>());
         em.merge(currentEvent);
         um.updateFromEventUpdate(currentEvent);
+        return noErrors;
     }
     
     private boolean sendInvite(Event e, List<String> iu){
