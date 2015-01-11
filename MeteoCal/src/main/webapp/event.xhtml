@@ -39,7 +39,8 @@
                     <h:outputText value="End Time: #{scheduleBean.currentEvent.endTime}" />
                     <h:outputText value="Location: #{scheduleBean.currentEvent.location}" />
                 </h:panelGrid>
-                <p:dataTable var="wc" value="#{eventBean.getWeather()}">
+                <p:dataTable var="wc" value="#{eventBean.getWeather()}" emptyMessage="No weather found"
+                             sortBy="#{wc.time}">
                     <p:column headerText="Date:">
                         <h:outputText value="#{wc.time}" />
                     </p:column>

@@ -36,8 +36,8 @@ public class UpdateManager {
     
     @Schedule(minute="*", hour="*")
     public void sendNotifies(){
-        Date today = new Date();
-        em.flush();
+         Date today = new Date();
+        //em.flush();
         
         List<Event> events = em.createNamedQuery(Event.findAll, Event.class).getResultList();
         
@@ -73,6 +73,7 @@ public class UpdateManager {
                                 em.persist(u);
                                 em.merge(event);
                                 em.merge(c.getUser());
+                                //em.flush();
                             }
                         }
                         break;

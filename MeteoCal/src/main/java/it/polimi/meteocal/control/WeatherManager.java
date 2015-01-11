@@ -170,13 +170,14 @@ public class WeatherManager {
                                         WeatherConditionPK pk = new WeatherConditionPK(event.getEventId(), day);
                                         WeatherCondition w = em.find(WeatherCondition.class, pk);
                                         em.remove(w);
+                                        em.merge(event);
                                         em.flush();
                                         weather.setOldCode(tempCode);
                                         em.persist(weather);
                                         event.addWeatherCondition(weather);
                                         em.merge(event);
-                                       // em.merge(event);
                                         yet=1;
+                                        k--;
                                     }
                                 }    
 
@@ -188,8 +189,7 @@ public class WeatherManager {
 
                                 }
 
-                                //em.merge(event);
-                                //em.flush();
+                                em.flush();
                                 
                                 }
                             }
