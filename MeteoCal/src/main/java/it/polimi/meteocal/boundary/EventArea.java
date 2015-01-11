@@ -92,7 +92,7 @@ public class EventArea{
         //adds the event to creator's calendar
         event.addInvited(creator, 1);
         
-        sendInvite(event,invitedUsers);
+        noErrors = sendInvite(event,invitedUsers);
         
         
         return noErrors;

@@ -54,14 +54,16 @@
                     src="#{scheduleBean.googleMap}">
                 </iframe>
             </h:form>
-            <p:dataList value="#{scheduleBean.getPartecipants()}" var="user">
-                <f:facet name="header">
-                    List of partecipants:
-                </f:facet>
-                #{user.name} #{user.surname}
-            </p:dataList>
-            <p><p:commandButton action="#{eventBean.goToChangeEventInfo()}" value="Change event info" disabled="#{!eventBean.isCreator()}" /></p>
-            <p><p:commandButton action="#{eventBean.removePartecipation()}" value="Delete partecipation" disabled="#{eventBean.isPartecipants()}" /></p>
+            <h:form>
+                <p:dataList value="#{scheduleBean.getPartecipants()}" var="user">
+                    <f:facet name="header">
+                        List of partecipants:
+                    </f:facet>
+                    #{user.name} #{user.surname}
+                </p:dataList>
+                <p><p:commandButton action="#{eventBean.goToChangeEventInfo()}" value="Change event info" disabled="#{!eventBean.isCreator()}" /></p>
+                <p><p:commandButton action="#{eventBean.removePartecipation()}" value="Delete partecipation" disabled="#{eventBean.isPartecipants()}" /></p>
+            </h:form>
         </section>
     </h:body>
 </html>

@@ -80,7 +80,7 @@ public class EventBean{
  Calls EventArea.createEvent(event,invitedUsers)
      * @return 
      */
-    public String createEvent() throws MessagingException {
+    public String createEvent(){
         switch (ua.timeConsistency(event)){
             case -2:
                 FacesContext.getCurrentInstance().addMessage(null,
@@ -136,6 +136,8 @@ public class EventBean{
         if (invites == null){
             invites = "";
         }
+        invites = invites.replace("\n", "");
+        invites = invites.replace("\r", "");
         String[] part = invites.split(";");
         HashSet temp = new HashSet();
         invitedUsers = Arrays.asList(part);
@@ -147,26 +149,8 @@ public class EventBean{
         invitedUsers = new ArrayList<>(temp);
         
     }
-    /*
-    private boolean timeConsistency(Event event){
-        if (event.getBeginTime().after(event.getEndTime())){ //beginTime is AFTER endTime
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "Begin Time must be before End Time"));
-            return false;
-        }
-        
-        List<Calendar> c = ua.getLoggedUser().getEvents();
-        for (Calendar c1 : c) {
-            if (event.getBeginTime().before(c1.getEvent().getEndTime()) &&
-                    event.getEndTime().after(c1.getEvent().getBeginTime()) && event.getEventId() != c1.getEventId()){
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "You cannot have more events at the same time!"));
-                return false;
-            }
-        }
-        return true;
-    }
-    */
+    
+    
     public String goToChangeEventInfo(){
         return "user/changeeventinfo?faces-redirect=true";
     }

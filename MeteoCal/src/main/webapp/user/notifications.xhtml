@@ -27,7 +27,8 @@
         <section>
             <h:form id="form">
                 <p:dataList value="#{userBean.getInvites()}" var="event" type="unordered"
-                            itemType="none" paginator="true" rows="10" styleClass="paginated">
+                            itemType="none" paginator="true" rows="10" styleClass="paginated"
+                            emptyMessage="No invite found" paginatorAlwaysVisible="false" >
                     <f:facet name="header">
                         Invites
                     </f:facet>
@@ -70,12 +71,13 @@
                 </p:dialog>
             </h:form>
             
-            
+            <br/>
             
             
             <h:form>
-                <p:dataList value="#{userBean.getUpdate()}" var="update" type="unordered"
-                            itemType="none" paginator="true" rows="5" styleClass="paginated">
+                <p:dataList value="#{userBean.getUpdate()}" var="update" type="definition"
+                            itemType="none" paginator="true" rows="5" styleClass="paginated"
+                            emptyMessage="No update found" paginatorAlwaysVisible="false"  >
                     <f:facet name="header">
                         Notifies
                     </f:facet>
