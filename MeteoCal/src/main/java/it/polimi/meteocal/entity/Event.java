@@ -46,10 +46,10 @@ public class Event implements Serializable {
     public static final String findAll = "Event.findAll";
    
    
-    @OneToMany(mappedBy="event", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy="event", cascade = CascadeType.PERSIST, orphanRemoval=true)
     private List<Calendar> invited;
     
-    @OneToMany(mappedBy="event", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy="event", cascade = CascadeType.PERSIST, orphanRemoval=true)
     private List<Update> update;
    
    
@@ -241,6 +241,10 @@ public class Event implements Serializable {
 
     public void setBwtdb(boolean bwtdb) {
         this.bwtdb = bwtdb;
+    }
+
+    public void setInvited(List<Calendar> invited) {
+        this.invited = invited;
     }
     
     

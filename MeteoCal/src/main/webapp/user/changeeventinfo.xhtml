@@ -38,6 +38,7 @@
         <section>
             <h:form id="modifyeventform" class="clear-left">
                 <p:growl id="growl" life="3000"/>
+                
                 <p:panel header="Change Event Info Form" visible="#{eventBean.isCreator()}">
                     <p:panelGrid columns="3">
                        
@@ -86,8 +87,8 @@
                                          action="#{eventBean.saveEvent()}"
                                          update="@all"
                                          ajax="true" />
-                        <p:outputLabel value=""/>
-                       </p:panelGrid>
+                        <p:commandButton value="Delete Event" action="#{eventBean.deleteEvent()}"/>
+                    </p:panelGrid>
                 </p:panel>
             </h:form>
             <p:dialog header="Google Map" widgetVar="gmap" modal="true" height="450">

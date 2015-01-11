@@ -5,6 +5,7 @@ import it.polimi.meteocal.control.UpdateManager;
 import it.polimi.meteocal.entity.Calendar;
 import it.polimi.meteocal.entity.Contact;
 import it.polimi.meteocal.entity.Event;
+import it.polimi.meteocal.entity.Update;
 import it.polimi.meteocal.entity.User;
 import it.polimi.meteocal.entity.WeatherCondition;
 import java.security.Principal;
@@ -184,6 +185,47 @@ public class EventArea{
             }
         }
         return temp;
+    }
+
+    public void deleteEvent() {
+        
+        for (Calendar c: currentEvent.getInvited()){
+            if (c.getInviteStatus() == 1){
+                EmailSender.send(c.getUserEmail(),
+                                "Evend deleted",
+                                currentEvent.getName() + "has been deleted");
+            }
+            User u = c.getUser();
+            
+            for (int i = 0; i < u.getEvents().size(); i++){
+                if (u.getEvents().get(i).getEvent().equals(currentEvent)){
+                    u.getEvents().remove(i);
+                    i--;
+                }
+            }
+
+            for (int i = 0; i < u.getNotifies().size(); i++){
+                if (u.getNotifies().get(i).getEvent().equals(currentEvent)){
+                    u.getNotifies().remove(i);
+                    i--;
+                }
+            }
+            
+            em.merge(u);
+        }
+        
+        
+            
+        
+        currentEvent.setWeatherConditions(new ArrayList<WeatherCondition>());
+        currentEvent.setUpdate(new ArrayList<Update>());
+        currentEvent.setInvited(new ArrayList<Calendar>());
+        
+        Event e = em.merge(currentEvent);
+        em.remove(e);
+        currentEvent = null;
+        
+        
     }
 
   

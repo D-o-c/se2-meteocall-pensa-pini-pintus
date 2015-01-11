@@ -185,6 +185,17 @@ public class EventBean{
         }
     }
     
+    public String deleteEvent(){
+        ea.deleteEvent();
+        
+        FacesContext context = FacesContext.getCurrentInstance();
+        context.addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO,"Info", "Event deleted succesfully"));
+        context.getExternalContext().getFlash().setKeepMessages(true);
+                
+        return "/user/home?faces-redirect=true";
+    }
+    
     public boolean isCreator(){
         return ea.isCreator();
     }
