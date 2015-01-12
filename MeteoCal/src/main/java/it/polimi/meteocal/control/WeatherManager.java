@@ -44,7 +44,7 @@ public class WeatherManager {
     private List<Event> eventList;
     Date toDate;
     
-    @Schedule(minute="*", hour="*")
+    @Schedule(minute="*/10", hour="*")
     public void weatherCreation() throws IOException{
         toDate = new Date();
         eventList = em.createNamedQuery(Event.findAll, Event.class).getResultList();

@@ -6,6 +6,7 @@
 package it.polimi.meteocal.control;
 
 import it.polimi.meteocal.entity.Calendar;
+import it.polimi.meteocal.entity.Email;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.Update;
 import it.polimi.meteocal.entity.WeatherCondition;
@@ -63,9 +64,15 @@ public class UpdateManager {
                                     "Description: " + event.getDescription() + "\n" +
                                     "Begin Time: " + event.getBeginTime() + "\n" +
                                     "Location: " + event.getLocation();
-                                EmailSender.send(c.getUserEmail(),
+                               /* EmailSender.send(c.getUserEmail(),
                                     "Bad weather for you event",
                                     desc);
+                                        */
+                                Email e = new Email(c.getUserEmail(),
+                                                    "Bad weather for you event",
+                                                    desc, false);
+                                em.persist(e);
+                                
                                 desc = desc.replace("\n", "<br/>");
                                 Update u = new Update();
                                 u.setEvent(event);
@@ -105,9 +112,15 @@ public class UpdateManager {
                                     "Begin Time: " + event.getBeginTime() + "\n" +
                                     "Location: " + event.getLocation() + "\n\n" +
                                     "The first sunny day is: " + sunnyDay;
-                        EmailSender.send(event.getCreator().getEmail(),
+                        /*EmailSender.send(event.getCreator().getEmail(),
                                 "Bad weather for you event",
-                                desc);
+                                desc);*/
+                        
+                        Email e = new Email(event.getCreator().getEmail(),
+                                            "Bad weather for you event",
+                                            desc, false);
+                        em.persist(e);
+                                
                         desc = desc.replace("\n", "<br/>");
                         Update u = new Update();
                         u.setEvent(event);
@@ -145,9 +158,15 @@ public class UpdateManager {
                                     "Description: " + event.getDescription() + "\n" +
                                     "Begin Time: " + event.getBeginTime() + "\n" +
                                     "Location: " + event.getLocation();
-                            EmailSender.send(c.getUserEmail(),
+                            /*EmailSender.send(c.getUserEmail(),
                                 "Weather changed",
-                                desc);
+                                desc);*/
+                            
+                            Email e = new Email(c.getUserEmail(),
+                                            "Weather changed",
+                                            desc, false);
+                            em.persist(e);
+                            
                             desc = desc.replace("\n", "<br/>");
                             Update u = new Update();
                             u.setEvent(event);
@@ -180,9 +199,15 @@ public class UpdateManager {
                         "Description: " + event.getDescription() + "\n"+
                         "Begin Time: " + event.getBeginTime() + "\n" +
                         "Location: " + event.getLocation();
-                EmailSender.send(c.getUserEmail(),
+             /*   EmailSender.send(c.getUserEmail(),
                     "Event info changed",
-                    desc);
+                    desc);*/
+                
+                Email e = new Email(c.getUserEmail(),
+                                    "Event info changed",
+                                    desc, false);
+                em.persist(e);
+                        
                 desc = desc.replace("\n", "<br/>");
                 Update u = new Update();
                 u.setEvent(event);

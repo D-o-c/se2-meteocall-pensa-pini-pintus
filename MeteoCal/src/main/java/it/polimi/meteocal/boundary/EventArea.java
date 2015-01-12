@@ -4,6 +4,7 @@ import it.polimi.meteocal.control.EmailSender;
 import it.polimi.meteocal.control.UpdateManager;
 import it.polimi.meteocal.entity.Calendar;
 import it.polimi.meteocal.entity.Contact;
+import it.polimi.meteocal.entity.Email;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.Update;
 import it.polimi.meteocal.entity.User;
@@ -11,7 +12,6 @@ import it.polimi.meteocal.entity.WeatherCondition;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -125,8 +125,12 @@ public class EventArea{
             try {
                 //if exists, add event to his calendar
                 e.addInvited(u, 0);
-                EmailSender.send(invitedUser,"Invite",
-                        "You received an invitation to an event, log on MeteoCal to accept!");
+                /*EmailSender.send(invitedUser,"Invite",
+                        "You received an invitation to an event, log on MeteoCal to accept!");*/
+                Email email = new Email(invitedUser, "Invite",
+                        "You received an invitation to an event, log on MeteoCal to accept!", false);
+                em.persist(email);
+                
             } catch (NullPointerException exc){
                 return false;
             }
@@ -191,9 +195,13 @@ public class EventArea{
         
         for (Calendar c: currentEvent.getInvited()){
             if (c.getInviteStatus() == 1){
-                EmailSender.send(c.getUserEmail(),
+                /*EmailSender.send(c.getUserEmail(),
                                 "Evend deleted",
-                                currentEvent.getName() + "has been deleted");
+                                currentEvent.getName() + "has been deleted");*/
+                Email email = new Email(c.getUserEmail(), "Event deleted",
+                                currentEvent.getName() + "has been deleted", false);
+                em.persist(email);
+                
             }
             User u = c.getUser();
             
