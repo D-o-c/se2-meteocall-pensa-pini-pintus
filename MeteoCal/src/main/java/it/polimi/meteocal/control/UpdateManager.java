@@ -30,12 +30,17 @@ import javax.persistence.PersistenceContext;
 public class UpdateManager {
 
     
+    private int[] badWeather;
     
     @PersistenceContext
     EntityManager em;
     
     @Schedule(minute="*", hour="*")
     public void sendNotifies(){
+        badWeather = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+                    13, 14, 15, 16, 17, 18, 19, 35, 36, 37, 38,
+                    39, 40, 41, 42, 43, 45, 46, 47};
+                    
          Date today = new Date();
         //em.flush();
         
@@ -49,7 +54,8 @@ public class UpdateManager {
                 
                 List<WeatherCondition> wcs = event.getWeatherConditions();
                 for (WeatherCondition wc : wcs){
-                    if (wc.getCode()<=15){
+                    //if (wc.getCode()<=15){
+                    if(contains(badWeather, wc.getCode())){
                         for (Calendar c : event.getInvited()){
                             if (c.getInviteStatus()==1){
                                 String desc = "For your tomorrow event bad weather is expected\n\n" + 
@@ -90,7 +96,8 @@ public class UpdateManager {
                 
                 List<WeatherCondition> wcs = event.getWeatherConditions();
                 for (WeatherCondition wc : wcs){
-                    if (wc.getCode()<=15){
+                    //if (wc.getCode()<=15){
+                    if (contains(badWeather, wc.getCode())){
                         String sunnyDay = findSunnyDay(event, wc.getTime());
                         String desc = "For one of your next events bad weather is expected\n\n" + 
                                     "Name: " + event.getName() + "\n" + 
@@ -197,7 +204,7 @@ public class UpdateManager {
         List<Date> possibleDate = new ArrayList<>();
         
         for (WeatherCondition wc : e.getWeatherConditions()){
-            if (wc.getCode() >= 20 && wc.getTime().after(d)){
+            if (!contains(badWeather, wc.getCode()) && wc.getTime().after(d)){
                 possibleDate.add(wc.getTime());
             }
         }
@@ -216,6 +223,15 @@ public class UpdateManager {
         
         return possibleDate.get(choosed).toString();
         
+    }
+    
+    
+    private boolean contains (int[] array, int v){
+        for (int i: array){
+            if (i==v)
+                return true;
+        }
+        return false;
     }
     
     

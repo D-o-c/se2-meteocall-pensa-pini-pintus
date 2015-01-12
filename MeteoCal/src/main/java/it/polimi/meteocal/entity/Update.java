@@ -32,7 +32,7 @@ public class Update implements Serializable {
     private long number;
     
     @NotNull
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", length = 1000)
     private String description;
     
     @ManyToOne
