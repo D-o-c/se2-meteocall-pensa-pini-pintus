@@ -3,7 +3,6 @@ package it.polimi.meteocal.boundary;
 import it.polimi.meteocal.control.EmailSender;
 import it.polimi.meteocal.control.PasswordEncrypter;
 import it.polimi.meteocal.entity.Calendar;
-import it.polimi.meteocal.entity.Email;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.Group;
 import it.polimi.meteocal.entity.User;
@@ -26,6 +25,9 @@ public class PublicArea {
     
     @Inject
     Principal principal;
+    
+    @Inject
+    EmailSender emailS;
 
     /**
      * Calls EntityManager.find(User.class, principal.getName())
@@ -49,13 +51,10 @@ public class PublicArea {
         } catch(NullPointerException e) {
             user.setGroupName(Group.USERS);
             user.setPublic(true);
-            em.persist(user);/*
-            EmailSender.send(user.getEmail() ,
+            em.persist(user);
+            emailS.send(user.getEmail() ,
                         "MeteoCal Registration",
-                        "Congratulations, you signed up on MeteoCal successfully");*/
-            Email email = new Email(user.getEmail(),
-                    "MeteoCal Registration", "Congratulations, you signed up on MeteoCal successfully", false);
-            em.persist(email);
+                        "Congratulations, you signed up on MeteoCal successfully");
             
             return true;
         }       

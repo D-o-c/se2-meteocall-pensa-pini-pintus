@@ -1,16 +1,11 @@
 package it.polimi.meteocal.control;
-import it.polimi.meteocal.entity.Email;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Schedule;
+import javax.ejb.Asynchronous;
 import javax.ejb.Singleton;
-import javax.ejb.Stateless;
  
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -19,43 +14,24 @@ import javax.mail.internet.MimeMessage;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
  
-
 @Singleton
-@Lock(LockType.WRITE) // not allows timers to execute in parallel
-@Stateless
+@Asynchronous
 public class EmailSender {
 
     
     @PersistenceContext
     EntityManager em;
     
-    private List<Email> mailList;
-    
-    
-    @Schedule(minute="*", hour="*")
-    public void sendEmail(){
-        mailList = em.createNamedQuery(Email.findAll, Email.class).getResultList();
-        
-        for (Email e : mailList){
-            try{
-                this.send(e.getRecipient(), e.getSubject(), e.getBody());
-                e.setSent(true);
-                em.merge(e);
-            }
-            catch(Exception exc){
-                
-            }
-        }
-    }
-    
-    
-    private void send (String recipient, String subject, String body) throws MessagingException{
+    @Asynchronous
+    public void send (String recipient, String subject, String body){
         List<String> temp = new ArrayList<>();
         temp.add(recipient);
         this.send(temp, subject, body);
     }
     
-    private void send(List<String> recipients, String subject, String body) throws MessagingException{
+    @Asynchronous
+    public void send(List<String> recipients, String subject, String body){
+        try{
         final String username = "PPPmeteocal@gmail.com";
         final String password = "meteocalPPP";
 
@@ -91,6 +67,10 @@ public class EmailSender {
         } finally{
             t.close();
         } 
+        }
+        catch(Exception e){
+            
+        }
         
     }
 }

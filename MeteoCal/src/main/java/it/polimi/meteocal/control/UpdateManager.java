@@ -6,7 +6,6 @@
 package it.polimi.meteocal.control;
 
 import it.polimi.meteocal.entity.Calendar;
-import it.polimi.meteocal.entity.Email;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.Update;
 import it.polimi.meteocal.entity.WeatherCondition;
@@ -18,6 +17,7 @@ import javax.ejb.LockType;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -36,6 +36,9 @@ public class UpdateManager {
     @PersistenceContext
     EntityManager em;
     
+    @Inject
+    EmailSender emailS;
+    
     @Schedule(minute="*", hour="*")
     public void sendNotifies(){
         badWeather = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
@@ -43,7 +46,6 @@ public class UpdateManager {
                     39, 40, 41, 42, 43, 45, 46, 47};
                     
          Date today = new Date();
-        //em.flush();
         
         List<Event> events = em.createNamedQuery(Event.findAll, Event.class).getResultList();
         
@@ -64,14 +66,9 @@ public class UpdateManager {
                                     "Description: " + event.getDescription() + "\n" +
                                     "Begin Time: " + event.getBeginTime() + "\n" +
                                     "Location: " + event.getLocation();
-                               /* EmailSender.send(c.getUserEmail(),
+                                emailS.send(c.getUserEmail(),
                                     "Bad weather for you event",
                                     desc);
-                                        */
-                                Email e = new Email(c.getUserEmail(),
-                                                    "Bad weather for you event",
-                                                    desc, false);
-                                em.persist(e);
                                 
                                 desc = desc.replace("\n", "<br/>");
                                 Update u = new Update();
@@ -112,14 +109,9 @@ public class UpdateManager {
                                     "Begin Time: " + event.getBeginTime() + "\n" +
                                     "Location: " + event.getLocation() + "\n\n" +
                                     "The first sunny day is: " + sunnyDay;
-                        /*EmailSender.send(event.getCreator().getEmail(),
+                        emailS.send(event.getCreator().getEmail(),
                                 "Bad weather for you event",
-                                desc);*/
-                        
-                        Email e = new Email(event.getCreator().getEmail(),
-                                            "Bad weather for you event",
-                                            desc, false);
-                        em.persist(e);
+                                desc);
                                 
                         desc = desc.replace("\n", "<br/>");
                         Update u = new Update();
@@ -158,14 +150,9 @@ public class UpdateManager {
                                     "Description: " + event.getDescription() + "\n" +
                                     "Begin Time: " + event.getBeginTime() + "\n" +
                                     "Location: " + event.getLocation();
-                            /*EmailSender.send(c.getUserEmail(),
+                            emailS.send(c.getUserEmail(),
                                 "Weather changed",
-                                desc);*/
-                            
-                            Email e = new Email(c.getUserEmail(),
-                                            "Weather changed",
-                                            desc, false);
-                            em.persist(e);
+                                desc);
                             
                             desc = desc.replace("\n", "<br/>");
                             Update u = new Update();
@@ -199,15 +186,10 @@ public class UpdateManager {
                         "Description: " + event.getDescription() + "\n"+
                         "Begin Time: " + event.getBeginTime() + "\n" +
                         "Location: " + event.getLocation();
-             /*   EmailSender.send(c.getUserEmail(),
+                emailS.send(c.getUserEmail(),
                     "Event info changed",
-                    desc);*/
+                    desc);
                 
-                Email e = new Email(c.getUserEmail(),
-                                    "Event info changed",
-                                    desc, false);
-                em.persist(e);
-                        
                 desc = desc.replace("\n", "<br/>");
                 Update u = new Update();
                 u.setEvent(event);
