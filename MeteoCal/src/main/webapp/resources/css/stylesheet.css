@@ -23,6 +23,9 @@ section {
 
 header {
     border-bottom: 1px solid #000000;
+    position: fixed;
+    z-index: 1;
+    width: 100%;
 }
 
 footer {

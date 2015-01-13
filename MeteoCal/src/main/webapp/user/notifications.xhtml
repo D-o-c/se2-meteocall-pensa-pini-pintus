@@ -24,11 +24,11 @@
                 <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
             </ul>
         </header>
-        <section>
-            <h:form id="form">
+        <section style="padding-top: 60px">
+            <h:form id="form" >
                 <p:dataList value="#{userBean.getInvites()}" var="event" type="unordered"
                             itemType="none" paginator="true" rows="10" styleClass="paginated"
-                            emptyMessage="No invite found" paginatorAlwaysVisible="false" >
+                            emptyMessage="No invite found" paginatorAlwaysVisible="false"  >
                     <f:facet name="header">
                         Invites
                     </f:facet>

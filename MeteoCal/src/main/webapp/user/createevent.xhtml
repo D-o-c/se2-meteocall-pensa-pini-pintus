@@ -20,7 +20,7 @@
         </script>
     </h:head>
     <h:body>
-        <header>
+        <header >
             <h1 id="title">MeteoCal</h1>
             <h:form id="searchForm" class="float-left">
                 <p:inputText value="#{searchBean.searchInput}" id="keyword"/>
@@ -35,7 +35,7 @@
                 <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
             </ul>
         </header>
-        <section>
+        <section style="padding-top: 60px">
             <h:form id="createeventform" class="clear-left">
                 <p:growl id="growl" life="3000"/>
                 <p:panel header="New Event Form">
