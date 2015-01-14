@@ -18,6 +18,7 @@ import javax.ejb.LockType;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.xml.parsers.DocumentBuilder;
@@ -40,11 +41,14 @@ public class WeatherManager {
     @PersistenceContext
     EntityManager em;
     
+    @Inject
+    UpdateManager um;
+    
     
     private List<Event> eventList;
     Date toDate;
     
-    @Schedule(minute="*/10", hour="*")
+    @Schedule(minute="*", hour="*")
     public void weatherCreation() throws IOException{
         toDate = new Date();
         eventList = em.createNamedQuery(Event.findAll, Event.class).getResultList();
@@ -59,6 +63,8 @@ public class WeatherManager {
                 getCondition(doc, eventList1);
             }
         }
+        
+        um.sendNotifies();
 
     }
     

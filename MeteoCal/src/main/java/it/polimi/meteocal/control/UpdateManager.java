@@ -12,11 +12,8 @@ import it.polimi.meteocal.entity.WeatherCondition;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Schedule;
+import javax.ejb.Asynchronous;
 import javax.ejb.Singleton;
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -26,8 +23,7 @@ import javax.persistence.PersistenceContext;
  * @author doc
  */
 @Singleton
-@Lock(LockType.WRITE) //not allows timers to execute in parallel
-@Stateless
+@Asynchronous
 public class UpdateManager {
 
     
@@ -39,7 +35,7 @@ public class UpdateManager {
     @Inject
     EmailSender emailS;
     
-    @Schedule(minute="*", hour="*")
+    @Asynchronous
     public void sendNotifies(){
         badWeather = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
                     13, 14, 15, 16, 17, 18, 19, 35, 36, 37, 38,
@@ -178,6 +174,7 @@ public class UpdateManager {
         
     }
     
+    @Asynchronous
     public void updateFromEventUpdate(Event event) {
         for (Calendar c : event.getInvited()){
             if (c.getInviteStatus()==1){
