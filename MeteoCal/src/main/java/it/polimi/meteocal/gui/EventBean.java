@@ -4,6 +4,7 @@ import it.polimi.meteocal.entity.Contact;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.boundary.EventArea;
 import it.polimi.meteocal.boundary.UserArea;
+import it.polimi.meteocal.entity.WeatherCondition;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -68,6 +69,10 @@ public class EventBean{
     public Event getCurrentEvent(){
         return ea.getCurrentEvent();
     }
+    
+    public List<WeatherCondition> getWeather(){
+        return ea.getCurrentEvent().getWeatherConditions();
+    }
     /**************************************************************************/
     
     /**
@@ -75,7 +80,7 @@ public class EventBean{
  Calls EventArea.createEvent(event,invitedUsers)
      * @return 
      */
-    public String createEvent() throws MessagingException {
+    public String createEvent(){
         switch (ua.timeConsistency(event)){
             case -2:
                 FacesContext.getCurrentInstance().addMessage(null,
@@ -131,6 +136,8 @@ public class EventBean{
         if (invites == null){
             invites = "";
         }
+        invites = invites.replace("\n", "");
+        invites = invites.replace("\r", "");
         String[] part = invites.split(";");
         HashSet temp = new HashSet();
         invitedUsers = Arrays.asList(part);
@@ -142,26 +149,8 @@ public class EventBean{
         invitedUsers = new ArrayList<>(temp);
         
     }
-    /*
-    private boolean timeConsistency(Event event){
-        if (event.getBeginTime().after(event.getEndTime())){ //beginTime is AFTER endTime
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "Begin Time must be before End Time"));
-            return false;
-        }
-        
-        List<Calendar> c = ua.getLoggedUser().getEvents();
-        for (Calendar c1 : c) {
-            if (event.getBeginTime().before(c1.getEvent().getEndTime()) &&
-                    event.getEndTime().after(c1.getEvent().getBeginTime()) && event.getEventId() != c1.getEventId()){
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "You cannot have more events at the same time!"));
-                return false;
-            }
-        }
-        return true;
-    }
-    */
+    
+    
     public String goToChangeEventInfo(){
         return "user/changeeventinfo?faces-redirect=true";
     }
@@ -170,18 +159,25 @@ public class EventBean{
         switch (ua.timeConsistency(ea.getCurrentEvent())){
             case -2:
                 FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "You cannot have more events at the same time!"));
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "You cannot have more events at the same time!",null));
                 return null;
             case -1:
                 FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "Begin Time must be before End Time"));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Begin Time must be before End Time",null));
                 return null;
             case 0:
                 this.updateInviteList();
-                ea.updateCurrentEvent(invitedUsers);
+                boolean noErrors = ea.updateCurrentEvent(invitedUsers);
+                
                 FacesContext context = FacesContext.getCurrentInstance();
                 context.addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_INFO,"Info", "Event info changed succesfully"));
+                context.getExternalContext().getFlash().setKeepMessages(true);
+                if (noErrors){
+                    return "/event?faces-redirect=true";
+                }  
+                context.addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_WARN,"Warning", "Some Invited Users Not Found!"));
                 context.getExternalContext().getFlash().setKeepMessages(true);
                 return "/event?faces-redirect=true";
             default:
@@ -189,8 +185,27 @@ public class EventBean{
         }
     }
     
+    public String deleteEvent(){
+        ea.deleteEvent();
+        
+        FacesContext context = FacesContext.getCurrentInstance();
+        context.addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO,"Info", "Event deleted succesfully"));
+        context.getExternalContext().getFlash().setKeepMessages(true);
+                
+        return "/user/home?faces-redirect=true";
+    }
+    
     public boolean isCreator(){
         return ea.isCreator();
+    }
+    
+    public boolean isPartecipants(){
+        boolean uno = ea.isCreator();
+        boolean due = ea.isPartecipants();
+        boolean disable = uno || !due;
+        return disable;
+       // return ea.isCreator() || ea.isPartecipants();
     }
     
     public String removePartecipation(){

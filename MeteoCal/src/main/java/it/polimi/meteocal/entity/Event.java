@@ -30,10 +30,14 @@ import javax.validation.constraints.Pattern;
 @Entity (name="EVENT")
 @NamedQueries({
         @NamedQuery(name = Event.findAll, 
-                query = "SELECT e FROM EVENT e")
+                query = "SELECT e FROM EVENT e"),
+        @NamedQuery(name = Event.findByCreator, 
+                    query = "SELECT e FROM EVENT e WHERE e.creator.email = ?1")
 })
 public class Event implements Serializable {
    
+    public final static String findByCreator = "Event.findByCreator";
+    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
@@ -42,8 +46,11 @@ public class Event implements Serializable {
     public static final String findAll = "Event.findAll";
    
    
-    @OneToMany(mappedBy="event", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy="event", cascade = CascadeType.PERSIST, orphanRemoval=true)
     private List<Calendar> invited;
+    
+    @OneToMany(mappedBy="event", cascade = CascadeType.PERSIST, orphanRemoval=true)
+    private List<Update> update;
    
    
     @Temporal(TemporalType.TIMESTAMP)
@@ -85,7 +92,23 @@ public class Event implements Serializable {
     @NotNull(message = "Location may not be empty")
     @Column(name = "LOCATION")
     private String location;
+    
+    @Column(name="BWODB")
+    private boolean bwodb; //BadWeatherOneDayBefore
+    
+    @Column(name="BWTDB")
+    private boolean bwtdb; //BadWeatherThreeDayBefore
+    
+    @OneToMany(mappedBy="event", orphanRemoval=true)
+    private List<WeatherCondition> weatherConditions;
 
+    public List<WeatherCondition> getWeatherConditions() {
+        return weatherConditions;
+    }
+
+    public void setWeatherConditions(List<WeatherCondition> weatherConditions) {
+        this.weatherConditions = weatherConditions;
+    }
     
     
     public String getName() {
@@ -183,6 +206,49 @@ public class Event implements Serializable {
         this.outdoor = outdoor;
     }
     
+
+    public void addWeatherCondition(WeatherCondition wc){
+        weatherConditions.add(wc);
+        
+    }
+
+    public List<Update> getUpdate() {
+        return update;
+    }
+
+    public void setUpdate(List<Update> update) {
+        this.update = update;
+    }
+    
+    public void addUpdate(Update u){
+        this.update.add(u);
+    }
+    public boolean equals(Event event) {
+        return this.eventId == event.eventId;
+    }
+
+    public boolean isBwodb() {
+        return bwodb;
+    }
+
+    public void setBwodb(boolean bwodb) {
+        this.bwodb = bwodb;
+    }
+
+    public boolean isBwtdb() {
+        return bwtdb;
+    }
+
+    public void setBwtdb(boolean bwtdb) {
+        this.bwtdb = bwtdb;
+    }
+
+    public void setInvited(List<Calendar> invited) {
+        this.invited = invited;
+    }
+    
+    
 }
+    
     
 

@@ -2,6 +2,7 @@ package it.polimi.meteocal.gui;
 
 import it.polimi.meteocal.boundary.UserArea;
 import it.polimi.meteocal.entity.Event;
+import it.polimi.meteocal.entity.Update;
 import it.polimi.meteocal.entity.User;
 import java.util.ArrayList;
 import java.util.List;
@@ -99,7 +100,22 @@ public class UserBean{
                 invites.add(ua.getLoggedUser().getEvents().get(i).getEvent());
             }
         }
-        return invites.size();
+        int count=0;
+        for (Update u : ua.getLoggedUser().getNotifies()){
+            if (!u.isRead()){
+                count++;
+            }
+        }
+        return invites.size() + count;
+    }
+    
+    public String setNotifyRead(Update u){
+        ua.setNotifyRead(u);
+        return "/user/notifications?faces-redirect=true";        
+    }
+    
+    public boolean isRead(Update u){
+        return u.isRead();
     }
     
     public Event getSelectedEvent() {
@@ -116,6 +132,10 @@ public class UserBean{
     public void setFile(UploadedFile file) {
         this.file = file;
     }
+    
+    public List<Update> getUpdate(){
+        return ua.getUpdate();
+    }
     /**************************************************************************/
     
     /**
@@ -124,8 +144,7 @@ public class UserBean{
      */
     public String changeCalendarVisibility() {
         ua.changeCalendarVisibility();
-        
-        String message = "";
+        String message;
         if(getLoggedUser().isPublic()) message = "public";
         else message = "private";
         

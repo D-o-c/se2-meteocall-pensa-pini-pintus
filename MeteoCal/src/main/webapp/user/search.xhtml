@@ -14,19 +14,22 @@
             <h1 id="title">MeteoCal</h1>
             <h:form id="searchForm" class="float-left">
                 <p:inputText value="#{searchBean.searchInput}" id="keyword"/>
-                <p:commandButton style="margin-left: 20px;" action="#{searchBean.findUser()}" value="Search"/>
-                <br></br>
-                <p:outputLabel style="position:relative;top:50px;left:-150px;"
-                               value="#{searchBean.resultsLabel()}"/>
-                <ul style="position:relative;top:50px;left:-150px;">
-                    <ui:repeat value="#{searchBean.users}" var="user">    
-                    <li style="padding-top:10px;">    
-                        <h:commandLink action="#{searchBean.selectUser(user)}"
-                                       value="#{user.name} #{user.surname}" />
-                    </li>    
-                    </ui:repeat>
-                </ul>
+                <p:commandButton class="searchUsersButton" action="#{searchBean.findUser()}" icon="ui-icon-search"/>
                 <p:watermark for="keyword" value="Search..." id="watermark" />
+                <p:dataTable var="user" value="#{searchBean.users}" style="position:absolute;top:50px;left:0px;">
+                    <p:column headerText="Name">
+                        <h:outputText value="#{user.name}" />
+                    </p:column>
+
+                    <p:column headerText="Surname">
+                        <h:outputText value="#{user.surname}" />
+                    </p:column>
+                    
+                    <p:column headerText="Link">
+                        <h:commandLink action="#{searchBean.selectUser(user)}"
+                                       value="See Calendar" />
+                    </p:column>
+                </p:dataTable>
             </h:form>
             <ul id="landmarks">
                 <li><p:link outcome="home" value="#{userBean.name}'s Calendar"/></li>

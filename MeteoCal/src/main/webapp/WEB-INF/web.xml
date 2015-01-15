@@ -45,4 +45,8 @@
             <role-name>USERS</role-name>
         </auth-constraint>
     </security-constraint>
+    <context-param>
+        <param-name>primefaces.THEME</param-name>
+        <param-value>sunny</param-value>
+    </context-param>
 </web-app>

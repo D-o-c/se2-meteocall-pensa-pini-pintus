@@ -41,6 +41,9 @@ public class User implements Serializable {
     @OneToMany(mappedBy="user")
     private List<Calendar> events;
     
+    @OneToMany(mappedBy="user")
+    private List<Update> notifies;
+    
     
     @OneToMany(mappedBy="user", orphanRemoval=true)
     private List<Contact> contacts;
@@ -131,6 +134,29 @@ public class User implements Serializable {
     public List<Contact> getContacts() {
         return contacts;
     }
+
+    public List<Update> getNotifies() {
+        return notifies;
+    }
+
+    public void setNotifies(List<Update> notifies) {
+        this.notifies = notifies;
+    }
     
+    public void addNotify(Update u){
+        this.notifies.add(u);
+    }
+
+    public boolean isPublic_() {
+        return public_;
+    }
+
+    public void setPublic_(boolean public_) {
+        this.public_ = public_;
+    }
+    
+    public boolean equals(User user) {
+        return this.email.equals(user.email);
+    }
     
 }

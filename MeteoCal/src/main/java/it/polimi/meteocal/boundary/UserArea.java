@@ -3,6 +3,7 @@ package it.polimi.meteocal.boundary;
 import it.polimi.meteocal.control.PasswordEncrypter;
 import it.polimi.meteocal.entity.Calendar;
 import it.polimi.meteocal.entity.Event;
+import it.polimi.meteocal.entity.Update;
 import it.polimi.meteocal.entity.User;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -167,7 +168,6 @@ public class UserArea {
                 this.getLoggedUser().getEvents().get(i).setInviteStatus(1);
             }
         }
-        //e.addInvited(this.getLoggedUser(), 1);
         em.merge(selectedEvent);
         em.merge(this.getLoggedUser());
     }
@@ -344,6 +344,15 @@ public class UserArea {
         }
         
         return status;
+    }
+
+    public List<Update> getUpdate() {
+        return this.getLoggedUser().getNotifies();
+    }
+
+    public void setNotifyRead(Update u) {
+        u.setRead(true);
+        em.merge(u);
     }
         
     

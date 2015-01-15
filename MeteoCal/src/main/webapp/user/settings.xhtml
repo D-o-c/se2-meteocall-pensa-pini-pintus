@@ -13,7 +13,7 @@
             <h1 id="title">MeteoCal</h1>
             <h:form id="searchForm" class="float-left">
                 <p:inputText value="#{searchBean.searchInput}" id="keyword"/>
-                <p:commandButton style="margin-left: 20px;" action="#{searchBean.findUser()}" value="Search"/>
+                <p:commandButton class="searchUsersButton" action="#{searchBean.findUser()}" icon="ui-icon-search"/>
                 <p:watermark for="keyword" value="Search..." id="watermark" />
             </h:form>
             <ul id="landmarks">
@@ -24,7 +24,7 @@
                 <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
             </ul>
         </header>
-        <section>
+        <section style="padding-top: 60px">
             <h:form class="clear-left" style="padding:20px;">
                 <p:commandButton value="Make calendar public"
                                  action="#{userBean.changeCalendarVisibility()}"
@@ -114,9 +114,7 @@
             </h:form>
             <h:form style="padding:20px;">
                 <h3 style="margin-top:0">Unregister Your Account</h3>
-                <p:commandButton action="#{registrationBean.unregister()}"
-                                 value="Unregister"
-                                 icon="ui-icon-circle-close"/>
+                <p:commandButton value="Unregister" action="#{registrationBean.unregister()}"/>
             </h:form>
         </section>
     </h:body>

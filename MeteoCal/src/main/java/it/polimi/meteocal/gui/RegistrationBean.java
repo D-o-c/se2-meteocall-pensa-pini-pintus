@@ -48,6 +48,7 @@ public class RegistrationBean {
      * Calls PublicArea.register(User user) 
      */
     public void register() {
+       
         boolean ok = sm.register(user);
         if(ok) {
             FacesContext.getCurrentInstance()

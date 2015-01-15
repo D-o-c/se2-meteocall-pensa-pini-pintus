@@ -1,10 +1,13 @@
 package it.polimi.meteocal.boundary;
 
 import it.polimi.meteocal.control.EmailSender;
+import it.polimi.meteocal.control.UpdateManager;
 import it.polimi.meteocal.entity.Calendar;
 import it.polimi.meteocal.entity.Contact;
 import it.polimi.meteocal.entity.Event;
+import it.polimi.meteocal.entity.Update;
 import it.polimi.meteocal.entity.User;
+import it.polimi.meteocal.entity.WeatherCondition;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +27,16 @@ public class EventArea{
     EntityManager em;
     
     @Inject
+    UpdateManager um;
+    
+    @Inject
+    EmailSender emailS;
+    
+    @Inject
     Principal principal;
     
     Event currentEvent;
+    
 
     /**
      * Calls EntityManager.find(User.class, principal.getName())
@@ -47,8 +57,22 @@ public class EventArea{
         return currentEvent;
     }
     
+    /**
+     * Return true if logged user is creator
+     * @return 
+     */
     public boolean isCreator(){
-        return currentEvent.getCreator().getEmail().equals(this.getLoggedUser().getEmail());
+        return currentEvent.getCreator().equals(this.getLoggedUser());
+    }
+    
+    public boolean isPartecipants() {
+        List<String> partecipants = new ArrayList<>();
+        for (Calendar c : currentEvent.getInvited()){
+            if (c.getInviteStatus() == 1){
+                partecipants.add(c.getUser().getEmail());
+            }
+        }
+        return partecipants.contains(this.getLoggedUser().getEmail());
     }
     
     /**
@@ -60,25 +84,33 @@ public class EventArea{
      * @return if all invited users exist in the database
      */
     public boolean createEvent(Event event, List<String> invitedUsers){
-        boolean noErrors = true;
+        boolean noErrors;
         //Logged user is the creator of the event
         User creator = getLoggedUser();
         event.setCreator(creator);
         //persists the event into the database
+        event.setBwodb(false);
+        event.setBwtdb(false);
         em.persist(event);
         
         //adds the event to creator's calendar
         event.addInvited(creator, 1);
         
-        sendInvite(event,invitedUsers);
+        noErrors = sendInvite(event,invitedUsers);
         
         
         return noErrors;
     }
     
-    public void updateCurrentEvent(List<String> invitedUsers){
-        sendInvite(currentEvent, invitedUsers);
+    public boolean updateCurrentEvent(List<String> invitedUsers){
+        boolean noErrors = sendInvite(currentEvent, invitedUsers);
+        currentEvent.setWeatherConditions(new ArrayList<WeatherCondition>());
+        //currentEvent.setBwodb(false);
+        //currentEvent.setBwtdb(false);
+        currentEvent.setWeatherConditions(new ArrayList<WeatherCondition>());
         em.merge(currentEvent);
+        um.updateFromEventUpdate(currentEvent);
+        return noErrors;
     }
     
     private boolean sendInvite(Event e, List<String> iu){
@@ -96,8 +128,9 @@ public class EventArea{
             try {
                 //if exists, add event to his calendar
                 e.addInvited(u, 0);
-                EmailSender.send(invitedUser,"Invite",
+                emailS.send(invitedUser,"Invite",
                         "You received an invitation to an event, log on MeteoCal to accept!");
+                
             } catch (NullPointerException exc){
                 return false;
             }
@@ -157,6 +190,50 @@ public class EventArea{
         }
         return temp;
     }
+
+    public void deleteEvent() {
+        
+        for (Calendar c: currentEvent.getInvited()){
+            if (c.getInviteStatus() == 1){
+                emailS.send(c.getUserEmail(),
+                                "Evend deleted",
+                                currentEvent.getName() + "has been deleted");
+                
+            }
+            User u = c.getUser();
+            
+            for (int i = 0; i < u.getEvents().size(); i++){
+                if (u.getEvents().get(i).getEvent().equals(currentEvent)){
+                    u.getEvents().remove(i);
+                    i--;
+                }
+            }
+
+            for (int i = 0; i < u.getNotifies().size(); i++){
+                if (u.getNotifies().get(i).getEvent().equals(currentEvent)){
+                    u.getNotifies().remove(i);
+                    i--;
+                }
+            }
+            
+            em.merge(u);
+        }
+        
+        
+            
+        
+        currentEvent.setWeatherConditions(new ArrayList<WeatherCondition>());
+        currentEvent.setUpdate(new ArrayList<Update>());
+        currentEvent.setInvited(new ArrayList<Calendar>());
+        
+        Event e = em.merge(currentEvent);
+        em.remove(e);
+        currentEvent = null;
+        
+        
+    }
+
+  
 
     
     

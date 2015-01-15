@@ -13,7 +13,7 @@
             <h1 id="title">MeteoCal</h1>
             <h:form id="searchForm" class="float-left">
                 <p:inputText value="#{searchBean.searchInput}" id="keyword"/>
-                <p:commandButton style="margin-left: 20px;" action="#{searchBean.findUser()}" value="Search"/>
+                <p:commandButton class="searchUsersButton" action="#{searchBean.findUser()}" icon="ui-icon-search"/>
                 <p:watermark for="keyword" value="Search..." id="watermark" />
             </h:form>
             <ul id="landmarks">
@@ -24,10 +24,11 @@
                 <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
             </ul>
         </header>
-        <section>
-            <h:form id="form">
+        <section style="padding-top: 60px">
+            <h:form id="form" >
                 <p:dataList value="#{userBean.getInvites()}" var="event" type="unordered"
-                            itemType="none" paginator="true" rows="10" styleClass="paginated">
+                            itemType="none" paginator="true" rows="10" styleClass="paginated"
+                            emptyMessage="No invite found" paginatorAlwaysVisible="false"  >
                     <f:facet name="header">
                         Invites
                     </f:facet>
@@ -68,6 +69,29 @@
                         </p:panelGrid>
                     </p:outputPanel>
                 </p:dialog>
+            </h:form>
+            
+            <br/>
+            
+            
+            <h:form>
+                <p:dataList value="#{userBean.getUpdate()}" var="update" type="definition"
+                            itemType="none" paginator="true" rows="5" styleClass="paginated"
+                            emptyMessage="No update found" paginatorAlwaysVisible="false"  >
+                    <f:facet name="header">
+                        Notifies
+                    </f:facet>
+                    <br/><br/>
+                    <h:outputText value="#{update.event.name}, #{update.description}"
+                                  style="display:inline-block" escape="false"/>
+                    <br/>
+                    <p:commandButton value="Set as read"
+                                     action="#{userBean.setNotifyRead(update)}"
+                                     disabled="#{userBean.isRead(update)}"/>
+                    </p:dataList>
+            
+            
+                
             </h:form>
         </section>
     </h:body>
