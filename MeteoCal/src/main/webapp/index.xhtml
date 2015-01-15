@@ -17,7 +17,7 @@
                     <h:panelGrid columns="2" id="logGrid">
                         <p:outputLabel for="username" value="Email"/>
                         <p:inputText id="username" value="#{indexBean.username}" 
-                                     required="true" />
+                                     required="true" maxlength="200" />
                         <p:outputLabel for="pass" value="Password"/>
                         <p:password id="pass" value="#{indexBean.password}" 
                                     required="true" />
@@ -31,19 +31,19 @@
                 <p:panel header="Registration Form" style="height: 329px;">
                     <h:panelGrid columns="3" id="regGrid">
                         <h:outputLabel for="name">Name:</h:outputLabel>
-                        <p:inputText id="name" value="#{indexBean.user.name}">
+                        <p:inputText id="name" value="#{indexBean.user.name}" maxlength="200">
                             <p:ajax update="namemsg"/>
                         </p:inputText>
                         <p:message id="namemsg" for="name" />
 
                         <h:outputLabel for="surname">Surname:</h:outputLabel>
-                        <p:inputText id="surname" value="#{indexBean.user.surname}">
+                        <p:inputText id="surname" value="#{indexBean.user.surname}" maxlength="200">
                             <p:ajax update="surnamemsg"/>
                         </p:inputText>
                         <p:message id="surnamemsg" for="surname" />
 
                         <h:outputLabel for="email">Email:</h:outputLabel>
-                        <p:inputText id="email" value="#{indexBean.user.email}" >
+                        <p:inputText id="email" value="#{indexBean.user.email}" maxlength="200" >
                             <p:ajax update="emailmsg"/>
                         </p:inputText>
                         <p:message id="emailmsg" for="email" />

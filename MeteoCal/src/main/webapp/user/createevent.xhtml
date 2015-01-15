@@ -23,7 +23,7 @@
         <header >
             <h1 id="title">MeteoCal</h1>
             <h:form id="searchForm" class="float-left">
-                <p:inputText value="#{searchBean.searchInput}" id="keyword"/>
+                <p:inputText value="#{searchBean.searchInput}" id="keyword" maxlength="200"/>
                 <p:commandButton class="searchUsersButton" action="#{searchBean.findUser()}" icon="ui-icon-search"/>
                 <p:watermark for="keyword" value="Search..." id="watermark" />
             </h:form>
@@ -42,7 +42,7 @@
                     <p:panelGrid columns="3">
                        
                         <p:outputLabel value="Event Name"/>
-                        <p:inputText id="name" value="#{createEventBean.event.name}"/>
+                        <p:inputText id="name" value="#{createEventBean.event.name}" maxlength="200"/>
                         <p:outputLabel value=""/>
                        
                         <p:outputLabel value="Description"/>
@@ -72,7 +72,7 @@
                         <p:outputLabel value=""/>
 
                         <p:outputLabel value="Location, write &quot;address, city, state&quot;" />
-                        <p:inputText id="location" value="#{createEventBean.event.location}" />
+                        <p:inputText id="location" value="#{createEventBean.event.location}" maxlength="200"/>
                         <p:commandButton value="Check" type="button" onclick="myFunction()" />
                         
                         <p:outputLabel value="Insert email of invited users separated by &quot;;&quot;" />

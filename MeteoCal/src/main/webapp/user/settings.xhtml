@@ -12,7 +12,7 @@
         <header>
             <h1 id="title">MeteoCal</h1>
             <h:form id="searchForm" class="float-left">
-                <p:inputText value="#{searchBean.searchInput}" id="keyword"/>
+                <p:inputText value="#{searchBean.searchInput}" id="keyword" maxlength="200"/>
                 <p:commandButton class="searchUsersButton" action="#{searchBean.findUser()}" icon="ui-icon-search"/>
                 <p:watermark for="keyword" value="Search..." id="watermark" />
             </h:form>
@@ -24,7 +24,12 @@
                 <li><h:form><p:commandLink action="#{indexBean.logout()}" value="Logout"/></h:form></li>
             </ul>
         </header>
-        <section style="padding-top: 60px">
+        <section>
+            
+            <h:form>
+                <p:growl id="growl" showDetail="true" life="3000"/>
+            </h:form>
+            
             <h:form class="clear-left" style="padding:20px;">
                 <p:commandButton value="Make calendar public"
                                  action="#{settingsBean.changeCalendarVisibility()}"
@@ -51,7 +56,6 @@
                                      update="@all"
                                      icon="ui-icon-wrench"/>
                 </h:panelGrid>
-                <p:messages style="width:800px;" showDetail="true"  autoUpdate="true" closable="true"/>
             </h:form>
             <h:form style="padding:20px;">
                 <p:dataTable id="evntable" var="event" value="#{settingsBean.getUserEvent()}"
@@ -127,7 +131,7 @@
                 <h3 style="margin-top:0">Import Calendar:</h3>
                 <p:fileUpload value="#{settingsBean.file}"  mode="simple" allowTypes="/(\.|\/)(xml|csv|xls)$/"/>
 
-                <p:commandButton value="Submit" ajax="true" disabled="#{settingsBean.fileNull}" actionListener="#{settingsBean.upload}"/>
+                <p:commandButton value="Submit" ajax="false" actionListener="#{settingsBean.upload}"/>
                 
             </h:form>
             <h:form style="padding:20px;">

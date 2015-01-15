@@ -71,10 +71,6 @@ public class SettingsBean {
         this.file = file;
     }
     
-    public boolean isFileNull(){
-        return this.file == null;
-    }
-    
      /**
      * return a list of event to which the user participates, for export them
      * @return 
@@ -85,7 +81,16 @@ public class SettingsBean {
     
     public String upload() {
         FacesContext context = FacesContext.getCurrentInstance();
-        String extension = file.getFileName().substring(file.getFileName().length()-3).toLowerCase();
+        String extension;
+        try{
+            extension = file.getFileName().substring(file.getFileName().length()-3).toLowerCase();
+        }
+        catch(Exception e){
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR",
+                    "Choose a file!");
+            FacesContext.getCurrentInstance().addMessage(null, message);
+            return null;
+        }
         int status = 0;
         switch (extension) {
             case "xls":
@@ -129,6 +134,12 @@ public class SettingsBean {
      * @return user home page if password change is correct
      */
     public String changePassword() {
+        if (newPassword.length() < 4){
+            FacesContext.getCurrentInstance()
+                    .addMessage(null, new FacesMessage(
+                            FacesMessage.SEVERITY_ERROR,"Password Change Failure!","Password must have at least 4 characters"));
+            return null;
+        }
         boolean changeIsOk = ua.changePassword(password,newPassword);
         if(changeIsOk) {
             FacesContext context = FacesContext.getCurrentInstance();
