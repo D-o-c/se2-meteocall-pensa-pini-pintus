@@ -34,7 +34,7 @@ public class ScheduleBean implements Serializable {
  
     @PostConstruct
     public void init() {
-        eventModel = ua.getCalendar(ua.getLoggedUser());
+        eventModel = ua.getCalendar();
        
     }
      
@@ -55,51 +55,11 @@ public class ScheduleBean implements Serializable {
         ea.setCurrentEvent(selectedEvent.getDescription());
         //return goInEventPage();
     }
-    
-       
-    public String goInEventPage(){/*
-        String title = selectedEvent.getTitle();
-        int pos = title.lastIndexOf("$")+1;
-        String id = title.substring(pos);*/
-        //String id = selectedEvent.getDescription();
-        //ea.setCurrentEvent(Long.parseLong(id));
-        return "/event?faces-redirect=true";
-    }
 
     public Event getCurrentEvent(){
         return ea.getCurrentEvent();
     }
+   
     
-    public List<User> getPartecipants(){
-        return ea.getPartecipants();
-    }
-    
-    public String getEventOutdoorStatus(){
-        if (ea.getCurrentEvent().isOutdoor()){
-            return "yes";
-        }
-        return "no";
-    }
-    
-    /**
-     * Called By event.xhtml
-     * @return
-     */
-    public String getGoogleMap() {
-       
-        String str = getCurrentEvent().getLocation();
-        //creates an array of address-city-state
-        String[] parts = str.split(",");
-       
-        String address = parts[0].replaceAll(" ","+");
-        String city = parts[1].replaceAll(" ","");
-        String state = parts[2].replaceAll(" ","");
-       
-        String  location = address+","+city+"+"+state;
-       
-        return "https://www.google.com/maps/embed/v1/place?key=AIzaSyDDm0i7Jy_achXhFjVg8LcT1kbmi8wmdV4&q="
-                +location;
-       
-    }
 
 }

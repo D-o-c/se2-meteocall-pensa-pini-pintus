@@ -17,11 +17,11 @@
                 <p:watermark for="keyword" value="Search..." id="watermark" />
             </h:form>
             <ul id="landmarks">
-                <li><p:link outcome="user/home" value="#{userBean.name}'s Calendar"/></li>
-                <li><p:link outcome="user/notifications" value="Notifications (#{userBean.getNumberOfNotifies()})"/></li>
+                <li><p:link outcome="user/home" value="#{homeBean.name}'s Calendar"/></li>
+                <li><p:link outcome="user/notifications" value="Notifications (#{notificationBean.getNumberOfNotifies()})"/></li>
                 <li><p:link outcome="user/addressbook" value="Addressbook"/></li>
                 <li><p:link outcome="user/settings" value="Settings"/></li>
-                <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
+                <li><h:form><p:commandLink action="#{indexBean.logout()}" value="Logout"/></h:form></li>
             </ul>
         </header>
         <section style="padding-top: 60px">
@@ -30,17 +30,17 @@
                 <p:growl id="growl" showDetail="true" life="3000"/>
             </h:form>
             
-            <p:fieldset legend="#{scheduleBean.currentEvent.name}" style="position:relative;top:20px;">
+            <p:fieldset legend="#{eventBean.currentEvent.name}" style="position:relative;top:20px;">
                 <h:panelGrid columns="1">
-                    <h:outputText value="Name: #{scheduleBean.currentEvent.name}" />
-                    <h:outputText value="Description: #{scheduleBean.currentEvent.description}" />
-                    <h:outputText value="Outdoor: #{scheduleBean.getEventOutdoorStatus()}" />
-                    <h:outputText value="Begin Time: #{scheduleBean.currentEvent.beginTime}" />
-                    <h:outputText value="End Time: #{scheduleBean.currentEvent.endTime}" />
-                    <h:outputText value="Location: #{scheduleBean.currentEvent.location}" />
+                    <h:outputText value="Name: #{eventBean.eventName}" />
+                    <h:outputText value="Description: #{eventBean.eventDescription}" />
+                    <h:outputText value="Outdoor: #{eventBean.eventOutdoorStatus}" />
+                    <h:outputText value="Begin Time: #{eventBean.eventBeginTime}" />
+                    <h:outputText value="End Time: #{eventBean.eventEndTime}" />
+                    <h:outputText value="Location: #{eventBean.eventLocation}" />
                 </h:panelGrid>
                 <p:dataTable var="wc" value="#{eventBean.getWeather()}" emptyMessage="No weather found"
-                             sortBy="#{wc.time}" style="display: #{scheduleBean.getEventOutdoorStatus()}ne">
+                             sortBy="#{wc.time}" style="display: #{eventBean.isWeatherVisible()}">
                     <p:column headerText="Date:">
                         <h:outputText value="#{wc.time}" />
                     </p:column>
@@ -61,17 +61,17 @@
                     height="450"
                     frameborder="0"
                     style="margin:50px;"
-                    src="#{scheduleBean.googleMap}">
+                    src="#{eventBean.googleMap}">
                 </iframe>
             </h:form>
             <h:form>
-                <p:dataList value="#{scheduleBean.getPartecipants()}" var="user">
+                <p:dataList value="#{eventBean.getPartecipants()}" var="user">
                     <f:facet name="header">
                         List of partecipants:
                     </f:facet>
                     #{user.name} #{user.surname}
                 </p:dataList>
-                <p><p:commandButton action="#{eventBean.goToChangeEventInfo()}" value="Change event info" disabled="#{!eventBean.isCreator()}" /></p>
+                <p><p:commandButton action="/user/changeeventinfo?faces-redirect=true" value="Change event info" disabled="#{!eventBean.isCreator()}" /></p>
                 <p><p:commandButton action="#{eventBean.removePartecipation()}" value="Delete partecipation" disabled="#{eventBean.isPartecipants()}" /></p>
             </h:form>
         </section>

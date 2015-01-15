@@ -17,11 +17,11 @@
                 <p:watermark for="keyword" value="Search..." id="watermark" />
             </h:form>
             <ul id="landmarks">
-                <li><p:link outcome="home" value="#{userBean.name}'s Calendar"/></li>
-                <li><p:link outcome="notifications" value="Notifications (#{userBean.getNumberOfNotifies()})"/></li>
+                <li><p:link outcome="home" value="#{homeBean.name}'s Calendar"/></li>
+                <li><p:link outcome="notifications" value="Notifications (#{notificationBean.getNumberOfNotifies()})"/></li>
                 <li><p:link outcome="addressbook" value="Addressbook"/></li>
                 <li><p:link outcome="settings" value="Settings"/></li>
-                <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
+                <li><h:form><p:commandLink action="#{indexBean.logout()}" value="Logout"/></h:form></li>
             </ul>
         </header>
         <section>
@@ -31,7 +31,7 @@
             </h:form>
             
             <h:form>
-                <p:commandButton style="margin: 60px 0 10px 0;"
+                <p:commandButton style="margin-bottom: 10px;"
                                  action="createevent?faces-redirect=true"
                                  value="Create New Event" />
             </h:form>
@@ -39,7 +39,7 @@
             <h:form>
                 <p:schedule id="schedule" value="#{scheduleBean.eventModel}" widgetVar="myschedule"
                             draggable="false" resizable="false" axisFormat="H(:mm)" timeFormat="H(:mm)"
-                            firstHour="0" showWeekends="true" locale="#{userBean.getLocaleDefault()}">
+                            firstHour="0" showWeekends="true">
 
 
                     <p:ajax event="eventSelect" listener="#{scheduleBean.onEventSelect}"
@@ -66,7 +66,7 @@
                         <p:outputLabel value="Location:"/>
                         <p:outputLabel value="#{scheduleBean.currentEvent.location}"/>
 
-                       <p:commandButton id="goButton" value="Go in Event Page" action="#{scheduleBean.goInEventPage()}"/>
+                       <p:commandButton id="goButton" value="Go in Event Page" action="/event?faces-redirect=true"/>
                     </h:panelGrid>
                 </p:dialog>
             </h:form>

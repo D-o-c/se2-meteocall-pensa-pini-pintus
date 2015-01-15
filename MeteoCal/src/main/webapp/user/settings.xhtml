@@ -17,35 +17,35 @@
                 <p:watermark for="keyword" value="Search..." id="watermark" />
             </h:form>
             <ul id="landmarks">
-                <li><p:link outcome="home" value="#{userBean.name}'s Calendar"/></li>
-                <li><p:link outcome="notifications" value="Notifications (#{userBean.getNumberOfNotifies()})"/></li>
+                <li><p:link outcome="home" value="#{homeBean.name}'s Calendar"/></li>
+                <li><p:link outcome="notifications" value="Notifications (#{notificationBean.getNumberOfNotifies()})"/></li>
                 <li><p:link outcome="addressbook" value="Addressbook"/></li>
                 <li><p:link outcome="settings" value="Settings"/></li>
-                <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
+                <li><h:form><p:commandLink action="#{indexBean.logout()}" value="Logout"/></h:form></li>
             </ul>
         </header>
         <section style="padding-top: 60px">
             <h:form class="clear-left" style="padding:20px;">
                 <p:commandButton value="Make calendar public"
-                                 action="#{userBean.changeCalendarVisibility()}"
+                                 action="#{settingsBean.changeCalendarVisibility()}"
                                  icon="ui-icon-check"
-                                 disabled="#{userBean.loggedUser.public}"/>
+                                 disabled="#{settingsBean.loggedUserPublic}"/>
                 <p:commandButton value="Make calendar private"
-                                 action="#{userBean.changeCalendarVisibility()}"
+                                 action="#{settingsBean.changeCalendarVisibility()}"
                                  icon="ui-icon-check"
-                                 disabled="#{!userBean.loggedUser.public}"/>
+                                 disabled="#{!settingsBean.loggedUserPublic}"/>
             </h:form>
             <h:form id="passform" style="padding:20px;">
                 <h3 style="margin-top:0">Change password</h3>
                 <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
                     <p:outputLabel for="oldpsw" value="Confirm old Password"/>
-                    <p:password id="oldpsw" value="#{userBean.password}" 
+                    <p:password id="oldpsw" value="#{settingsBean.password}" 
                                  required="true" />
                     <p:outputLabel for="newpsw" value="Insert new Password"/>
-                    <p:password id="newpsw" value="#{userBean.newPassword}" 
+                    <p:password id="newpsw" value="#{settingsBean.newPassword}" 
                                 required="true" />
                     <p:commandButton id="submit"
-                                     action="#{userBean.changePassword()}"
+                                     action="#{settingsBean.changePassword()}"
                                      value="Change"
                                      ajax="true"
                                      update="@all"
@@ -54,7 +54,7 @@
                 <p:messages style="width:800px;" showDetail="true"  autoUpdate="true" closable="true"/>
             </h:form>
             <h:form style="padding:20px;">
-                <p:dataTable id="evntable" var="event" value="#{userBean.getUserEvent()}"
+                <p:dataTable id="evntable" var="event" value="#{settingsBean.getUserEvent()}"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}" 
                              paginator="true" rows="10" style="display: none;">
                     <p:column>
@@ -76,6 +76,24 @@
                             <h:outputText value="Description" />
                         </f:facet>
                         <h:outputText value="#{event.description}" />
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Begin Time" />
+                        </f:facet>
+                        <h:outputText value="#{event.beginTime}" />
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="End Time" />
+                        </f:facet>
+                        <h:outputText value="#{event.endTime}" />
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Location" />
+                        </f:facet>
+                        <h:outputText value="#{event.location}" />
                     </p:column>
                     
                     <!-- DA AGGIUNGERE ALTRE INFO -->
@@ -107,14 +125,14 @@
             </h:form>
             <h:form id="uploadform" enctype="multipart/form-data" style="padding:20px;">
                 <h3 style="margin-top:0">Import Calendar:</h3>
-                <p:fileUpload value="#{userBean.file}" mode="simple" allowTypes="/(\.|\/)(xml|csv|xls)$/"/>
+                <p:fileUpload value="#{settingsBean.file}"  mode="simple" allowTypes="/(\.|\/)(xml|csv|xls)$/"/>
 
-                <p:commandButton value="Submit" ajax="false" actionListener="#{userBean.upload}" update="uploadmsg"/>
-                <p:messages style="color: red;"/>
+                <p:commandButton value="Submit" ajax="true" disabled="#{settingsBean.fileNull}" actionListener="#{settingsBean.upload}"/>
+                
             </h:form>
             <h:form style="padding:20px;">
                 <h3 style="margin-top:0">Unregister Your Account</h3>
-                <p:commandButton value="Unregister" action="#{registrationBean.unregister()}"/>
+                <p:commandButton value="Unregister" action="#{settingsBean.unregister()}"/>
             </h:form>
         </section>
     </h:body>

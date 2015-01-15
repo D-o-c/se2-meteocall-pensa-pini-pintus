@@ -1,24 +1,32 @@
 package it.polimi.meteocal.boundary;
 
-import it.polimi.meteocal.entity.Contact;
-import it.polimi.meteocal.entity.primarykeys.ContactPK;
+import it.polimi.meteocal.control.GuestManager;
+import it.polimi.meteocal.control.SearchingManager;
+import it.polimi.meteocal.control.UserManager;
 import it.polimi.meteocal.entity.User;
 import java.security.Principal;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import org.primefaces.model.ScheduleModel;
 
 /**
  *
- * @author user
  */
 @Stateless
 public class SearchArea {
     
-    @PersistenceContext
-    EntityManager em;
+    
+    
+    @Inject
+    UserManager um;
+    
+    @Inject
+    GuestManager gm;
+    
+    @Inject
+    SearchingManager sm;
     
     @Inject
     Principal principal;
@@ -40,43 +48,17 @@ public class SearchArea {
     }
     /**************************************************************************/
     
-    /**
-     * Calls EntityManager.find(User.class, principal.getName())
-     * @return the logger user
-     */
-    public User getLoggedUser() {
-        return em.find(User.class, principal.getName());
-    }
     
     /**
      * Search users by email or name or surname by a search input
      * @param searchInput
      */
     public void findUser(String searchInput) {
-        usersSearched = em.createNamedQuery(User.findByEmailOrLikeNameSurname, User.class)
-                                .setParameter(1, searchInput+"%")
-                                .setParameter(2, searchInput)
-                                .getResultList();
-        User loggedUser = getLoggedUser();
+        usersSearched = sm.searchUser(searchInput);
+        User loggedUser = gm.getLoggedUser();
         if(usersSearched.contains(loggedUser)) {
             usersSearched.remove(loggedUser);
         }
-    }
-    
-    /**
-     * Label if usersSearched.isEmpty()
-     * @return "Results : Not Found"
-     */
-    public String resultsLabel() {
-        if(usersSearched.isEmpty()) return "Results : Not Found";
-        else return "Results :";
-    }
-    
-    /**
-     * @return List of contacts of the logged user
-     */
-    public List<Contact> getContacts() {
-        return getLoggedUser().getContacts();
     }
     
     /**
@@ -87,25 +69,11 @@ public class SearchArea {
      * @param name
      * @param surname 
      */
-    public void addContact(String email, String name, String surname) {
-       Contact contact = new Contact(email, name, surname, getLoggedUser());
-       em.persist(contact);
-       getLoggedUser().addContact(contact);
-       em.merge(getLoggedUser());
+    public void addContact() {
+        sm.addContact(gm.getLoggedUser(), selectedUser);
     }
     
-    /**
-     * Deletes a contact of the logged user
-     * Calls EntityManager.find(Contact.class, Primary Key)
-     * Calls EntityManager.remove(contact)
-     * @param contact 
-     */
-    public void deleteContact(String contactEmail) {
-        ContactPK pk = new ContactPK(contactEmail,getLoggedUser().getEmail());
-        Contact toBeRemoved = em.find(Contact.class, pk);
-        getLoggedUser().getContacts().remove(toBeRemoved);
-        em.remove(toBeRemoved);
-    }
+    
 
     /**
      * Check if the logged user has the contact
@@ -113,8 +81,11 @@ public class SearchArea {
      * @param contactEmail
      * @return if the logged user has the contact
      */
-    public boolean exist(String contactEmail) {
-        ContactPK pk = new ContactPK(contactEmail, getLoggedUser().getEmail());
-        return getLoggedUser().getContacts().contains(em.find(Contact.class, pk));
+    public boolean exist() {
+        return sm.exist(gm.getLoggedUser(), selectedUser);
+    }
+
+    public ScheduleModel getCalendar() {
+        return um.getCalendar(selectedUser);
     }
 }

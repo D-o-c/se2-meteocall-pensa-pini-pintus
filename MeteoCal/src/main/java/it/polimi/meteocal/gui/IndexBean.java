@@ -1,36 +1,48 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package it.polimi.meteocal.gui;
 
+import it.polimi.meteocal.boundary.PublicArea;
+import it.polimi.meteocal.entity.User;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.inject.Named;
+import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 /**
  *
- * @author aldo
+ * @author doc
  */
 @Named
 @RequestScoped
-public class LoginBean {
+public class IndexBean {
     
     private static final String user_home_page_url = "/user/home?faces-redirect=true";
     private static final String index_page_url = "/index?faces-redirect=true";
     
-    @Inject
-    private Logger logger;
+    @EJB
+    PublicArea pa;
+    
+ //   @Inject
+ //   private Logger logger;
     
     private String username;
     private String password;
+    private User user;
 
     /**
      * Empty Constructor
      */
-    public LoginBean() {}
+    public IndexBean() {}
 
     /**************************** Getter and Setter ***************************/
     public String getUsername() {
@@ -48,13 +60,48 @@ public class LoginBean {
     public void setPassword(String password) {
         this.password = password;
     }
+    public User getUser() {
+        if (user == null) {
+            user = new User();
+        }
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
     /**************************************************************************/
+    
+    
+    /**
+     * Calls PublicArea.register() 
+     */
+    public void register() {
+       
+        if(pa.register(user)) {
+            this.username = user.getEmail();
+            user = new User();
+            FacesContext.getCurrentInstance()
+                .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+                        "Info", "Registration Successfull"));
+        }
+        else {
+            FacesContext.getCurrentInstance()
+                .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                        "Error", "Registration Failed"));
+        }
+        
+    }
+    
+    
+    
     
     /**
      * Login
      * @return user_home_page_url
      */
     public String login() {
+        
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) context
                 .getExternalContext().getRequest();
@@ -65,7 +112,7 @@ public class LoginBean {
             context.addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
                             "Error","Login Failed"));
-            logger.log(Level.SEVERE,"Login Failed");
+ //         logger.log(Level.SEVERE,"Login Failed");
             return null;
         }
     }
@@ -78,7 +125,8 @@ public class LoginBean {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
         request.getSession().invalidate();
-        logger.log(Level.INFO, "User Logged out");
+  //      logger.log(Level.INFO, "User Logged out");
         return index_page_url;
     }
+    
 }

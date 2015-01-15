@@ -17,16 +17,16 @@
                 <p:watermark for="keyword" value="Search..." id="watermark" />
             </h:form>
             <ul id="landmarks">
-                <li><p:link outcome="home" value="#{userBean.name}'s Calendar"/></li>
-                <li><p:link outcome="notifications" value="Notifications (#{userBean.getNumberOfNotifies()})"/></li>
+                <li><p:link outcome="home" value="#{homeBean.name}'s Calendar"/></li>
+                <li><p:link outcome="notifications" value="Notifications (#{notificationBean.numberOfNotifies})"/></li>
                 <li><p:link outcome="addressbook" value="Addressbook"/></li>
                 <li><p:link outcome="settings" value="Settings"/></li>
-                <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
+                <li><h:form><p:commandLink action="#{indexBean.logout()}" value="Logout"/></h:form></li>
             </ul>
         </header>
-        <section style="padding-top: 60px">
+        <section>
             <h:form class="clear-left">
-                <p:dataTable var="contact" value="#{searchBean.contacts}">
+                <p:dataTable var="contact" value="#{addressBookBean.contacts}">
                     <p:column headerText="Name">
                         <h:outputText value="#{contact.name}" />
                     </p:column>
@@ -40,7 +40,7 @@
                     </p:column>
 
                     <p:column headerText="Delete">
-                        <p:commandButton action="#{searchBean.deleteContact(contact.email)}"
+                        <p:commandButton action="#{addressBookBean.deleteContact(contact.email)}"
                                          value="Delete"/>
                     </p:column>
                 </p:dataTable>

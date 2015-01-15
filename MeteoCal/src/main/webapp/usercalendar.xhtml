@@ -18,29 +18,29 @@
                 <p:watermark for="keyword" value="Search..." id="watermark" />
             </h:form>
             <ul id="landmarks">
-                <li><p:link outcome="user/home" value="#{userBean.name}'s Calendar"/></li>
-                <li><p:link outcome="user/notifications" value="Notifications (#{userBean.getNumberOfNotifies()})"/></li>
+                <li><p:link outcome="user/home" value="#{homeBean.name}'s Calendar"/></li>
+                <li><p:link outcome="user/notifications" value="Notifications (#{notificationBean.getNumberOfNotifies()})"/></li>
                 <li><p:link outcome="user/addressbook" value="Addressbook"/></li>
                 <li><p:link outcome="user/settings" value="Settings"/></li>
-                <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
+                <li><h:form><p:commandLink action="#{indexBean.logout()}" value="Logout"/></h:form></li>
             </ul>
         </header>
         <section>
-            <h3 style="margin:0px;padding:20px;">#{searchBean.selectedUser.name} #{searchBean.selectedUser.surname} (#{searchBean.selectedUser.email})</h3>
-            <h:form style="margin:0;padding:20px;">
+            <h:form style="padding-bottom: 10px;">
                 <p:commandButton 
-                    action="#{searchBean.addContact()}"
-                    value="Add To Contacts" disabled="#{searchBean.exist()}"/>
+                    action="#{userCalendarBean.addContact()}"
+                    value="Add To Contacts" disabled="#{userCalendarBean.exist()}"/>
+                <p:outputLabel style="margin:0px;padding:20px" value="nome cognome email"/>
             </h:form>
 
 
             <h:form id="scheduleform">
-                <p:schedule id="schedule" value="#{searchBean.eventModel}" widgetVar="myschedule"
+                <p:schedule id="schedule" value="#{userCalendarBean.eventModel}" widgetVar="myschedule"
                             draggable="false" resizable="false" axisFormat="H(:mm)" timeFormat="H(:mm)"
-                            firstHour="0" showWeekends="true" locale="#{userBean.getLocaleDefault()}">
+                            firstHour="0" showWeekends="true">
 
 
-                    <p:ajax event="eventSelect" listener="#{searchBean.onEventSelect}"
+                    <p:ajax event="eventSelect" listener="#{userCalendarBean.onEventSelect}"
                             update="eventDetails" oncomplete="PF('eventDialog').show();" />
 
                 </p:schedule>
@@ -49,23 +49,23 @@
                     <h:panelGrid id="eventDetails" columns="2">
 
                         <p:outputLabel value="Name:"/>
-                        <p:outputLabel value="#{scheduleBean.currentEvent.name}"/>
+                        <p:outputLabel value="#{userCalendarBean.currentEvent.name}"/>
 
                         <p:outputLabel value="Description"/>
-                        <p:outputLabel value="#{scheduleBean.currentEvent.description}"/>
+                        <p:outputLabel value="#{userCalendarBean.currentEvent.description}"/>
 
                         <p:outputLabel value="Begin Time:"/>
-                        <p:outputLabel value="#{scheduleBean.currentEvent.beginTime}"/>
+                        <p:outputLabel value="#{userCalendarBean.currentEvent.beginTime}"/>
 
                         <p:outputLabel value="End Time:"/>
-                        <p:outputLabel value="#{scheduleBean.currentEvent.endTime}"/>
+                        <p:outputLabel value="#{userCalendarBean.currentEvent.endTime}"/>
 
                         <p:outputLabel value="Location:"/>
-                        <p:outputLabel value="#{scheduleBean.currentEvent.location}"/>
+                        <p:outputLabel value="#{userCalendarBean.currentEvent.location}"/>
 
                         <p:commandButton id="goButton" value="Go in Event Page"
-                                         action="#{scheduleBean.goInEventPage()}"
-                                         disabled="#{searchBean.privateEvent}"/>
+                                         action="/event?faces-redirect=true"
+                                         disabled="#{userCalendarBean.privateEvent}"/>
                     </h:panelGrid>
                 </p:dialog>
             </h:form>

@@ -1,23 +1,20 @@
 package it.polimi.meteocal.boundary;
 
+import it.polimi.meteocal.control.EventManager;
+import it.polimi.meteocal.control.GuestManager;
 import it.polimi.meteocal.control.PasswordEncrypter;
-import it.polimi.meteocal.entity.Calendar;
+import it.polimi.meteocal.control.UserManager;
+import it.polimi.meteocal.entity.Contact;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.Update;
-import it.polimi.meteocal.entity.User;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import org.primefaces.model.DefaultScheduleEvent;
-import org.primefaces.model.DefaultScheduleModel;
 import org.primefaces.model.ScheduleModel;
 import org.primefaces.model.UploadedFile;
 import javax.xml.parsers.DocumentBuilder;
@@ -36,26 +33,24 @@ import jxl.read.biff.BiffException;
 
 /**
  *
- * @author aldo
+ * DA COMMENTARE
  */
 @Stateless
 public class UserArea {
-
-    @PersistenceContext
-    EntityManager em;
     
     @Inject
     Principal principal;
     
-    Event selectedEvent; //event to accept or deny
+    @Inject
+    UserManager um;
     
-    /**
-     * Calls EntityManager.find(User.class, principal.getName())
-     * @return the logger user
-     */
-    public User getLoggedUser() {
-        return em.find(User.class, principal.getName());
-    }
+    @Inject
+    EventManager em;
+    
+    @Inject
+    GuestManager gm;
+    
+    Event selectedEvent; //event to accept or deny
     
     
 
@@ -67,66 +62,36 @@ public class UserArea {
         this.selectedEvent = selectedEvent;
     }
     
-    /**
-     * Calls EntityManager.find(User.class, PrimaryKey)
-     * Sets the logged user privacy
+    /*
+     * OKOK
      */
     public void changeCalendarVisibility() {
-        boolean temp = getLoggedUser().isPublic();
-        temp ^= true;
-        getLoggedUser().setPublic(temp);
+        um.changeCalendarVisibility(gm.getLoggedUser());
     }
     
-    /**
-     * Controls validity of input password and possibly save that password
-     * @param inputPassword
-     * @param newPassword
-     * @return if change has been made correctly
+    /*
+     * OKOK 
      */
     public boolean changePassword(String inputPassword, String newPassword) {
-        String email = getLoggedUser().getEmail();
-        String enc_old_psw = getLoggedUser().getPassword();
+        
+        String enc_old_psw = gm.getLoggedUser().getPassword();
         String enc_new_psw = PasswordEncrypter.encryptPassword(inputPassword);
-        if(enc_new_psw.equals(enc_old_psw)) {
-            //update password
-            em.find(User.class, email).setPassword(newPassword);
+        
+        if (enc_old_psw.equals(enc_new_psw)){
+            um.changePassword(gm.getLoggedUser(), newPassword);
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
+        
     }
     
-    public ScheduleModel getCalendar(User u){
-        ScheduleModel calendar = new DefaultScheduleModel();
-        try{
-            
-            List<Calendar> temp = u.getEvents();
-            for (Calendar temp1 : temp) {
-                if (temp1.getInviteStatus() == 1) {
-                    Event evntTemp = temp1.getEvent();
-                    DefaultScheduleEvent dse = new DefaultScheduleEvent(evntTemp.getName(),
-                                                                        evntTemp.getBeginTime(),
-                                                                        evntTemp.getEndTime());
-                    if (u.getEmail().equals(this.getLoggedUser().getEmail()) || evntTemp.isPub()){
-                        dse.setDescription(Long.toString(evntTemp.getEventId()));
-                    }
-                    else{
-                        dse.setTitle("Private event!");
-                        dse.setDescription(null);
-                    }
-                    calendar.addEvent(dse);
-
-                }
-            }
-        }
-        catch (Exception e){
-            
-        }
-        
-        
-        return calendar;
+    /*
+     * OKOK
+     */
+    public ScheduleModel getCalendar(){
+        return um.getCalendar(gm.getLoggedUser());
     }
+    
     /**
      * Verify timeConsistency of the @param and between event (with inviteStatus == 1) of logged user and @param
      * @param event
@@ -136,68 +101,30 @@ public class UserArea {
      *      0: if there isn't problem
      */
     public int timeConsistency(Event event){
-        try{
-            if (event.getBeginTime().after(event.getEndTime())){ //beginTime is AFTER endTime
-                return -1;
-            }
-
-            List<Calendar> c = this.getLoggedUser().getEvents();
-            for (Calendar c1 : c) {
-                if (event.getBeginTime().before(c1.getEvent().getEndTime()) &&
-                        event.getEndTime().after(c1.getEvent().getBeginTime()) &&
-                        event.getEventId() != c1.getEventId() &&
-                        c1.getInviteStatus()==1){
-                    return -2;
-                }
-            }
-        }
-        catch(NullPointerException e){
-                
-        }
-        return 0;
+        return um.timeConsistency(gm.getLoggedUser(), event);
     }
     
+    /*
+     * OKOK 
+     */
     public void accept(){
-        for (int i=0;i<selectedEvent.getInvited().size();i++){
-            if (selectedEvent.getInvited().get(i).getUser().getEmail().equals(this.getLoggedUser().getEmail())){
-                selectedEvent.getInvited().get(i).setInviteStatus(1);
-            }
-        }
-        for (int i = 0; i < this.getLoggedUser().getEvents().size(); i++){
-            if (this.getLoggedUser().getEvents().get(i).getEventId()==selectedEvent.getEventId()){
-                this.getLoggedUser().getEvents().get(i).setInviteStatus(1);
-            }
-        }
-        em.merge(selectedEvent);
-        em.merge(this.getLoggedUser());
+        um.acceptInvite(gm.getLoggedUser(), selectedEvent);
+        
     }
+    
+    /*
+     * OKOK
+     */
     public void deny(){
-        for (int i=0;i<selectedEvent.getInvited().size();i++){
-            if (selectedEvent.getInvited().get(i).getUser().getEmail().equals(this.getLoggedUser().getEmail())){
-                selectedEvent.getInvited().get(i).setInviteStatus(-1);
-            }
-        }
-        for (int i = 0; i < this.getLoggedUser().getEvents().size(); i++){
-            if (this.getLoggedUser().getEvents().get(i).getEventId()==selectedEvent.getEventId()){
-                this.getLoggedUser().getEvents().get(i).setInviteStatus(-1);
-            }
-        }
-        em.merge(selectedEvent);
-        em.merge(this.getLoggedUser());
+        um.denyInvite(gm.getLoggedUser(), selectedEvent);
     }
 
-    /**
-     * return a list of event to which the user participates, for export them
-     * @return 
+    /*
+     * OKOK
      */
     public List<Event> getUserEvent() {
-        List<Event> temp = new ArrayList<>();
-        for (int i = 0; i < this.getLoggedUser().getEvents().size(); i++){
-            if (this.getLoggedUser().getEvents().get(i).getInviteStatus()==1){
-                temp.add(this.getLoggedUser().getEvents().get(i).getEvent());
-            }
-        }
-        return temp;
+        return um.getUserEvent(gm.getLoggedUser());
+        
     }
 
     public int importXLScalendar(UploadedFile file) {
@@ -215,7 +142,7 @@ public class UserArea {
                     LabelCell temp = (LabelCell) cell;
                     id = temp.getString();
                     try{
-                        tempEvent.add(em.find(Event.class, Long.parseLong(id)));
+                        tempEvent.add(em.find(Long.parseLong(id)));
                     }
                     catch(Exception e){
                         return -1;
@@ -229,7 +156,7 @@ public class UserArea {
             return -1;
         }
         
-        return this.importCalendar(tempEvent);
+        return um.importCalendar(gm.getLoggedUser(), tempEvent);
     }
 
     public int importCSVcalendar(UploadedFile file) {
@@ -243,7 +170,7 @@ public class UserArea {
                 String[] singleLine = line.split(",");
                 String id = singleLine[0].substring(1, singleLine[0].length()-1);
                 try{
-                    tempEvent.add(em.find(Event.class, Long.parseLong(id)));
+                    tempEvent.add(em.find(Long.parseLong(id)));
                 }
                 catch(Exception e){
                     return -1;
@@ -254,7 +181,7 @@ public class UserArea {
         catch(Exception e){
             return -1;
         }
-        return this.importCalendar(tempEvent);
+        return um.importCalendar(gm.getLoggedUser(),tempEvent);
     }
 
     public int importXMLcalendar(UploadedFile file) {
@@ -290,7 +217,7 @@ public class UserArea {
         } catch (ParserConfigurationException | IOException | SAXException e) {
             return -1;
         }
-        return this.importCalendar(tempEvent);
+        return um.importCalendar(gm.getLoggedUser(),tempEvent);
     }
     
     
@@ -308,51 +235,51 @@ public class UserArea {
             Element el = (Element)nl.item(0);
             temp = el.getFirstChild().getNodeValue();
         }
-        id = Long.parseLong(temp);
-        return em.find(Event.class, id); 
+        return em.find(Long.parseLong(temp)); 
     }
     
-    private int importCalendar(HashSet<Event> e){
-        int status = 0;
-        for (int i=0;i<this.getLoggedUser().getEvents().size();i++){
-            if (!this.getLoggedUser().getEvents().get(i).getEvent().getCreator().getEmail().equals(this.getLoggedUser().getEmail())){
-                this.getLoggedUser().getEvents().get(i).setInviteStatus(-1);
-            }
-        }
-        List<Event> events = new ArrayList<>(e);
-        //Event[] events = (Event[]) e.toArray();
-        for (Event event : events) {
-            if (this.timeConsistency(event)==0){
-                for (int j = 0; j < event.getInvited().size(); j++) {
-                    if (event.getInvited().get(j).getUser().getEmail().equals(this.getLoggedUser().getEmail())) {
-                        event.getInvited().get(j).setInviteStatus(1);
-                        
-                    }
-                }
-
-                for (int i = 0; i < this.getLoggedUser().getEvents().size(); i++){
-                    if (this.getLoggedUser().getEvents().get(i).getEventId()==event.getEventId()){
-                        this.getLoggedUser().getEvents().get(i).setInviteStatus(1);
-                    }
-                }
-                em.merge(event);
-                em.merge(this.getLoggedUser());
-            }
-            else{
-                status = -2;
-            }
-        }
-        
-        return status;
-    }
+    
 
     public List<Update> getUpdate() {
-        return this.getLoggedUser().getNotifies();
+        return um.getNotifies(gm.getLoggedUser());
     }
 
     public void setNotifyRead(Update u) {
-        u.setRead(true);
-        em.merge(u);
+        um.setNotifyRead(u);
+        
+    }
+    
+    public int getNumberOfNotifies(){
+        
+        return this.getInvites().size() + um.getNumberOfNotReadedNotifies(gm.getLoggedUser());
+    }
+
+    public List<Event> getInvites() {
+        return um.getInvites(gm.getLoggedUser());
+    }
+
+    public String getName() {
+        return gm.getLoggedUser().getName();
+    }
+    
+    public boolean isLoggedUserPublic(){
+        return gm.getLoggedUser().isPublic();
+    }
+
+    public List<Contact> getContact() {
+        return um.getContacts(gm.getLoggedUser());
+    }
+
+    /**
+     * Deletes a contact of the logged user
+     * Calls EntityManager.find(Contact.class, Primary Key)
+     * Calls EntityManager.remove(contact)
+     * @param contact 
+     */
+    public void deleteContact(String contactEmail) {
+        um.deleteContact(gm.getLoggedUser(), contactEmail);
+        
+        
     }
         
     

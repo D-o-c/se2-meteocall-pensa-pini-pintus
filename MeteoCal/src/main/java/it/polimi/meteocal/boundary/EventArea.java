@@ -1,20 +1,21 @@
 package it.polimi.meteocal.boundary;
 
 import it.polimi.meteocal.control.EmailSender;
+import it.polimi.meteocal.control.EventManager;
+import it.polimi.meteocal.control.GuestManager;
 import it.polimi.meteocal.control.UpdateManager;
+import it.polimi.meteocal.control.UserManager;
 import it.polimi.meteocal.entity.Calendar;
 import it.polimi.meteocal.entity.Contact;
 import it.polimi.meteocal.entity.Event;
-import it.polimi.meteocal.entity.Update;
 import it.polimi.meteocal.entity.User;
-import it.polimi.meteocal.entity.WeatherCondition;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 /**
  *
@@ -23,11 +24,17 @@ import javax.persistence.PersistenceContext;
 @Stateless
 public class EventArea{
     
-    @PersistenceContext
-    EntityManager em;
-    
     @Inject
     UpdateManager um;
+    
+    @Inject
+    GuestManager gm;
+    
+    @Inject
+    UserManager userManager;
+    
+    @Inject
+    EventManager em;
     
     @Inject
     EmailSender emailS;
@@ -38,20 +45,14 @@ public class EventArea{
     Event currentEvent;
     
 
-    /**
-     * Calls EntityManager.find(User.class, principal.getName())
-     * @return the logger user
-     */
-    public User getLoggedUser() {
-        return em.find(User.class, principal.getName());
-    }
+    
     
     /**
      * @return List of contacts of the logged user
-     */
+     *//*
     public List<Contact> getContacts() {
         return getLoggedUser().getContacts();
-    }
+    }*/
     
     public Event getCurrentEvent() {
         return currentEvent;
@@ -62,7 +63,7 @@ public class EventArea{
      * @return 
      */
     public boolean isCreator(){
-        return currentEvent.getCreator().equals(this.getLoggedUser());
+        return currentEvent.getCreator().equals(gm.getLoggedUser());
     }
     
     public boolean isPartecipants() {
@@ -72,7 +73,7 @@ public class EventArea{
                 partecipants.add(c.getUser().getEmail());
             }
         }
-        return partecipants.contains(this.getLoggedUser().getEmail());
+        return partecipants.contains(gm.getLoggedUser().getEmail());
     }
     
     /**
@@ -82,71 +83,62 @@ public class EventArea{
      * @param event
      * @param invitedUsers
      * @return if all invited users exist in the database
+     * 
+     * OKOK
      */
-    public boolean createEvent(Event event, List<String> invitedUsers){
-        boolean noErrors;
-        //Logged user is the creator of the event
-        User creator = getLoggedUser();
-        event.setCreator(creator);
-        //persists the event into the database
-        event.setBwodb(false);
-        event.setBwtdb(false);
-        em.persist(event);
+    public boolean createEvent(Event event, String invites){
+        List<String> invitedUsers = this.updateInviteList(invites);
         
-        //adds the event to creator's calendar
-        event.addInvited(creator, 1);
+        return em.createEvent(event, invitedUsers, gm.getLoggedUser());
         
-        noErrors = sendInvite(event,invitedUsers);
+    }
+    /*
+     * OKOK
+     */
+    public boolean updateCurrentEvent(String invites){
+        List<String> invitedUsers = this.updateInviteList(invites);
         
-        
-        return noErrors;
+        return em.updateEvent(currentEvent, invitedUsers);
     }
     
-    public boolean updateCurrentEvent(List<String> invitedUsers){
-        boolean noErrors = sendInvite(currentEvent, invitedUsers);
-        currentEvent.setWeatherConditions(new ArrayList<WeatherCondition>());
-        //currentEvent.setBwodb(false);
-        //currentEvent.setBwtdb(false);
-        currentEvent.setWeatherConditions(new ArrayList<WeatherCondition>());
-        em.merge(currentEvent);
-        um.updateFromEventUpdate(currentEvent);
-        return noErrors;
+    
+    
+    /**
+     * Cleans the Arraylist<String> invitedUsers
+     * From ; and " "
+     * 
+     * OKOK
+     */
+    private List<String> updateInviteList(String invites){
+        List<String> invitedUsers;
+        
+        if (invites == null){
+            invites = "";
+        }
+        invites = invites.replace("\n", "").replace("\r", "").replace("\t", "");
+        String[] part = invites.split(";");
+        HashSet temp = new HashSet();
+        invitedUsers = Arrays.asList(part);
+        for (int i = 0; i < invitedUsers.size(); i++){
+            invitedUsers.set(i, invitedUsers.get(i).replaceAll(" ", ""));
+            temp.add(invitedUsers.get(i));
+        }
+        temp.remove("");
+        invitedUsers = new ArrayList<>(temp);
+        
+        return invitedUsers;
+        
     }
     
-    private boolean sendInvite(Event e, List<String> iu){
-        //delete people already invited
-        List<Calendar> temp = e.getInvited();
-        for (Calendar temp1 : temp) {
-            iu.remove(temp1.getUserEmail());
-        }
-        
-        //deletes the creator from users invited to the event
-        iu.remove(e.getCreator().getEmail());
-        //Checks the existance of the emails in the user database
-        for (String invitedUser : iu) {
-            User u = em.find(User.class, invitedUser);
-            try {
-                //if exists, add event to his calendar
-                e.addInvited(u, 0);
-                emailS.send(invitedUser,"Invite",
-                        "You received an invitation to an event, log on MeteoCal to accept!");
-                
-            } catch (NullPointerException exc){
-                return false;
-            }
-            
-        }
-        return true;
-        
-    }
+    
     /**
      * Finds all events
      * @return List of Events
-     */
+     *//*
     public List<Event> findAll(){
         return em.createNamedQuery(Event.findAll, Event.class)
                                 .getResultList();
-    }
+    }*/
 
     
     public void setCurrentEvent(String id) {
@@ -155,82 +147,59 @@ public class EventArea{
             
         }
         else{
-            currentEvent = em.find(Event.class, Long.parseLong(id));
+            currentEvent = em.find(Long.parseLong(id));
         }
     }
-
+/*
     public Event findEvent(long id) {
-        return em.find(Event.class, id);
-    }
+        return em.find(id);
+    }*/
 
     /**
      * Remove current user from the list of partecipants of current event
+     * OKOK
      */
     public void removeFromPartecipants() {
-         for (int i=0;i<currentEvent.getInvited().size();i++){
-            if (currentEvent.getInvited().get(i).getUser().getEmail().equals(this.getLoggedUser().getEmail())){
-                currentEvent.getInvited().get(i).setInviteStatus(-1);
-            }
-        }
-        for (int i = 0; i < this.getLoggedUser().getEvents().size(); i++){
-            if (this.getLoggedUser().getEvents().get(i).getEventId()==currentEvent.getEventId()){
-                this.getLoggedUser().getEvents().get(i).setInviteStatus(-1);
-            }
-        }
-        em.merge(currentEvent);
-        em.merge(this.getLoggedUser());
+        
+        em.removeFromPartecipants(currentEvent, gm.getLoggedUser());
+        
+        
     }
 
+    
+    
     public List<User> getPartecipants() {
-        List<User> temp = new ArrayList<>();
-        for (int i = 0; i < currentEvent.getInvited().size(); i++){
-            if (currentEvent.getInvited().get(i).getInviteStatus()==1){
-                temp.add(currentEvent.getInvited().get(i).getUser());
-            }
-        }
-        return temp;
+        return em.getPartecipants(currentEvent);
+        
+        
     }
 
+    
     public void deleteEvent() {
         
-        for (Calendar c: currentEvent.getInvited()){
-            if (c.getInviteStatus() == 1){
-                emailS.send(c.getUserEmail(),
-                                "Evend deleted",
-                                currentEvent.getName() + "has been deleted");
-                
-            }
-            User u = c.getUser();
-            
-            for (int i = 0; i < u.getEvents().size(); i++){
-                if (u.getEvents().get(i).getEvent().equals(currentEvent)){
-                    u.getEvents().remove(i);
-                    i--;
-                }
-            }
-
-            for (int i = 0; i < u.getNotifies().size(); i++){
-                if (u.getNotifies().get(i).getEvent().equals(currentEvent)){
-                    u.getNotifies().remove(i);
-                    i--;
-                }
-            }
-            
-            em.merge(u);
-        }
-        
-        
-            
-        
-        currentEvent.setWeatherConditions(new ArrayList<WeatherCondition>());
-        currentEvent.setUpdate(new ArrayList<Update>());
-        currentEvent.setInvited(new ArrayList<Calendar>());
-        
-        Event e = em.merge(currentEvent);
-        em.remove(e);
+        em.deleteEvent(currentEvent);
         currentEvent = null;
         
         
+    }
+    
+    
+    
+    /**
+     * Method to suggest contacts during form compilation
+     * Calls UserManager.getContacts()
+     * @param query
+     * @return possible contact emails matching the query
+     */
+    public List<String> complete(String query){
+        List<String> invitedEmail = new ArrayList<>();
+        List<Contact> contactList = userManager.getContacts(gm.getLoggedUser());
+        for (Contact c : contactList) {
+            if (c.getEmail().startsWith(query)){
+                invitedEmail.add(c.getEmail() + "; ");
+            }
+        }
+        return invitedEmail;
     }
 
   

@@ -28,62 +28,62 @@
                 <p:watermark for="keyword" value="Search..." id="watermark" />
             </h:form>
             <ul id="landmarks">
-                <li><p:link outcome="home" value="#{userBean.name}'s Calendar"/></li>
-                <li><p:link outcome="notifications" value="Notifications (#{userBean.getNumberOfNotifies()})"/></li>
+                <li><p:link outcome="home" value="#{homeBean.getName()}'s Calendar"/></li>
+                <li><p:link outcome="notifications" value="Notifications (#{notificationBean.getNumberOfNotifies()})"/></li>
                 <li><p:link outcome="addressbook" value="Addressbook"/></li>
                 <li><p:link outcome="settings" value="Settings"/></li>
-                <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
+                <li><h:form><p:commandLink action="#{indexBean.logout()}" value="Logout"/></h:form></li>
             </ul>
         </header>
-        <section style="padding-top: 60px">
+        <section>
             <h:form id="createeventform" class="clear-left">
                 <p:growl id="growl" life="3000"/>
                 <p:panel header="New Event Form">
                     <p:panelGrid columns="3">
                        
                         <p:outputLabel value="Event Name"/>
-                        <p:inputText id="name" value="#{eventBean.event.name}"/>
+                        <p:inputText id="name" value="#{createEventBean.event.name}"/>
                         <p:outputLabel value=""/>
                        
                         <p:outputLabel value="Description"/>
-                        <p:inputTextarea id="description" value="#{eventBean.event.description}"
+                        <p:inputTextarea id="description" value="#{createEventBean.event.description}"
                                          rows="5" cols="30" counter="display" maxlength="100"
                                          counterTemplate="{0} characters remaining." autoResize="false"/>
                         <h:outputText id="display" />
 
                         <p:outputLabel value="Public"/>
-                        <p:selectBooleanCheckbox value="#{eventBean.event.pub}"/>
+                        <p:selectBooleanCheckbox value="#{createEventBean.event.pub}"/>
                         <p:outputLabel value=""/>
                        
                         <p:outputLabel value="Outdoor"/>
-                        <p:selectBooleanCheckbox value="#{eventBean.event.outdoor}"/>
+                        <p:selectBooleanCheckbox value="#{createEventBean.event.outdoor}"/>
                         <p:outputLabel value=""/>
 
                         <p:outputLabel value="Begin time"/>
-                        <p:calendar id="beginTime" value="#{eventBean.event.beginTime}"
+                        <p:calendar id="beginTime" value="#{createEventBean.event.beginTime}"
                                     pages="3" effect="fold" mindate="#{scheduleBean.today()}"
                                     pattern="dd/MM/yyyy HH:mm"/>
                         <p:outputLabel value=""/>    
                        
                         <p:outputLabel value="End time"/>
-                        <p:calendar id="endTime" value="#{eventBean.event.endTime}"
+                        <p:calendar id="endTime" value="#{createEventBean.event.endTime}"
                                     pages="3" effect="fold" mindate="#{scheduleBean.today()}"
                                     pattern="dd/MM/yyyy HH:mm"/>
                         <p:outputLabel value=""/>
 
                         <p:outputLabel value="Location, write &quot;address, city, state&quot;" />
-                        <p:inputText id="location" value="#{eventBean.event.location}" />
+                        <p:inputText id="location" value="#{createEventBean.event.location}" />
                         <p:commandButton value="Check" type="button" onclick="myFunction()" />
                         
                         <p:outputLabel value="Insert email of invited users separated by &quot;;&quot;" />
-                        <p:inputTextarea value="#{eventBean.invites}" rows="10" cols="50"
-                                         completeMethod="#{eventBean.complete}"
+                        <p:inputTextarea value="#{createEventBean.invites}" rows="10" cols="50"
+                                         completeMethod="#{createEventBean.complete}"
                                          queryDelay="500" minQueryLength="2"/>
                         <p:outputLabel value=""/>
 
                         <p:outputLabel value=""/>
                         <p:commandButton value="Create Event"
-                                         action="#{eventBean.createEvent()}"
+                                         action="#{createEventBean.createEvent()}"
                                          update="@all"
                                          ajax="true" />
                         <p:outputLabel value=""/>
