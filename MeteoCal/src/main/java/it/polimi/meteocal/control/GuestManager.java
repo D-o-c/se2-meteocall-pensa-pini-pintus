@@ -71,14 +71,6 @@ public class GuestManager {
             em.persist(u);
         }
         
-     /*   User test = em.find(User.class, "undefined@email.com");
-        if(test == null) {
-            em.persist(u);
-        }
-        else {
-            u = test;
-        }*/
-        
         //update del creator degli eventi del loggedUser
         //il creator diventa "undefined" e l'evento viene salvato
         for (Event e : events) {

@@ -146,14 +146,6 @@ public class User implements Serializable {
     public void addNotify(Update u){
         this.notifies.add(u);
     }
-
-    public boolean isPublic_() {
-        return public_;
-    }
-
-    public void setPublic_(boolean public_) {
-        this.public_ = public_;
-    }
     
     public boolean equals(User user) {
         return this.email.equals(user.email);
