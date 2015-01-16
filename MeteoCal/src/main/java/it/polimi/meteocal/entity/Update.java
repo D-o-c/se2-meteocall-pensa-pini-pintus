@@ -8,7 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
@@ -25,6 +24,10 @@ public class Update implements Serializable {
     @Id
     @Column(name = "EVENT_ID")
     private long eventId;
+    
+    @Id
+    @Column(name = "USER_EMAIL")
+    private String email;
    
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
@@ -36,7 +39,7 @@ public class Update implements Serializable {
     private String description;
     
     @ManyToOne
-    @JoinColumn(name="USER_EMAIL", referencedColumnName="EMAIL")
+    @PrimaryKeyJoinColumn(name="USER_EMAIL", referencedColumnName="EMAIL")
     private User user;
     
     @ManyToOne
@@ -49,6 +52,14 @@ public class Update implements Serializable {
     public Update() {
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
     public long getEventId() {
         return eventId;
     }

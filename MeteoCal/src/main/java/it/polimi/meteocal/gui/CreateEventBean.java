@@ -4,6 +4,8 @@ import it.polimi.meteocal.boundary.EventArea;
 import it.polimi.meteocal.boundary.UserArea;
 import it.polimi.meteocal.entity.Event;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;

@@ -23,7 +23,6 @@ import javax.persistence.PersistenceContext;
  * @author doc
  */
 @Singleton
-@Asynchronous
 public class UpdateManager {
 
     
@@ -35,13 +34,12 @@ public class UpdateManager {
     @Inject
     EmailSender emailS;
     
-    @Asynchronous
     public void sendNotifies(){
         badWeather = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
                     13, 14, 15, 16, 17, 18, 19, 35, 36, 37, 38,
                     39, 40, 41, 42, 43, 45, 46, 47};
                     
-         Date today = new Date();
+        Date today = new Date();
         
         List<Event> events = em.createNamedQuery(Event.findAll, Event.class).getResultList();
         
@@ -53,7 +51,6 @@ public class UpdateManager {
                 
                 List<WeatherCondition> wcs = event.getWeatherConditions();
                 for (WeatherCondition wc : wcs){
-                    //if (wc.getCode()<=15){
                     if(contains(badWeather, wc.getCode())){
                         for (Calendar c : event.getInvited()){
                             if (c.getInviteStatus()==1){
@@ -70,6 +67,9 @@ public class UpdateManager {
                                 Update u = new Update();
                                 u.setEvent(event);
                                 u.setUser(c.getUser());
+                                
+                                u.setEmail(c.getUserEmail());
+                                
                                 u.setDescription(desc);
                                 u.setEventId(event.getEventId());
                                 u.setRead(false);
@@ -96,7 +96,6 @@ public class UpdateManager {
                 
                 List<WeatherCondition> wcs = event.getWeatherConditions();
                 for (WeatherCondition wc : wcs){
-                    //if (wc.getCode()<=15){
                     if (contains(badWeather, wc.getCode())){
                         String sunnyDay = findSunnyDay(event, wc.getTime());
                         String desc = "For one of your next events bad weather is expected\n\n" + 
@@ -113,6 +112,9 @@ public class UpdateManager {
                         Update u = new Update();
                         u.setEvent(event);
                         u.setUser(event.getCreator());
+                        
+                        u.setEmail(event.getCreator().getEmail());
+                        
                         u.setDescription(desc);
                         u.setEventId(event.getEventId());
                         u.setRead(false);
@@ -154,6 +156,9 @@ public class UpdateManager {
                             Update u = new Update();
                             u.setEvent(event);
                             u.setUser(c.getUser());
+                            
+                            u.setEmail(c.getUserEmail());
+                            
                             u.setDescription(desc);
                             u.setEventId(event.getEventId());
                             u.setRead(false);
@@ -174,7 +179,6 @@ public class UpdateManager {
         
     }
     
-    @Asynchronous
     public void updateFromEventUpdate(Event event) {
         for (Calendar c : event.getInvited()){
             if (c.getInviteStatus()==1){
@@ -191,6 +195,9 @@ public class UpdateManager {
                 Update u = new Update();
                 u.setEvent(event);
                 u.setUser(c.getUser());
+                
+                u.setEmail(c.getUserEmail());
+                
                 u.setDescription(desc);
                 u.setEventId(event.getEventId());
                 u.setRead(false);

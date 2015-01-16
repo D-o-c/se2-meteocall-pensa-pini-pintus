@@ -3,7 +3,6 @@ package it.polimi.meteocal.boundary;
 import it.polimi.meteocal.control.EmailSender;
 import it.polimi.meteocal.control.EventManager;
 import it.polimi.meteocal.control.GuestManager;
-import it.polimi.meteocal.control.UpdateManager;
 import it.polimi.meteocal.control.UserManager;
 import it.polimi.meteocal.entity.Calendar;
 import it.polimi.meteocal.entity.Contact;
@@ -24,8 +23,7 @@ import javax.inject.Inject;
 @Stateless
 public class EventArea{
     
-    @Inject
-    UpdateManager um;
+    
     
     @Inject
     GuestManager gm;

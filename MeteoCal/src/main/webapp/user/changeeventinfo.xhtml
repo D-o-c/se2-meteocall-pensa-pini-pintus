@@ -8,14 +8,20 @@
         <h:outputStylesheet library="css" name="stylesheet.css" />
         <script>
             function myFunction() {
-                PF('gmap').show();
-                var str = document.getElementById("modifyeventform:location").value;
-                var parts = str.split(",");
-                var address = parts[0].split(" ").join("+");
-                var city = parts[1].split(" ").join("");
-                var state = parts[2].split(" ").join("");
-                var location = address+","+city+"+"+state;
-                document.getElementById("gmap").src = "https://www.google.com/maps/embed/v1/place?key=AIzaSyDDm0i7Jy_achXhFjVg8LcT1kbmi8wmdV4&amp;q="+location;
+                var str = document.getElementById("createeventform:location").value;
+                var patt = new RegExp("[\\w*[ ]*]*[,][\\w*[ ]*]*[,][\\w*[ ]*]*");
+                if(patt.test(str)){
+                    var parts = str.split(",");
+                    var address = parts[0].split(" ").join("+");
+                    var city = parts[1].split(" ").join("");
+                    var state = parts[2].split(" ").join("");
+                    var location = address+","+city+"+"+state;
+                    document.getElementById("gmap").src = "https://www.google.com/maps/embed/v1/place?key=AIzaSyDDm0i7Jy_achXhFjVg8LcT1kbmi8wmdV4&amp;q="+location;
+                    PF('gmap').show();
+                }
+                else{
+                    window.alert("Location not found.");
+                }
             }
         </script>
     </h:head>

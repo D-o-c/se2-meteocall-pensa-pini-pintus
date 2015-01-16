@@ -75,7 +75,7 @@ public class UserCalendarBean {
         eventModel = sa.getCalendar();
        
     }
-    
+   
     public ScheduleModel getEventModel() {
         return eventModel;
     }
@@ -84,6 +84,18 @@ public class UserCalendarBean {
         selectedEvent = (ScheduleEvent) selectEvent.getObject();
         ea.setCurrentEvent(selectedEvent.getDescription());
         privateEvent = selectedEvent.getDescription() == null;
+    }
+    
+    public String getSelectedUserName(){
+        return sa.getSelectedUser().getName();
+    }
+    
+    public String getSelectedUserSurname(){
+        return sa.getSelectedUser().getSurname();
+    }
+    
+    public String getSelectedUserEmail(){
+        return sa.getSelectedUser().getEmail();
     }
     
 }
