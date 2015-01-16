@@ -85,6 +85,6 @@ public class SearchArea {
     }
 
     public ScheduleModel getCalendar() {
-        return um.getCalendar(selectedUser);
+        return um.getCalendar(selectedUser, gm.getLoggedUser());
     }
 }

@@ -88,7 +88,7 @@ public class UserArea {
      * OKOK
      */
     public ScheduleModel getCalendar(){
-        return um.getCalendar(gm.getLoggedUser());
+        return um.getCalendar(gm.getLoggedUser(), gm.getLoggedUser());
     }
     
     /**

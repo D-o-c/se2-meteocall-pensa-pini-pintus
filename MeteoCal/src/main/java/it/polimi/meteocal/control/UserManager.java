@@ -14,8 +14,6 @@ import it.polimi.meteocal.entity.primarykeys.ContactPK;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import javax.ejb.EJB;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.primefaces.model.DefaultScheduleEvent;
@@ -31,9 +29,6 @@ public class UserManager {
     @PersistenceContext
     EntityManager em;
     
-    @Inject
-    GuestManager gm;
-    
     
     public void changeCalendarVisibility(User u){
         boolean temp = u.isPublic();
@@ -47,7 +42,7 @@ public class UserManager {
         em.merge(u);
     }
     
-    public ScheduleModel getCalendar(User u){
+    public ScheduleModel getCalendar(User u, User loggedUser){
         
         ScheduleModel calendar = new DefaultScheduleModel();
         try{
@@ -59,7 +54,7 @@ public class UserManager {
                     DefaultScheduleEvent dse = new DefaultScheduleEvent(evntTemp.getName(),
                                                                         evntTemp.getBeginTime(),
                                                                         evntTemp.getEndTime());
-                    if (u.equals(gm.getLoggedUser()) || evntTemp.isPub()){
+                    if (u.equals(loggedUser) || evntTemp.isPub()){
                         dse.setDescription(Long.toString(evntTemp.getEventId()));
                     }
                     else{
@@ -86,7 +81,7 @@ public class UserManager {
                 return -1;
             }
 
-            List<Calendar> c = gm.getLoggedUser().getEvents();
+            List<Calendar> c = u.getEvents();
             for (Calendar c1 : c) {
                 if (e.getBeginTime().before(c1.getEvent().getEndTime()) &&
                         e.getEndTime().after(c1.getEvent().getBeginTime()) &&

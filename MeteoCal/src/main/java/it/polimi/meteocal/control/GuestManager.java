@@ -29,14 +29,6 @@ public class GuestManager {
     @Inject
     EmailSender emailS;
     
-    public void login(){
-        
-    }
-    
-    public void logout(){
-        
-    }
-    
     public boolean register(User user){
         if (em.find(User.class, user.getEmail())==null){
             user.setGroupName(Group.USERS);
