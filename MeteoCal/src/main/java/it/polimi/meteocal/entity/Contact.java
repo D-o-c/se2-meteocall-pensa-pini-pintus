@@ -24,20 +24,20 @@ public class Contact implements Serializable {
    // public static final String findByUserEmail = "Contact.findByUserEmail";
     
     @Id
-    @Column(name="CONTACT_EMAIL")
+    @Column(name="EMAIL")
     private String email;
     
     @ManyToOne
     @Id
-    @JoinColumn(name="OWNER_EMAIL", referencedColumnName="EMAIL")
+    @JoinColumn(name="OWNER", referencedColumnName="EMAIL")
     private User user;
     
     @NotNull(message = "May not be empty")
-    @Column(name="CONTACT_NAME")
+    @Column(name="NAME")
     private String name;
     
     @NotNull(message = "May not be empty")
-    @Column(name="CONTACT_SURNAME")
+    @Column(name="SURNAME")
     private String surname;
     
     public Contact() {

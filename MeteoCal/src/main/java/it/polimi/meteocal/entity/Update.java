@@ -21,11 +21,11 @@ public class Update implements Serializable {
     private static final long serialVersionUID = 1L;
     
     @Id
-    @Column(name = "EVENT_ID")
+    @Column(name = "EVENT")
     private long eventId;
     
     @Id
-    @Column(name = "USER_EMAIL")
+    @Column(name = "RECIPIENT")
     private String email;
    
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -38,14 +38,15 @@ public class Update implements Serializable {
     private String description;
     
     @ManyToOne
-    @PrimaryKeyJoinColumn(name="USER_EMAIL", referencedColumnName="EMAIL")
+    @PrimaryKeyJoinColumn(name="USER", referencedColumnName="EMAIL")
     private User user;
     
     @ManyToOne
-    @PrimaryKeyJoinColumn(name="EVENT_ID", referencedColumnName="ID")
+    @PrimaryKeyJoinColumn(name="EVENT", referencedColumnName="ID")
     private Event event;
     
     @Column(name = "READ_")
+    @NotNull
     private boolean read;
 
     public Update() {

@@ -64,6 +64,7 @@ public class User implements Serializable {
     @Column(name = "SURNAME")
     private String surname;
     
+    @NotNull
     @Column(name = "PUBLIC_")
     private boolean public_;
     

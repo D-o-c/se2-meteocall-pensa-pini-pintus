@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -33,18 +34,22 @@ public class WeatherCondition implements Serializable {
     
     @ManyToOne
     @Id
-    @JoinColumn(name="EVENT_ID", referencedColumnName="ID")
+    @JoinColumn(name="EVENT", referencedColumnName="ID")
     private Event event;
     
+    @NotNull
     @Column(name="CODE")
     private int code;
     
+    @NotNull
     @Column(name="TEMPERATURE")
     private int temp;
     
+    @NotNull
     @Column(name="OLD_CODE")
     private int oldCode;
     
+    @NotNull
     @Column(name="TYPE")
     private String type;
     

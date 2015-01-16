@@ -61,7 +61,6 @@ public class Event implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @NotNull(message = "End Time may not be empty")
     @Column(name = "END_TIME")
-   
     @Future
     private Date endTime;
    
@@ -93,9 +92,11 @@ public class Event implements Serializable {
     private String location;
     
     @Column(name="BWODB")
+    @NotNull
     private boolean bwodb; //BadWeatherOneDayBefore
     
     @Column(name="BWTDB")
+    @NotNull
     private boolean bwtdb; //BadWeatherThreeDayBefore
     
     @OneToMany(mappedBy="event", orphanRemoval=true)
