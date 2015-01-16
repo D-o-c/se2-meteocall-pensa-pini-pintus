@@ -146,9 +146,9 @@ public class EventManager {
         
             
         
-        event.setWeatherConditions(new ArrayList<WeatherCondition>());
-        event.setUpdate(new ArrayList<Update>());
-        event.setInvited(new ArrayList<Calendar>());
+    //    event.setWeatherConditions(new ArrayList<WeatherCondition>());
+    //    event.setUpdate(new ArrayList<Update>());
+    //    event.setInvited(new ArrayList<Calendar>());
         
         Event e = em.merge(event);
         em.remove(e);

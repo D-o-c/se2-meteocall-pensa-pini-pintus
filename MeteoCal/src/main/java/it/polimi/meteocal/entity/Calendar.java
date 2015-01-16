@@ -26,11 +26,11 @@ public class Calendar implements Serializable{
     public final static String findByUserEmail = "Calendar.findByUserEmail";
     
     @Id
-    @Column(name = "USER_EMAIL")
+    @Column(name = "USER_")
     private String userEmail;
     
     @Id
-    @Column(name = "EVENT_ID")
+    @Column(name = "EVENT")
     private long eventId;
     
     
@@ -39,11 +39,11 @@ public class Calendar implements Serializable{
     private int inviteStatus;
     
     @ManyToOne
-    @PrimaryKeyJoinColumn(name="USER_EMAIL", referencedColumnName="EMAIL")
+    @PrimaryKeyJoinColumn(name="USER_", referencedColumnName="EMAIL")
     private User user;
     
     @ManyToOne
-    @PrimaryKeyJoinColumn(name="EVENT_ID", referencedColumnName="ID")
+    @PrimaryKeyJoinColumn(name="EVENT", referencedColumnName="ID")
     private Event event;
 
     //ATTENZIONE NON CANCELLARE IL COSTRUTTORE!!!!!
