@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 /**
  *
- * @author aldo
  */
 public class UpdatePK implements Serializable{
     

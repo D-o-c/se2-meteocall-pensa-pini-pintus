@@ -12,7 +12,6 @@ import javax.validation.constraints.NotNull;
 
 /**
  *
- * @author aldo
  */
 @Entity(name = "CONTACT")/*
 @NamedQueries({
@@ -30,7 +29,7 @@ public class Contact implements Serializable {
     
     @ManyToOne
     @Id
-    @JoinColumn(name="EMAIL")
+    @JoinColumn(name="OWNER_EMAIL", referencedColumnName="EMAIL")
     private User user;
     
     @NotNull(message = "May not be empty")

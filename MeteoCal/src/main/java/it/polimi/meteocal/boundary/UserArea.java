@@ -33,7 +33,6 @@ import jxl.read.biff.BiffException;
 
 /**
  *
- * DA COMMENTARE
  */
 @Stateless
 public class UserArea {

@@ -12,7 +12,6 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +19,6 @@ import org.primefaces.model.UploadedFile;
 
 /**
  *
- * @author doc
  */
 @Named
 @RequestScoped

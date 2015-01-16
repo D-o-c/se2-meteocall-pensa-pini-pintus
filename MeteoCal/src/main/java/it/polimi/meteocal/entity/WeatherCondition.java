@@ -33,7 +33,7 @@ public class WeatherCondition implements Serializable {
     
     @ManyToOne
     @Id
-    @JoinColumn(name="ID")
+    @JoinColumn(name="EVENT_ID", referencedColumnName="ID")
     private Event event;
     
     @Column(name="CODE")

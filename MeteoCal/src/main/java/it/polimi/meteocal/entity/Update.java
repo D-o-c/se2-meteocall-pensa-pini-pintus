@@ -14,7 +14,6 @@ import javax.validation.constraints.NotNull;
 
 /**
  *
- * @author Anton
  */
 @Entity (name = "UPDATE_")
 @IdClass(UpdatePK.class)

@@ -6,7 +6,6 @@ import it.polimi.meteocal.control.UserManager;
 import it.polimi.meteocal.entity.User;
 import java.security.Principal;
 import java.util.List;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.primefaces.model.ScheduleModel;

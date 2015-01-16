@@ -15,7 +15,6 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author aldo
  */
 @Entity(name = "USERS")
 @NamedQueries({

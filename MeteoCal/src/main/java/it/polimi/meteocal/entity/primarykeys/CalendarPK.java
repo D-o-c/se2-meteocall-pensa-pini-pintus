@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 /**
  *
- * @author doc
  */
 public class CalendarPK implements Serializable{
     

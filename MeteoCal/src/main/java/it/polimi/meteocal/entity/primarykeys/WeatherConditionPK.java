@@ -10,7 +10,6 @@ import java.util.Date;
 
 /**
  *
- * @author aldo
  */
 public class WeatherConditionPK implements Serializable{
     private long event;

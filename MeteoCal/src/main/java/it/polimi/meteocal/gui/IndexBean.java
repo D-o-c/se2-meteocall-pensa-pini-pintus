@@ -7,20 +7,16 @@ package it.polimi.meteocal.gui;
 
 import it.polimi.meteocal.boundary.PublicArea;
 import it.polimi.meteocal.entity.User;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 /**
  *
- * @author doc
  */
 @Named
 @RequestScoped

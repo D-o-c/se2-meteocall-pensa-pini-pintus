@@ -10,7 +10,6 @@ import javax.persistence.PersistenceContext;
 
 /**
  *
- * @author aldo
  */
 @Stateless
 public class PublicArea {

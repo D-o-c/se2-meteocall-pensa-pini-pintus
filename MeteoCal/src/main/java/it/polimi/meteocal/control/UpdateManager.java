@@ -12,7 +12,6 @@ import it.polimi.meteocal.entity.WeatherCondition;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.Asynchronous;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -20,7 +19,6 @@ import javax.persistence.PersistenceContext;
 
 /**
  *
- * @author doc
  */
 @Singleton
 public class UpdateManager {

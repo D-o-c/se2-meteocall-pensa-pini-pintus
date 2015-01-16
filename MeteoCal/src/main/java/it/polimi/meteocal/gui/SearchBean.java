@@ -3,21 +3,14 @@ package it.polimi.meteocal.gui;
 import it.polimi.meteocal.boundary.EventArea;
 import it.polimi.meteocal.boundary.SearchArea;
 import it.polimi.meteocal.boundary.UserArea;
-import it.polimi.meteocal.entity.Contact;
 import it.polimi.meteocal.entity.User;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import org.primefaces.event.SelectEvent;
-import org.primefaces.model.DefaultScheduleEvent;
-import org.primefaces.model.ScheduleEvent;
-import org.primefaces.model.ScheduleModel;
 
 /**
  *
- * @author aldo
  */
 @ManagedBean
 @ViewScoped

@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 /**
  *
- * @author aldo
  */
 public class ContactPK implements Serializable{
     private String email;

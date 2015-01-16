@@ -19,7 +19,6 @@ import org.primefaces.model.ScheduleModel;
 
 /**
  *
- * @author doc
  */
 @Named
 @RequestScoped

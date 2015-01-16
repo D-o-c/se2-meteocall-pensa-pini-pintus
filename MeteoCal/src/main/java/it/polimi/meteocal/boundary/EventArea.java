@@ -18,7 +18,6 @@ import javax.inject.Inject;
 
 /**
  *
- * @author doc
  */
 @Stateless
 public class EventArea{

@@ -23,7 +23,6 @@ import javax.validation.constraints.Pattern;
 
 /**
  *
- * @author Anton
  */
 
 
@@ -84,7 +83,7 @@ public class Event implements Serializable {
    
     @NotNull(message = "May not be empty")
     @ManyToOne
-    @JoinColumn(name = "EMAIL")
+    @JoinColumn(name="CREATOR_EMAIL", referencedColumnName="EMAIL")
     private User creator;
    
     @Pattern(regexp="[\\w*[ ]*]*[,][\\w*[ ]*]*[,][\\w*[ ]*]*",

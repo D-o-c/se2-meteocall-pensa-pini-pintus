@@ -14,7 +14,6 @@ import javax.validation.constraints.NotNull;
 
 /**
  *
- * @author doc
  */
 @Entity(name = "CALENDAR")
 @NamedQueries({

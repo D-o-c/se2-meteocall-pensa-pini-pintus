@@ -17,7 +17,6 @@ import javax.inject.Named;
 
 /**
  *
- * @author doc
  */
 @Named
 @RequestScoped

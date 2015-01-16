@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author aldo
  */
 public class PasswordEncrypter {
 
