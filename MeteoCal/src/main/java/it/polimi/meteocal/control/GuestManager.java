@@ -46,13 +46,14 @@ public class GuestManager {
     public void unregister(User loggedUser){
         
         //tuple della tabella Calendario dell'utente loggedUser
-        List<Calendar> calendars = em.createNamedQuery(Calendar.findByUserEmail)
+     //   List<Calendar> calendars = loggedUser.getEvents();
+      /*  List<Calendar> calendars = em.createNamedQuery(Calendar.findByUserEmail)
                 .setParameter(1, loggedUser.getEmail())
                 .getResultList();
         //rimozione dalle tuple dalla tabella Calendario
         for (Calendar calendar : calendars) {
             em.remove(calendar);
-        }
+        }*/
         //tuple della tabella Evento con creatore il loggedUser
         List<Event> events = em.createNamedQuery(Event.findByCreator)
                 .setParameter(1, loggedUser.getEmail())
