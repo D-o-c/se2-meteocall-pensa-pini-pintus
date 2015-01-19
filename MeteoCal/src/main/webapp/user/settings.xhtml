@@ -2,23 +2,142 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title>Settings Page</title>
         <h:outputStylesheet library="css" name="stylesheet.css" />
     </h:head>
     <h:body>
-        <h1>MeteoCal</h1>
-        <ul id="landmarks">
-            <li><p:link outcome="home" value="#{userBean.name}'s Calendar"/></li>
-            <li><p:link outcome="addressbook" value="Notifications"/></li>
-            <li><p:link outcome="addressbook" value="Addressbook"/></li>
-            <li>Settings</li>
-            <li><h:form><p:commandLink action="#{loginBean.logout()}" value="Logout"/></h:form></li>
-        </ul>
-        <h:form class="clear-left">
-            <p:commandLink action="#{registrationBean.unregister()}" value="Unregister"/>
-        </h:form>
+        <header>
+            <h1 id="title">MeteoCal</h1>
+            <h:form id="searchForm" class="float-left">
+                <p:inputText value="#{searchBean.searchInput}" id="keyword" maxlength="200"/>
+                <p:commandButton class="searchUsersButton" action="#{searchBean.findUser()}" icon="ui-icon-search"/>
+                <p:watermark for="keyword" value="Search..." id="watermark" />
+            </h:form>
+            <ul id="landmarks">
+                <li><p:link outcome="home" value="#{homeBean.name}'s Calendar"/></li>
+                <li><p:link outcome="notifications" value="Notifications (#{notificationBean.getNumberOfNotifies()})"/></li>
+                <li><p:link outcome="addressbook" value="Addressbook"/></li>
+                <li><p:link outcome="settings" value="Settings"/></li>
+                <li><h:form><p:commandLink action="#{indexBean.logout()}" value="Logout"/></h:form></li>
+            </ul>
+        </header>
+        <section>
+            
+            <h:form>
+                <p:growl id="growl" showDetail="true" life="3000"/>
+            </h:form>
+            
+            <h:form class="clear-left" style="padding:20px;">
+                <p:commandButton value="Make calendar public"
+                                 action="#{settingsBean.changeCalendarVisibility()}"
+                                 icon="ui-icon-check"
+                                 disabled="#{settingsBean.loggedUserPublic}"/>
+                <p:commandButton value="Make calendar private"
+                                 action="#{settingsBean.changeCalendarVisibility()}"
+                                 icon="ui-icon-check"
+                                 disabled="#{!settingsBean.loggedUserPublic}"/>
+            </h:form>
+            <h:form id="passform" style="padding:20px;">
+                <h3 style="margin-top:0">Change password</h3>
+                <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+                    <p:outputLabel for="oldpsw" value="Confirm old Password"/>
+                    <p:password id="oldpsw" value="#{settingsBean.password}" 
+                                 required="true" />
+                    <p:outputLabel for="newpsw" value="Insert new Password"/>
+                    <p:password id="newpsw" value="#{settingsBean.newPassword}" 
+                                feedback="true" required="true" />
+                    <p:commandButton id="submit"
+                                     action="#{settingsBean.changePassword()}"
+                                     value="Change"
+                                     ajax="true"
+                                     update="@all"
+                                     icon="ui-icon-wrench"/>
+                </h:panelGrid>
+            </h:form>
+            <h:form style="padding:20px;">
+                <p:dataTable id="evntable" var="event" value="#{settingsBean.getUserEvent()}"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}" 
+                             paginator="true" rows="10" style="display: none;">
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Id" />
+                        </f:facet>
+                        <h:outputText value="#{event.eventId}" />
+                    </p:column>
+
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Name"/>
+                        </f:facet>
+                        <h:outputText value="#{event.name}" />
+                    </p:column>
+
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Description" />
+                        </f:facet>
+                        <h:outputText value="#{event.description}" />
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="BeginTime" />
+                        </f:facet>
+                        <h:outputText value="#{event.beginTime}" />
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="EndTime" />
+                        </f:facet>
+                        <h:outputText value="#{event.endTime}" />
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Location" />
+                        </f:facet>
+                        <h:outputText value="#{event.location}" />
+                    </p:column>
+                    
+                    <!-- DA AGGIUNGERE ALTRE INFO -->
+                </p:dataTable>
+                
+
+                <h3 style="margin-top:0">Export Calendar:</h3>
+                <h:commandLink>
+                    <h:graphicImage library="images" name="xls.png" width="50px" height="50px" />
+                    <p:dataExporter type="xls" target="evntable" fileName="MeteoCalEvents" pageOnly="true"/>
+                </h:commandLink>
+
+                <h:commandLink>
+                    <h:graphicImage library="images" name="pdf.png" width="50px" height="50px" />
+                    <p:dataExporter type="pdf" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
+                </h:commandLink>
+
+                <h:commandLink>
+                    <h:graphicImage library="images" name="csv.png" width="50px" height="50px" />
+                    <p:dataExporter type="csv" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
+                </h:commandLink>
+
+                <h:commandLink>
+                    <h:graphicImage library="images" name="xml.png" width="50px" height="50px" />
+                    <p:dataExporter type="xml" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
+                </h:commandLink>
+
+                
+            </h:form>
+            <h:form id="uploadform" enctype="multipart/form-data" style="padding:20px;">
+                <h3 style="margin-top:0">Import Calendar (only xml, xls, csv from MeteoCal):</h3>
+                <p:fileUpload value="#{settingsBean.file}"  mode="simple" allowTypes="/(\.|\/)(xml|csv|xls)$/"/>
+
+                <p:commandButton value="Submit" ajax="false" actionListener="#{settingsBean.upload}"/>
+                
+            </h:form>
+            <h:form style="padding:20px;">
+                <h3 style="margin-top:0">Unregister Your Account</h3>
+                <p:commandButton value="Unregister" action="#{settingsBean.unregister()}"/>
+            </h:form>
+        </section>
     </h:body>
 </html>
-

@@ -1,14 +1,67 @@
 body {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Segoe UI', Arial, sans-serif;
     margin:0px;
+    min-width:1038px;
 }
 
-h1 {
-    margin:0px;
-    float:left;
+section{
+    padding-top: 60px;
 }
 
-#landmarks {
+.fc-event{
+    cursor: pointer!important;
+
+}
+
+header,footer {
+    background-color: #FF0000;
+    height:50px;
+}
+
+.searchUsersButton {
+    position:relative;
+    top:3px;
+    left:-3px;
+    height:31px;
+}
+
+section {
+    background-color: #FFFFCC;
+    min-height:600px;
+}
+
+header {
+    border-bottom: 1px solid #000000;
+    position: fixed;
+    z-index: 9;
+    width: 100%;
+}
+
+footer {
+    border-top: 1px solid #000000;
+    
+}
+
+#mainTitle {
+    margin:0px;
+    padding:0px;
+    text-align:center;
+    line-height: 50px;
+    color:#FFFFFF;
+    text-shadow: 1px 1px #000000;
+}
+
+#title {
+    margin:0px;
+    padding: 0px 20px 0px 20px;
+    display: inline;
+    line-height: 50px;
+    float: left;
+    color:#FFFFFF;
+    text-shadow: 1px 1px #000000; 
+}
+
+ul, #landmarks {
     list-style:none;
     padding:0px;
     margin:0px;
@@ -19,6 +72,29 @@ h1 {
     padding: 14px 0px 0px 20px;
 }
 
+#landmarks li a {
+    color:#FFFFFF;
+    text-decoration:none;
+}
+
+#landmarks li a:hover {
+    text-decoration:underline;
+}
+
+#landmarks li a:visited {
+    color:#FFFFFF;
+    text-decoration:none;
+}
+
 .clear-left {
     clear:left;
 }
+
+.float-left {
+    float:left;
+}
+
+#searchForm {
+    margin-top: 7px;
+}
+
