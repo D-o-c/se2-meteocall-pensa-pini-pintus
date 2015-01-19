@@ -48,7 +48,7 @@
                                  required="true" />
                     <p:outputLabel for="newpsw" value="Insert new Password"/>
                     <p:password id="newpsw" value="#{settingsBean.newPassword}" 
-                                required="true" />
+                                feedback="true" required="true" />
                     <p:commandButton id="submit"
                                      action="#{settingsBean.changePassword()}"
                                      value="Change"
@@ -83,13 +83,13 @@
                     </p:column>
                     <p:column>
                         <f:facet name="header">
-                            <h:outputText value="Begin Time" />
+                            <h:outputText value="BeginTime" />
                         </f:facet>
                         <h:outputText value="#{event.beginTime}" />
                     </p:column>
                     <p:column>
                         <f:facet name="header">
-                            <h:outputText value="End Time" />
+                            <h:outputText value="EndTime" />
                         </f:facet>
                         <h:outputText value="#{event.endTime}" />
                     </p:column>
@@ -128,7 +128,7 @@
                 
             </h:form>
             <h:form id="uploadform" enctype="multipart/form-data" style="padding:20px;">
-                <h3 style="margin-top:0">Import Calendar:</h3>
+                <h3 style="margin-top:0">Import Calendar (only xml, xls, csv from MeteoCal):</h3>
                 <p:fileUpload value="#{settingsBean.file}"  mode="simple" allowTypes="/(\.|\/)(xml|csv|xls)$/"/>
 
                 <p:commandButton value="Submit" ajax="false" actionListener="#{settingsBean.upload}"/>

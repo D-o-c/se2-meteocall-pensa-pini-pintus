@@ -60,7 +60,7 @@ public class HomeScheduleBean implements Serializable {
      */
     public void onEventSelect(SelectEvent selectEvent) {
         scheduleEvent = (ScheduleEvent) selectEvent.getObject();
-        eventArea.setCurrentEvent((long) scheduleEvent.getData());
+        eventArea.setCurrentEvent(scheduleEvent.getData());
     }
     
     /**

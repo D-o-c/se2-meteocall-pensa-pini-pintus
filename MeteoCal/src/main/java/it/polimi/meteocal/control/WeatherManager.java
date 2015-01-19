@@ -50,33 +50,35 @@ public class WeatherManager {
     /**
      * Calls
      * Method performed every * minutes *hours
-     * @throws IOException 
      */
     @Schedule(minute="*", hour="*")
-    public void searchWeather() throws IOException {
+    public void searchWeather(){
+        try{
         
-        today = new Date();
-        eventstList = em.createNamedQuery(Event.findAll, Event.class).getResultList();
-        
-        for (Event event : eventstList) {
-            if (event.getBeginTime().getTime() <= today.getTime() + five_days && 
-                    event.isOutdoor() &&
-                    event.getEndTime().after(today)) {
-                
-                int start = event.getLocation().indexOf(",")+1;
-                int end = event.getLocation().lastIndexOf(",");
-                
-                String city = event.getLocation().substring(start, end).replaceAll(" ", "+");
-                
-                //generation of xml document
-                Document document = generateXML(city);
-                
-                //save weather conditions
-                saveWeatherConditions(document, event);
-                
-            }//endif
-        }//endfor
-        um.sendNotifies();
+            today = new Date();
+            eventstList = em.createNamedQuery(Event.findAll, Event.class).getResultList();
+
+            for (Event event : eventstList) {
+                if (event.getBeginTime().getTime() <= today.getTime() + five_days && 
+                        event.isOutdoor() &&
+                        event.getEndTime().after(today)) {
+
+                    int start = event.getLocation().indexOf(",")+1;
+                    int end = event.getLocation().lastIndexOf(",");
+
+                    String city = event.getLocation().substring(start, end).replaceAll(" ", "+");
+
+                    //generation of xml document
+                    Document document = generateXML(city);
+
+                    //save weather conditions
+                    saveWeatherConditions(document, event);
+
+                }//endif
+            }//endfor
+            um.sendNotifies();
+        }
+        catch(Exception e){}
     }
     
     /**
@@ -188,7 +190,7 @@ public class WeatherManager {
                                             event.addWeatherCondition(weather);
                                             em.merge(event);
                                             weatherExists = true;
-                                            k --;
+                                            k--;
                                         }
                                     }    
 

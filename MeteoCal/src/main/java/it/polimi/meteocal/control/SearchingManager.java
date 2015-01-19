@@ -80,13 +80,12 @@ public class SearchingManager {
                                                                         e.getBeginTime(),
                                                                         e.getEndTime());
                     //DefaultScheduleEvent.setData() is used to set the ID
-                    dse.setData(e.getEventId());
+                    
                     if(e.isPub()) {
-                        dse.setDescription("public");
+                        dse.setData(e.getEventId());
                     }
                     else{
                         dse.setTitle("Private Event");
-                        dse.setDescription("private");
                     }
                     
                     calendar.addEvent(dse);

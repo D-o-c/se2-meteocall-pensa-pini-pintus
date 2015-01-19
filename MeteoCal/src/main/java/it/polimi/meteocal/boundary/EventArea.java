@@ -45,8 +45,15 @@ public class EventArea{
      * Calls eventManager.find(id)
      * @param id 
      */
-    public void setCurrentEvent(long id) {
-        currentEvent = eventManager.find(id);
+    public void setCurrentEvent(Object id) {
+        if (id == null){
+            currentEvent = new Event();
+            currentEvent.setPub(false);
+           
+        }
+        else{
+            currentEvent = eventManager.find((long) id);
+        }
     }
     
     /**************************************************************************/

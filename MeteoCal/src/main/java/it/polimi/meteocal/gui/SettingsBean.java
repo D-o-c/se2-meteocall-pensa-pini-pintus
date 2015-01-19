@@ -156,7 +156,7 @@ public class SettingsBean {
                 return null;
             case -2:
                 context.addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_WARN, warning, time_consistency_error));
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, error, time_consistency_error));
                 context.getExternalContext().getFlash().setKeepMessages(true);
                 return home_page_url;
             default:

@@ -57,7 +57,7 @@ public class UserCalendarScheduleBean implements Serializable {
      */
     public void onEventSelect(SelectEvent selectEvent) {
         scheduleEvent = (ScheduleEvent) selectEvent.getObject();
-        eventArea.setCurrentEvent((long) scheduleEvent.getData());
+        eventArea.setCurrentEvent(scheduleEvent.getData());
     }
     
     /**
@@ -65,21 +65,26 @@ public class UserCalendarScheduleBean implements Serializable {
      */
     public Event getCurrentEvent(){
         Event e = eventArea.getCurrentEvent();
-        if(!e.isPub()) {
+        /*if(!e.isPub()) {
             //Description in the dialogue box becomes empty
             e = new Event();
             return e;
         }
-        else {
+        else {*/
             return e;
-        }
+        //}
     }
     
     /**
      * @return !eventArea.getCurrentEvent().isPub()
      */
     public boolean isPrivate() {
-        return !eventArea.getCurrentEvent().isPub();
+        try{
+            return !eventArea.getCurrentEvent().isPub();
+        }
+        catch(Exception e){
+            return false;
+        }
     }
     
     /**

@@ -29,7 +29,7 @@ public class GuestManager {
             user.setGroupName(Group.USERS);
             user.setPublic(true);
             em.persist(user);
-       emailSender.send(user.getEmail() ,
+        emailSender.send(user.getEmail() ,
                         "MeteoCal Registration",
                         "Congratulations, you signed up on MeteoCal successfully");
             return true;
@@ -40,15 +40,6 @@ public class GuestManager {
     
     public void unregister(User loggedUser){
         
-        //tuple della tabella Calendario dell'utente loggedUser
-     //   List<Calendar> calendars = loggedUser.getEvents();
-      /*  List<Calendar> calendars = em.createNamedQuery(Calendar.findByUserEmail)
-                .setParameter(1, loggedUser.getEmail())
-                .getResultList();
-        //rimozione dalle tuple dalla tabella Calendario
-        for (Calendar calendar : calendars) {
-            em.remove(calendar);
-        }*/
         //tuple della tabella Evento con creatore il loggedUser
         List<Event> events = em.createNamedQuery(Event.findByCreator)
                 .setParameter(1, loggedUser.getEmail())

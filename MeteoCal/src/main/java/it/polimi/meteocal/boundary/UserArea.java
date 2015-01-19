@@ -169,7 +169,7 @@ public class UserArea {
         try {
             
             br = new BufferedReader(new InputStreamReader(file.getInputstream(), "UTF-8"));
-            
+            br.readLine();
             while ((line = br.readLine()) != null){
                 String[] singleLine = line.split(",");
                 String id = singleLine[0].substring(1, singleLine[0].length()-1);
@@ -207,18 +207,18 @@ public class UserArea {
             NodeList nl = docEle.getElementsByTagName("event");
             
             if(nl != null && nl.getLength() > 0) {
-			for(int i = 0 ; i < nl.getLength();i++) {
+                for(int i = 0 ; i < nl.getLength();i++) {
 
-				//get the event element
-				Element el = (Element)nl.item(i);
+                    //get the event element
+                    Element el = (Element)nl.item(i);
 
-				//get the Event object
-				Event e = getEvent(el);
+                    //get the Event object
+                    Event e = getEvent(el);
 
-				//add it to list
-				events.add(e);
-			}
-		}
+                    //add it to list
+                    events.add(e);
+                }
+            }
             
  
         } catch (ParserConfigurationException | IOException | SAXException e) {
