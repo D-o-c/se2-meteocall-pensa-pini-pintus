@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package it.polimi.meteocal.control;
 
 import it.polimi.meteocal.entity.Calendar;
@@ -23,14 +18,17 @@ import javax.persistence.PersistenceContext;
 @Singleton
 public class UpdateManager {
 
-    
+    //Constants
+    private static final int one_day = 86400000;
+    private static final int three_days = 259200000;
+    //Codes
     private int[] badWeather;
     
     @PersistenceContext
     EntityManager em;
-    
+    //Control
     @Inject
-    EmailSender emailS;
+    EmailSender emailSender;
     
     public void sendNotifies(){
         badWeather = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
@@ -41,11 +39,10 @@ public class UpdateManager {
         
         List<Event> events = em.createNamedQuery(Event.findAll, Event.class).getResultList();
         
-        
         //Bad weather one day before (for all partecipants):
         for (Event event : events) {
-            if(event.getBeginTime().getTime() - 86400000 <= (new Date()).getTime() &&
-                    !event.isBwodb() && event.getBeginTime().after(today)){
+            if(event.getBeginTime().getTime() - one_day <= (new Date()).getTime()
+                    && !event.isBwodb() && event.getBeginTime().after(today)){
                 
                 List<WeatherCondition> wcs = event.getWeatherConditions();
                 for (WeatherCondition wc : wcs){
@@ -57,7 +54,7 @@ public class UpdateManager {
                                     "Description: " + event.getDescription() + "\n" +
                                     "Begin Time: " + event.getBeginTime() + "\n" +
                                     "Location: " + event.getLocation();
-                                emailS.send(c.getUserEmail(),
+                                emailSender.send(c.getUserEmail(),
                                     "Bad weather for you event",
                                     desc);
                                 
@@ -87,10 +84,9 @@ public class UpdateManager {
         }
         
         //Bad weather three day before (only for creator):
-        
         for (Event event : events) {
-            if(event.getBeginTime().getTime() - 259200000 <= (new Date()).getTime() &&
-                    !event.isBwtdb()  && event.getBeginTime().after(today)){
+            if(event.getBeginTime().getTime() - three_days <= (new Date()).getTime()
+                    && !event.isBwtdb()  && event.getBeginTime().after(today)){
                 
                 List<WeatherCondition> wcs = event.getWeatherConditions();
                 for (WeatherCondition wc : wcs){
@@ -102,7 +98,7 @@ public class UpdateManager {
                                     "Begin Time: " + event.getBeginTime() + "\n" +
                                     "Location: " + event.getLocation() + "\n\n" +
                                     "The first sunny day is: " + sunnyDay;
-                        emailS.send(event.getCreator().getEmail(),
+                        emailSender.send(event.getCreator().getEmail(),
                                 "Bad weather for you event",
                                 desc);
                                 
@@ -146,7 +142,7 @@ public class UpdateManager {
                                     "Description: " + event.getDescription() + "\n" +
                                     "Begin Time: " + event.getBeginTime() + "\n" +
                                     "Location: " + event.getLocation();
-                            emailS.send(c.getUserEmail(),
+                            emailSender.send(c.getUserEmail(),
                                 "Weather changed",
                                 desc);
                             
@@ -177,15 +173,19 @@ public class UpdateManager {
         
     }
     
+    /**
+     * 
+     * @param event 
+     */
     public void updateFromEventUpdate(Event event) {
         for (Calendar c : event.getInvited()){
-            if (c.getInviteStatus()==1){
+            if (c.getInviteStatus() == 1){
                 String desc = "The info for this event is just changed\n\n" + 
                         "Name: " + event.getName() + "\n" + 
                         "Description: " + event.getDescription() + "\n"+
                         "Begin Time: " + event.getBeginTime() + "\n" +
                         "Location: " + event.getLocation();
-                emailS.send(c.getUserEmail(),
+                emailSender.send(c.getUserEmail(),
                     "Event info changed",
                     desc);
                 
@@ -209,16 +209,22 @@ public class UpdateManager {
         
     }
     
-    private String findSunnyDay(Event e, Date d){
+    /**
+     * @param event
+     * @param d
+     * @return first sunny day for an event 
+     */
+    private String findSunnyDay(Event event, Date d){
         List<Date> possibleDate = new ArrayList<>();
         
-        for (WeatherCondition wc : e.getWeatherConditions()){
+        for (WeatherCondition wc : event.getWeatherConditions()){
             if (!contains(badWeather, wc.getCode()) && wc.getTime().after(d)){
                 possibleDate.add(wc.getTime());
             }
         }
+        
         if (possibleDate.isEmpty()){
-            return "very hard to find it";
+            return "Very hard to find it";
         }
         
         int choosed = 0;
@@ -231,10 +237,13 @@ public class UpdateManager {
         }
         
         return possibleDate.get(choosed).toString();
-        
     }
     
-    
+    /**
+     * @param array : int[]
+     * @param v : int
+     * @return true if v is in array 
+     */
     private boolean contains (int[] array, int v){
         for (int i: array){
             if (i==v)
@@ -242,7 +251,5 @@ public class UpdateManager {
         }
         return false;
     }
-    
-    
-    
+ 
 }

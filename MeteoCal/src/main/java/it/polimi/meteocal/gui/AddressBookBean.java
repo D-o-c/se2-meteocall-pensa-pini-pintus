@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package it.polimi.meteocal.gui;
 
 import it.polimi.meteocal.boundary.UserArea;
@@ -19,22 +14,27 @@ import javax.inject.Named;
 @RequestScoped
 public class AddressBookBean {
     
-        private static final String user_addressbook_page_url = "/user/addressbook?faces-redirect=true";
+    //String
+    private static final String user_addressbook_page_url = "/user/addressbook?faces-redirect=true";
 
-    
+    //Boundary
     @EJB
-    UserArea ua;
+    UserArea userArea;
     
-    public List<Contact> getContacts(){
-        return ua.getContact();
+    /**
+     * @return userArea.getContacts()
+     */
+    public List<Contact> getContacts() {
+        return userArea.getContact();
     }
     
     /**
-     * Calls SearchArea.deleteContact(String contactEmail)
-     * @return addressbook page
+     * Calls userArea.deleteContact(Contact contact)
+     * @param contact = contact to be deleted 
+     * @return /user/addressbook?faces-redirect=true
      */
-    public String deleteContact(String contactEmail) {
-        ua.deleteContact(contactEmail);
+    public String deleteContact(Contact contact) {
+        userArea.deleteContact(contact);
         return user_addressbook_page_url;
     }
     

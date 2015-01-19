@@ -46,10 +46,7 @@ public class Calendar implements Serializable{
     @PrimaryKeyJoinColumn(name="EVENT", referencedColumnName="ID")
     private Event event;
 
-    //ATTENZIONE NON CANCELLARE IL COSTRUTTORE!!!!!
-    public Calendar(){
-        
-    }
+    public Calendar(){}
     
     public String getUserEmail() {
         return userEmail;

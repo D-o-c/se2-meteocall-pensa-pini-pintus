@@ -75,7 +75,7 @@
             
             
             <h:form>
-                <p:dataList value="#{notificationBean.getUpdate()}" var="update" type="definition"
+                <p:dataList value="#{notificationBean.updates}" var="update" type="definition"
                             itemType="none" paginator="true" rows="5" styleClass="paginated"
                             emptyMessage="No update found" paginatorAlwaysVisible="false"  >
                     <f:facet name="header">

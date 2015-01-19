@@ -4,7 +4,6 @@ import it.polimi.meteocal.control.GuestManager;
 import it.polimi.meteocal.control.SearchingManager;
 import it.polimi.meteocal.control.UserManager;
 import it.polimi.meteocal.entity.User;
-import java.security.Principal;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -16,24 +15,19 @@ import org.primefaces.model.ScheduleModel;
 @Stateless
 public class SearchArea {
     
-    
-    
+    //Controls
     @Inject
-    UserManager um;
-    
+    UserManager userManager;
     @Inject
-    GuestManager gm;
-    
+    GuestManager guestManager;
     @Inject
-    SearchingManager sm;
-    
-    @Inject
-    Principal principal;
-    
+    SearchingManager searchingManager;
+        
+    //list of results of the search
     List<User> usersSearched;
+    //user selected from that list
     User selectedUser;
     
-    /**************************** Getter and Setter ***************************/
     public List<User> getUsersSearched() {
         return usersSearched;
     }
@@ -45,46 +39,35 @@ public class SearchArea {
     public User getSelectedUser() {
         return selectedUser;
     }
+    
     /**************************************************************************/
     
-    
     /**
-     * Search users by email or name or surname by a search input
-     * @param searchInput
+     * Calls searchingManager.searchMatchingUser(searchInput, loggedUser)
+     * @param searchInput = input string
      */
     public void findUser(String searchInput) {
-        usersSearched = sm.searchUser(searchInput);
-        User loggedUser = gm.getLoggedUser();
-        if(usersSearched.contains(loggedUser)) {
-            usersSearched.remove(loggedUser);
-        }
+        usersSearched = searchingManager.searchMatchingUser(searchInput, guestManager.getLoggedUser());
     }
     
     /**
-     * Creates a new contact
-     * Calls EntityManager.persist(contact)
-     * Adds the contact to the logged user
-     * @param email
-     * @param name
-     * @param surname 
+     * Calls searchingManager.addContact(loggedUser, selectedUser)
      */
     public void addContact() {
-        sm.addContact(gm.getLoggedUser(), selectedUser);
+        searchingManager.addContact(guestManager.getLoggedUser(), selectedUser);
     }
     
-    
+    /**
+     * @return searchingManager.contactExist(loggedUser, selectedUser);
+     */
+    public boolean contactExist() {
+        return searchingManager.contactExist(guestManager.getLoggedUser(), selectedUser);
+    }
 
     /**
-     * Check if the logged user has the contact
-     * Calls EntityManager.find(Contact.class, Primary Key)
-     * @param contactEmail
-     * @return if the logged user has the contact
+     * @return searchingManager.getCalendar(selectedUser)
      */
-    public boolean exist() {
-        return sm.exist(gm.getLoggedUser(), selectedUser);
-    }
-
     public ScheduleModel getCalendar() {
-        return um.getCalendar(selectedUser, gm.getLoggedUser());
+        return searchingManager.getCalendar(selectedUser);
     }
 }

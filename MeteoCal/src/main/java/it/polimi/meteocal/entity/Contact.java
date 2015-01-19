@@ -40,8 +40,7 @@ public class Contact implements Serializable {
     @Column(name="SURNAME")
     private String surname;
     
-    public Contact() {
-    }
+    public Contact() {}
 
     public Contact(String email, String name, String surname, User user) {
         this.email = email;

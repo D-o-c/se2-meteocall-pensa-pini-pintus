@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package it.polimi.meteocal.gui;
 
 import it.polimi.meteocal.boundary.UserArea;
@@ -23,60 +18,103 @@ import org.primefaces.context.RequestContext;
 @RequestScoped
 public class NotificationBean {
     
+    //Strings
+    private static final String info = "Info";
+    private static final String accepted = "Invitation accepted";
+    private static final String refused = "Invitation refused";
+    private static final String another_event_error = "You already have another event at the same time! Delete it before!";
+    private static final String user_notifications_page_url = "/user/notifications?faces-redirect=true";
+    private static final String home_page_url = "home?faces-redirect=true";
+    
+    //Boundary
     @EJB
-    UserArea ua;
+    UserArea userArea;
     
-    //private List<Event> invites;
+    /**
+     * Empty Constructor
+     */
+    public NotificationBean() {}
     
+    /**
+     * @return userArea.getInvites()
+     */
     public List<Event> getInvites() {
-        return ua.getInvites();
+        return userArea.getInvites();
     }
     
+    /**
+     * @return userArea.getNumberOfNotifies()
+     */
     public int getNumberOfNotifies(){
-        return ua.getNumberOfNotifies();
+        return userArea.getNumberOfNotifies();
     }
     
-    public String setNotifyRead(Update u){
-        ua.setNotifyRead(u);
-        return "/user/notifications?faces-redirect=true";        
+    /**
+     * Calls userArea.setNotifyRead(update)
+     * @param update
+     * @return /user/notifications?faces-redirect=true
+     */
+    public String setNotifyRead(Update update){
+        userArea.setNotifyRead(update);
+        return user_notifications_page_url;        
     }
     
+    /**
+     * @return userArea.getSelectedEvent()
+     */
     public Event getSelectedEvent() {
-        return ua.getSelectedEvent();
+        return userArea.getSelectedEvent();
     }
 
+    /**
+     * Calls userArea.setSelectedEvent(selectedEvent)
+     * @param selectedEvent 
+     */
     public void setSelectedEvent(Event selectedEvent) {
-        ua.setSelectedEvent(selectedEvent);
+        userArea.setSelectedEvent(selectedEvent);
     }
     
-    public List<Update> getUpdate(){
-        return ua.getUpdate();
+    /**
+     * @return userArea.getUpdates()
+     */
+    public List<Update> getUpdates() {
+        return userArea.getUpdates();
     }
     
-    public String accept(){
-        if (ua.timeConsistency(ua.getSelectedEvent()) == -2){
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Another Event",
-                                            "You already have another event at the same time! Delete it before!");
-         
+    /**
+     * Calls userArea.accept()
+     * @return home?faces-redirect=true
+     */
+    public String accept() {
+        
+        Event event = userArea.getSelectedEvent();
+        
+        int checkTimeConsistency = userArea.timeConsistency(event);
+        
+        if (checkTimeConsistency == -2){
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, info, another_event_error);
             RequestContext.getCurrentInstance().showMessageInDialog(message);
             return null;
         }
-        ua.accept();
+        userArea.accept();
         FacesContext context = FacesContext.getCurrentInstance();
-                context.addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_INFO,"Info", "Invitation accepted"));
-                context.getExternalContext().getFlash().setKeepMessages(true);
-        return "home?faces-redirect=true";
+        context.addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO, info, accepted));
+        context.getExternalContext().getFlash().setKeepMessages(true);
+        return home_page_url;
     }
     
+    /**
+     * Calls userArea.deny()
+     * @return home?faces-redirect=true
+     */
     public String deny(){
-        ua.deny();
+        userArea.deny();
         FacesContext context = FacesContext.getCurrentInstance();
-                context.addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_INFO,"Info", "Invitation refused"));
-                context.getExternalContext().getFlash().setKeepMessages(true);
-        return "home";
-        
+        context.addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO, info, refused));
+        context.getExternalContext().getFlash().setKeepMessages(true);
+        return home_page_url;
     }
     
 }

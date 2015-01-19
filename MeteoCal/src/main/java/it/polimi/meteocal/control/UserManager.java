@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package it.polimi.meteocal.control;
 
 import it.polimi.meteocal.entity.Calendar;
@@ -22,93 +17,127 @@ import org.primefaces.model.ScheduleModel;
 
 /**
  *
- * DA COMMENTARE
  */
 public class UserManager {
     
     @PersistenceContext
     EntityManager em;
     
-    
-    public void changeCalendarVisibility(User u){
-        boolean temp = u.isPublic();
+    /**
+     * If public then private and viceversa
+     * @param user 
+     */
+    public void changeCalendarVisibility(User user){
+        boolean temp = user.isPublic();
         temp ^= true;
-        u.setPublic(temp);
-        em.merge(u);
+        user.setPublic(temp);
+        em.merge(user);
     }
     
-    public void changePassword(User u, String p){
-        u.setPassword(p);
-        em.merge(u);
+    /**
+     * Update password and merge user
+     * @param user
+     * @param password 
+     */
+    public void changePassword(User user, String password){
+        user.setPassword(password);
+        em.merge(user);
     }
     
-    public ScheduleModel getCalendar(User u, User loggedUser){
+    /**
+     * @param user
+     * @return calendar of a user
+     */
+    public ScheduleModel getCalendar(User user) {
         
         ScheduleModel calendar = new DefaultScheduleModel();
-        try{
-            
-            List<Calendar> temp = u.getEvents();
-            for (Calendar temp1 : temp) {
-                if (temp1.getInviteStatus() == 1) {
-                    Event evntTemp = temp1.getEvent();
-                    DefaultScheduleEvent dse = new DefaultScheduleEvent(evntTemp.getName(),
-                                                                        evntTemp.getBeginTime(),
-                                                                        evntTemp.getEndTime());
-                    if (u.equals(loggedUser) || evntTemp.isPub()){
-                        dse.setDescription(Long.toString(evntTemp.getEventId()));
-                    }
-                    else{
-                        dse.setTitle("Private event!");
-                        dse.setDescription(null);
-                    }
-                    calendar.addEvent(dse);
-
-                }
-            }
-        }
-        catch (Exception e){
-            
-        }
         
+        try {
+            
+            List<Calendar> userEvents = user.getEvents();
+            for(Calendar c : userEvents) {
+                int inviteStatus = c.getInviteStatus();
+                if(inviteStatus == 1) {
+                    Event e = c.getEvent();
+                    DefaultScheduleEvent dse = new DefaultScheduleEvent(e.getName(),
+                                                                        e.getBeginTime(),
+                                                                        e.getEndTime());
+                    //DefaultScheduleEvent.setData() is used to set the ID
+                    dse.setData(e.getEventId());
+                    calendar.addEvent(dse);
+                    
+                }//endif
+                
+            }//endfor
+            
+        } catch (Exception e) {}
         
         return calendar;
-        
     }
     
-    public int timeConsistency(User u, Event e){
-        try{
-            if (e.getBeginTime().after(e.getEndTime())){ //beginTime is AFTER endTime
+    /**
+     * @param user
+     * @param event
+     * @return
+     * </br>0 no problems
+     * </br>-1 begin time is after end time
+     * </br>-2 user has another event at the same time
+     */
+    public int timeConsistency(User user, Event event){
+        
+        try {
+            if (event.getBeginTime().after(event.getEndTime())){
                 return -1;
             }
 
-            List<Calendar> c = u.getEvents();
-            for (Calendar c1 : c) {
-                if (e.getBeginTime().before(c1.getEvent().getEndTime()) &&
-                        e.getEndTime().after(c1.getEvent().getBeginTime()) &&
-                        e.getEventId() != c1.getEventId() &&
-                        c1.getInviteStatus()==1){
+            List<Calendar> calendars = user.getEvents();
+            for (Calendar c : calendars) {
+                if (event.getBeginTime().before(c.getEvent().getEndTime()) &&
+                    event.getEndTime().after(c.getEvent().getBeginTime()) &&
+                    event.getEventId() != c.getEventId() &&
+                    c.getInviteStatus() == 1) {
                     return -2;
                 }
             }
         }
-        catch(NullPointerException exc){
-                
-        }
+        catch(NullPointerException e){}
         return 0;
-        
     }
 
+    /**
+     * @param user
+     * @return all events of a user
+     */
     public List<Event> getUserEvent(User user) {
-        //QUERY??????????
+        List<Event> events = new ArrayList<>();
+        for (int i = 0; i < user.getEvents().size(); i++){
+            if (user.getEvents().get(i).getInviteStatus() == 1){
+                events.add(user.getEvents().get(i).getEvent());
+            }
+        }
+        return events;
+    }
+    
+    /**
+     * @param user
+     * @return all pending invites of a user 
+     */
+    public List<Event> getInvites(User user) {
         List<Event> temp = new ArrayList<>();
         for (int i = 0; i < user.getEvents().size(); i++){
-            if (user.getEvents().get(i).getInviteStatus()==1){
+            if (user.getEvents().get(i).getInviteStatus() == 0){
                 temp.add(user.getEvents().get(i).getEvent());
             }
         }
         return temp;
     }
 
+    /**
+     * 
+     * @param user
+     * @param e
+     * @return 
+     */
     public int importCalendar(User user, HashSet<Event> e) {
         int status = 0;
         for (int i=0;i<user.getEvents().size();i++){
@@ -144,74 +173,75 @@ public class UserManager {
     
     }
 
+    /**
+     * @param user
+     * @return user.getNotifies()
+     */
     public List<Update> getNotifies(User user) {
         return user.getNotifies();
     }
 
-    public void setNotifyRead(Update u) {
-        u.setRead(true);
-        em.merge(u);
+    /**
+     * Updates "update" and merge "update"
+     * @param update 
+     */
+    public void setNotifyRead(Update update) {
+        update.setRead(true);
+        em.merge(update);
     }
 
-    public void acceptInvite(User user, Event selectedEvent) {
+    /**
+     * Accept invitation decision = 1</br>
+     * Deny invitation decision = -1 </br>
+     * @param user
+     * @param selectedEvent 
+     * @param decision
+     */
+    public void answerInvite(User user, Event selectedEvent, int decision) {
         
-        for (int i=0;i<selectedEvent.getInvited().size();i++){
-            if (selectedEvent.getInvited().get(i).getUser().equals(user)){
-                selectedEvent.getInvited().get(i).setInviteStatus(1);
+        List<Calendar> calendars = selectedEvent.getInvited();
+        for(Calendar c : calendars) {
+            if(c.getUser().equals(user)) {
+                c.setInviteStatus(decision);
             }
         }
-        for (int i = 0; i < user.getEvents().size(); i++){
-            if (user.getEvents().get(i).getEvent().equals(selectedEvent)){
-                user.getEvents().get(i).setInviteStatus(1);
+        
+        calendars = user.getEvents();
+        for(Calendar c : calendars) {
+            if(c.getEvent().equals(selectedEvent)) {
+                c.setInviteStatus(decision);
             }
         }
+        
         em.merge(selectedEvent);
         em.merge(user);
     }
     
-    public void denyInvite(User user, Event selectedEvent){
-        
-        for (int i=0;i<selectedEvent.getInvited().size();i++){
-            if (selectedEvent.getInvited().get(i).getUser().equals(user)){
-                selectedEvent.getInvited().get(i).setInviteStatus(-1);
-            }
-        }
-        for (int i = 0; i < user.getEvents().size(); i++){
-            if (user.getEvents().get(i).getEvent().equals(selectedEvent)){
-                user.getEvents().get(i).setInviteStatus(-1);
-            }
-        }
-        
-        em.merge(selectedEvent);
-        em.merge(user);
+    /**
+     * @param user
+     * @return number of not read notifies
+     */
+    public int getNumberOfNotReadNotifies(User user) {
+        return ((Number)em.createNamedQuery(Update.countNotRead)
+                    .setParameter(1, user.getEmail()).getSingleResult())
+                        .intValue();
     }
 
-    public List<Event> getInvites(User user) {
-        List<Event> temp = new ArrayList<>();
-        for (int i = 0; i < user.getEvents().size(); i++){
-            if (user.getEvents().get(i).getInviteStatus() == 0){
-                temp.add(user.getEvents().get(i).getEvent());
-            }
-        }
-        return temp;
+    /**
+     * @param user
+     * @return user.getContacts()
+     */
+    public List<Contact> getContacts(User user) {
+        return user.getContacts();
     }
 
-    public int getNumberOfNotReadedNotifies(User user) {
-        int count=0;
-        for (Update u : user.getNotifies()){
-            if (!u.isRead()){
-                count++;
-            }
-        }
-        return count;
-    }
-
-    public List<Contact> getContacts(User u) {
-        return u.getContacts();
-    }
-
-    public void deleteContact(User user, String contactEmail) {
-        ContactPK pk = new ContactPK(contactEmail,user.getEmail());
+    /**
+     * Removes a contact from user contact lists
+     * @param user
+     * @param contact 
+     */
+    public void deleteContact(User user, Contact contact) {
+        ContactPK pk = new ContactPK(contact.getEmail(),user.getEmail());
         Contact toBeRemoved = em.find(Contact.class, pk);
         user.getContacts().remove(toBeRemoved);
         em.remove(toBeRemoved);

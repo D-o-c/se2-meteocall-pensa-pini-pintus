@@ -18,17 +18,34 @@ import javax.inject.Named;
 @RequestScoped
 public class CreateEventBean {
     
-    private final static String user_home = "/user/home?faces-redirect=true";
+    //Strings
+    private static final String info = "Info";
+    private static final String warning = "Warning";
+    private static final String overlapped_events_error = "You cannot have more events at the same time!";
+    private static final String time_consistency_error = "Begin Time must be before End Time";
+    private static final String creation_successfull = "Event Successfully Created";
+    private static final String some_users_not_found = "Some Invited Users Not Found!";
+    private final static String user_home_page_url = "/user/home?faces-redirect=true";
 
-    
+    //Boundaries
     @EJB
-    EventArea ea;
+    EventArea eventArea;
     @EJB
-    UserArea ua;
+    UserArea userArea;
     
+    //Input string of emails of invited users
     private String invites;
-    private Event event;
     
+    private Event event;
+
+    /**
+     * Empty Constructor
+     */
+    public CreateEventBean() {}
+    
+    /**
+     * @return event
+     */
     public Event getEvent() {
         if (event == null) {
             event = new Event();
@@ -36,53 +53,65 @@ public class CreateEventBean {
         return event;
     }
 
-    public void setEvent(Event event) {
-        this.event = event;
-    }
+    /**
+     * @return invites
+     */
     public String getInvites() {
         return invites;
     }
 
+    /**
+     * @param invites 
+     */
     public void setInvites(String invites) {
         this.invites = invites;
     }
     
+    /**************************************************************************/
+    
     /**
-     * Calls updateInviteList() to clean the invitedUsers List
-        Calls EventArea.createEvent(event,invitedUsers)
-     * @return 
+     * @param query = Input string used to autocomplete invited users list 
+     * @return eventArea.complete(query)
      */
-    public String createEvent(){
-        switch (ua.timeConsistency(event)){
+    public List<String> complete(String query) {
+        return eventArea.complete(query);
+    }
+    
+    /**
+     * Calls userArea.timeConsistency(event)
+     * Calls eventArea.createEvent(event, invites);
+     * @return /user/home?faces-redirect=true
+     */
+    public String createEvent() {
+        
+        FacesContext context = FacesContext.getCurrentInstance();
+        
+        int checkTimeConsistency = userArea.timeConsistency(event);
+        
+        switch (checkTimeConsistency){
             case -2:
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "You cannot have more events at the same time!",null));
+                context.addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, overlapped_events_error, null));
                 return null;
             case -1:
-                FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Begin Time must be before End Time",null));
+                context.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, time_consistency_error, null));
                 return null;
             case 0:
-                boolean noErrors = ea.createEvent(event, invites);
-                
-                FacesContext context = FacesContext.getCurrentInstance();
+                boolean allUsersInvited = eventArea.createEvent(event, invites);
                 context.addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_INFO,"Info", "Event Successfully Created"));
+                        new FacesMessage(FacesMessage.SEVERITY_INFO, info, creation_successfull));
                 context.getExternalContext().getFlash().setKeepMessages(true);
-                if (noErrors){
-                    return user_home;
+                if (allUsersInvited){
+                    return user_home_page_url;
                 }  
                 context.addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_WARN,"Warning", "Some Invited Users Not Found!"));
+                        new FacesMessage(FacesMessage.SEVERITY_WARN, warning, some_users_not_found));
                 context.getExternalContext().getFlash().setKeepMessages(true);
-                return user_home;
+                return user_home_page_url;
             default:
                 return null;
         }
     }
-    
-    public List<String> complete(String query){
-        return ea.complete(query);
-    }
-    
+        
 }

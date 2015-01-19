@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package it.polimi.meteocal.entity.primarykeys;
 
 import java.io.Serializable;
@@ -12,18 +7,26 @@ import java.util.Date;
  *
  */
 public class WeatherConditionPK implements Serializable{
+    
     private long event;
     private Date time;
 
-    public WeatherConditionPK() {
-    }
+    /**
+     * Empty Constructor
+     */
+    public WeatherConditionPK() {}
 
+    /**
+     * Constructor
+     * @param event
+     * @param time 
+     */
     public WeatherConditionPK(long event, Date time) {
         this.event = event;
         this.time = time;
     }
     
-
+    @Override
     public boolean equals(Object object) {
         if (object instanceof WeatherConditionPK) {
             WeatherConditionPK pk = (WeatherConditionPK)object;
@@ -33,6 +36,7 @@ public class WeatherConditionPK implements Serializable{
         }
     }
 
+    @Override
     public int hashCode() {
          return (int)(event + time.hashCode());
     }
