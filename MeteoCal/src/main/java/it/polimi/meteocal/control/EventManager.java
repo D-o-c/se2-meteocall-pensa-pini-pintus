@@ -1,13 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package it.polimi.meteocal.control;
 
 import it.polimi.meteocal.entity.Calendar;
 import it.polimi.meteocal.entity.Event;
-import it.polimi.meteocal.entity.Update;
 import it.polimi.meteocal.entity.User;
 import it.polimi.meteocal.entity.WeatherCondition;
 import java.util.ArrayList;
@@ -21,76 +15,105 @@ import javax.persistence.PersistenceContext;
  */
 public class EventManager {
     
+    private static final String invite = "Invite";
+    private static final String text =
+            "You received an invitation to an event, log on MeteoCal to accept!";
+    private static final String delete = "Event deleted";
+    private static final String deleted = " has been deleted";
+    
     @PersistenceContext
     EntityManager em;
     
+    //Controls
     @Inject
-    EmailSender emailS;
-    
+    EmailSender emailSender;
     @Inject
-    UpdateManager um;
+    UpdateManager userManager;
 
+    /**
+     * @param event
+     * @param invitedUsers
+     * @param creator
+     * @return if all invitations have been sent correctly
+     */
     public boolean createEvent(Event event, List<String> invitedUsers, User creator) {
+        //set flags to false
         event.setBwodb(false);
         event.setBwtdb(false);
         
-        //Logged user is the creator of the event
         event.setCreator(creator);
-        
-        
-        //persists the event into the database
         
         em.persist(event);
         
-        //adds the event to creator's calendar
         event.addInvited(creator, 1);
         
         return sendInvite(event,invitedUsers);
     }
     
-    private boolean sendInvite(Event e, List<String> iu){
+    /**
+     * Adds invites and sends emails
+     * @param event
+     * @param invitedEmails
+     * @return true if all invitations have been sent correctly
+     */
+    private boolean sendInvite(Event event, List<String> invitedEmails){
         //delete people already invited
-        List<Calendar> temp = e.getInvited();
-        for (Calendar temp1 : temp) {
-            iu.remove(temp1.getUserEmail());
+        List<Calendar> calendars = event.getInvited();
+        for (Calendar c : calendars) {
+            invitedEmails.remove(c.getUserEmail());
         }
         
         //deletes the creator from users invited to the event
-        iu.remove(e.getCreator().getEmail());
+        invitedEmails.remove(event.getCreator().getEmail());
+        
         //Checks the existance of the emails in the user database
-        for (String invitedUser : iu) {
-            User u = em.find(User.class, invitedUser);
+        for (String s : invitedEmails) {
+            User u = em.find(User.class, s);
             try {
                 //if exists, add event to his calendar
-                e.addInvited(u, 0);
-                emailS.send(invitedUser,"Invite",
-                        "You received an invitation to an event, log on MeteoCal to accept!");
-                
-            } catch (NullPointerException exc){
+                event.addInvited(u, 0);
+                emailSender.send(s, invite, text);
+            } catch (NullPointerException e){
                 return false;
             }
-            
         }
         return true;
-        
     }
 
+    /**
+     * Calls userManager.updateFromEventUpdate(currentEvent)
+     * @param currentEvent
+     * @param invitedUsers
+     * @return true if all invitations have been sent correctly
+     */
     public boolean updateEvent(Event currentEvent, List<String> invitedUsers) {
         currentEvent.setBwodb(false);
         currentEvent.setBwtdb(false);
+        em.merge(currentEvent);
         
+        //send invites
         boolean noErrors = sendInvite(currentEvent, invitedUsers);
-        currentEvent.setWeatherConditions(new ArrayList<WeatherCondition>());
+        //removes weather conditions
         currentEvent.setWeatherConditions(new ArrayList<WeatherCondition>());
         em.merge(currentEvent);
-        um.updateFromEventUpdate(currentEvent);
+        
+        userManager.updateFromEventUpdate(currentEvent);
         return noErrors;
     }
 
+    /**
+     * @param eventId
+     * @return em.find(Event.class, eventId)
+     */
     public Event find(long eventId) {
         return em.find(Event.class, eventId);
     }
 
+    /**
+     * 
+     * @param event
+     * @param user 
+     */
     public void removeFromPartecipants(Event event, User user) {
         for (int i=0;i<event.getInvited().size();i++){
             if (event.getInvited().get(i).getUser().equals(user)){
@@ -106,26 +129,33 @@ public class EventManager {
         em.merge(user);
     }
 
+    /**
+     * @param event
+     * @return list of user who partecipates to an event
+     */
     public List<User> getPartecipants(Event event) {
-        List<User> temp = new ArrayList<>();
-        for (int i = 0; i < event.getInvited().size(); i++){
-            if (event.getInvited().get(i).getInviteStatus()==1){
-                temp.add(event.getInvited().get(i).getUser());
+        List<User> partecipants = new ArrayList<>();
+        for(Calendar c : event.getInvited()) {
+            if(c.getInviteStatus() == 1) {
+                partecipants.add(c.getUser());
             }
         }
-        return temp;
+        return partecipants;
     }
 
+    /**
+     * Removes an event
+     * @param event 
+     */
     public void deleteEvent(Event event) {
-        for (Calendar c: event.getInvited()){
-            if (c.getInviteStatus() == 1){
-                emailS.send(c.getUserEmail(),
-                                "Event deleted",
-                                event.getName() + "has been deleted");
-                
+        for (Calendar calendar : event.getInvited()){
+            if (calendar.getInviteStatus() == 1){
+                emailSender.send(calendar.getUserEmail(),
+                                delete, 
+                                event.getName() + deleted);
             }
-            User u = c.getUser();
             
+            User u = calendar.getUser();
             for (int i = 0; i < u.getEvents().size(); i++){
                 if (u.getEvents().get(i).getEvent().equals(event)){
                     u.getEvents().remove(i);
@@ -142,14 +172,7 @@ public class EventManager {
             
             em.merge(u);
         }
-        
-        
-            
-        
-    //    event.setWeatherConditions(new ArrayList<WeatherCondition>());
-    //    event.setUpdate(new ArrayList<Update>());
-    //    event.setInvited(new ArrayList<Calendar>());
-        
+                
         Event e = em.merge(event);
         em.remove(e);
     }

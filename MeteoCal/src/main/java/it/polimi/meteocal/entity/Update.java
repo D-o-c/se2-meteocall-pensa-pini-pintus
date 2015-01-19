@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
@@ -17,8 +19,13 @@ import javax.validation.constraints.NotNull;
  */
 @Entity (name = "UPDATE_")
 @IdClass(UpdatePK.class)
+@NamedQueries({
+    @NamedQuery(name = Update.countNotRead, 
+                    query = "SELECT COUNT(u) FROM UPDATE_ u WHERE u.read = false AND u.email = ?1")
+})
 public class Update implements Serializable {
     private static final long serialVersionUID = 1L;
+    public static final String countNotRead = "Update.countNotRead";
     
     @Id
     @Column(name = "EVENT")
@@ -38,7 +45,7 @@ public class Update implements Serializable {
     private String description;
     
     @ManyToOne
-    @PrimaryKeyJoinColumn(name="USER", referencedColumnName="EMAIL")
+    @PrimaryKeyJoinColumn(name="RECIPIENT", referencedColumnName="EMAIL")
     private User user;
     
     @ManyToOne

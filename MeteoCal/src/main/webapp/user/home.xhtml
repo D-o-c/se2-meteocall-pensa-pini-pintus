@@ -37,12 +37,12 @@
             </h:form>
             
             <h:form>
-                <p:schedule id="schedule" value="#{scheduleBean.eventModel}" widgetVar="myschedule"
+                <p:schedule id="schedule" value="#{homeScheduleBean.scheduleModel}" widgetVar="myschedule"
                             draggable="false" resizable="false" axisFormat="H(:mm)" timeFormat="H(:mm)"
                             firstHour="0" showWeekends="true">
 
 
-                    <p:ajax event="eventSelect" listener="#{scheduleBean.onEventSelect}"
+                    <p:ajax event="eventSelect" listener="#{homeScheduleBean.onEventSelect}"
                             update="eventDetails" oncomplete="PF('eventDialog').show();" />
 
                 </p:schedule>
@@ -52,19 +52,19 @@
                     <h:panelGrid id="eventDetails" columns="2">
 
                         <p:outputLabel value="Name:"/>
-                        <p:outputLabel value="#{scheduleBean.currentEvent.name}"/>
+                        <p:outputLabel value="#{homeScheduleBean.currentEvent.name}"/>
 
                         <p:outputLabel value="Description"/>
-                        <p:outputLabel value="#{scheduleBean.currentEvent.description}"/>
+                        <p:outputLabel value="#{homeScheduleBean.currentEvent.description}"/>
 
                         <p:outputLabel value="Begin Time:"/>
-                        <p:outputLabel value="#{scheduleBean.currentEvent.beginTime}"/>
+                        <p:outputLabel value="#{homeScheduleBean.currentEvent.beginTime}"/>
 
                         <p:outputLabel value="End Time:"/>
-                        <p:outputLabel value="#{scheduleBean.currentEvent.endTime}"/>
+                        <p:outputLabel value="#{homeScheduleBean.currentEvent.endTime}"/>
 
                         <p:outputLabel value="Location:"/>
-                        <p:outputLabel value="#{scheduleBean.currentEvent.location}"/>
+                        <p:outputLabel value="#{homeScheduleBean.currentEvent.location}"/>
 
                        <p:commandButton id="goButton" value="Go in Event Page" action="/event?faces-redirect=true"/>
                     </h:panelGrid>

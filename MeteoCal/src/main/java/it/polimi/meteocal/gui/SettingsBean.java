@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package it.polimi.meteocal.gui;
 
 import it.polimi.meteocal.boundary.PublicArea;
@@ -24,172 +19,230 @@ import org.primefaces.model.UploadedFile;
 @RequestScoped
 public class SettingsBean {
      
+    //Strings
+    private static final String info = "Info";
+    private static final String warning = "Warning";
+    private static final String error = "Error";
+    private static final String choose = "Choose a file!";
+    private static final String invalid_extension = "Upload only xls, csv or xml file";
+    private static final String bad_formed_file = "Verify that the file is well conformed";
+    private static final String successfull = "Calendar imported succesfully";
+    private static final String time_consistency_error = 
+            "Calendar not completely imported because same event has problem with time consistency";
+    private static final String password_short = "Password must have at least 4 characters";
+    private static final String password_changed = "Password Successfully Changed";
+    private static final String try_again = "Please Try Again";
+    private static final String public_calendar = "Now your calendar is PUBLIC";
+    private static final String private_calendar = "Now your calendar is PRIVATE";
+    private static final String unregistration = "Unregistration Successfull";
     private static final String index_page_url = "/index?faces-redirect=true";
-    private static final String home_page = "home?faces-redirect=true";
+    private static final String home_page_url = "home?faces-redirect=true";
     
-    
+    //Boundaries
     @EJB
-    PublicArea pa;
+    PublicArea publicArea;
     @EJB
-    UserArea ua;
+    UserArea userArea;
     
-    private String newEmail;
+    //logged user credentials
     private String password;
     private String newPassword;
+    
+    //import calendar
     private UploadedFile file;
 
-    public String getNewEmail() {
-        return newEmail;
-    }
-
-    public void setNewEmail(String newEmail) {
-        this.newEmail = newEmail;
-    }
-
+    /**
+     * Empty Constructor
+     */
+    public SettingsBean(){}
+    
+    /**
+     * @return password
+     */
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
+    /**
+     * @return newPassword
+     */
     public String getNewPassword() {
         return newPassword;
     }
 
-    public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
-    }
+    /**
+     * @return file
+     */
     public UploadedFile getFile() {
         return file;
     }
- 
+
+    /**
+     * @param password 
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * @param newPassword 
+     */
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    /**
+     * @param file 
+     */
     public void setFile(UploadedFile file) {
         this.file = file;
     }
     
-     /**
-     * return a list of event to which the user participates, for export them
-     * @return 
+    /**************************************************************************/
+    
+    /**
+     * @return userArea.isLoggedUserPublic()
      */
-    public List<Event> getUserEvent(){
-        return ua.getUserEvent();
+    public boolean isLoggedUserPublic(){
+        return userArea.isLoggedUserPublic();
     }
     
+    /**
+     * @return userArea.getUserEvent()
+     */
+    public List<Event> getUserEvent(){
+        return userArea.getUserEvent();
+    }
+    
+    /**
+     * Calls userArea.import***calendar
+     * @return home?faces-redirect=true
+     */
     public String upload() {
+        
         FacesContext context = FacesContext.getCurrentInstance();
+        
         String extension;
-        try{
-            extension = file.getFileName().substring(file.getFileName().length()-3).toLowerCase();
-        }
-        catch(Exception e){
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR",
-                    "Choose a file!");
-            FacesContext.getCurrentInstance().addMessage(null, message);
+        
+        try {
+            extension = getFileExtension(file);
+        } catch(Exception e){
+            context.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, error, choose));
             return null;
         }
+        
         int status = 0;
         switch (extension) {
             case "xls":
-                status = ua.importXLScalendar(file);
+                status = userArea.importXLScalendar(file);
                 break;
             case "csv":
-                status = ua.importCSVcalendar(file);
+                status = userArea.importCSVcalendar(file);
                 break;
             case "xml":
-                status = ua.importXMLcalendar(file);
+                status = userArea.importXMLcalendar(file);
                 break;
             default:
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR",
-                        "Upload only xls, csv or xml file");
-                FacesContext.getCurrentInstance().addMessage(null, message);
+                context.addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, error,invalid_extension));
                 return null;
         }
         
         switch (status){
             case -1:
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR",
-                        "Verify that the file is well conformed");
-                FacesContext.getCurrentInstance().addMessage(null, message);
+                context.addMessage(null, 
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, error, bad_formed_file));
                 return null;
             case -2:
                 context.addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_INFO,"Info",
-                                "Calendar not completely imported because same event has problem with time consistency"));
+                        new FacesMessage(FacesMessage.SEVERITY_WARN, warning, time_consistency_error));
                 context.getExternalContext().getFlash().setKeepMessages(true);
-                return "/user/home";
+                return home_page_url;
             default:
                 context.addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_INFO,"Info", "Calendar imported succesfully"));
+                        new FacesMessage(FacesMessage.SEVERITY_INFO, info, successfull));
                 context.getExternalContext().getFlash().setKeepMessages(true);
-                return "/user/home";
+                return home_page_url;
         }
     }
     
     /**
-     * Calls UserArea to set the new password
-     * @return user home page if password change is correct
+     * Calls userArea.changePassword(password,newPassword)
+     * @return home?faces-redirect=true
      */
     public String changePassword() {
-        if (newPassword.length() < 4){
-            FacesContext.getCurrentInstance()
-                    .addMessage(null, new FacesMessage(
-                            FacesMessage.SEVERITY_ERROR,"Password Change Failure!","Password must have at least 4 characters"));
-            return null;
-        }
-        boolean changeIsOk = ua.changePassword(password,newPassword);
-        if(changeIsOk) {
-            FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO,"Info", "Password Successfully Changed"));
-            context.getExternalContext().getFlash().setKeepMessages(true);
-            return home_page;
-        }
-        else {
-            FacesContext.getCurrentInstance()
-                    .addMessage(null, new FacesMessage(
-                            FacesMessage.SEVERITY_ERROR,"Password Change Failure!","Please Try Again"));
-            return null;
-        }
-    }
-    
-    /**
-     * Calls UserArea to set the visibility of the calendar
-     * @return user home page
-     */
-    public String changeCalendarVisibility() {
-        ua.changeCalendarVisibility();
-        String message;
-        if(ua.isLoggedUserPublic()) message = "public";
-        else message = "private";
         
         FacesContext context = FacesContext.getCurrentInstance();
-        context.addMessage(null, new FacesMessage("Info", "Now your calendar is " + message));
-        context.getExternalContext().getFlash().setKeepMessages(true);
-        return home_page;
+        
+        if (newPassword.length() < 4){
+            context.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, error, password_short));
+            return null;
+        }
+        
+        boolean changeIsOk = userArea.changePassword(password,newPassword);
+        
+        if(changeIsOk) {
+            context.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, info, password_changed));
+            context.getExternalContext().getFlash().setKeepMessages(true);
+            return home_page_url;
+        }
+        else {
+            context.addMessage(null, new FacesMessage(
+                            FacesMessage.SEVERITY_ERROR, error, try_again));
+            return null;
+        }
     }
     
+    /**
+     * Calls userArea.changeCalendarVisibility()
+     * @return home?faces-redirect=true
+     */
+    public String changeCalendarVisibility() {
+        
+        FacesContext context = FacesContext.getCurrentInstance();
+        
+        userArea.changeCalendarVisibility();
+                
+        if(userArea.isLoggedUserPublic()) {
+            context.addMessage(null, new FacesMessage(info, public_calendar));
+            context.getExternalContext().getFlash().setKeepMessages(true);
+            return home_page_url;
+        }
+        else {
+            context.addMessage(null, new FacesMessage(info, private_calendar));
+            context.getExternalContext().getFlash().setKeepMessages(true);
+            return home_page_url;
+        }
+    }
     
     /**
-     * Calls PublicArea.unregister(), invalidate the session
-     * @return index page
+     * Calls publicArea.unregister()
+     * @return /index?faces-redirect=true
      */
     public String unregister() {
-        pa.unregister();
+        
+        publicArea.unregister();
         
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
         request.getSession().invalidate();
         
         context.addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO,"Info", "Unregistration Successfull"));
+                new FacesMessage(FacesMessage.SEVERITY_INFO, info, unregistration));
         context.getExternalContext().getFlash().setKeepMessages(true);
         
         return index_page_url;
     }
     
-    public boolean isLoggedUserPublic(){
-        return ua.isLoggedUserPublic();
+    /**
+     * @param file
+     * @return extension of a file 
+     */
+    private String getFileExtension(UploadedFile file) {
+        return file.getFileName().substring(file.getFileName().length()-3).toLowerCase();
     }
+    
 }

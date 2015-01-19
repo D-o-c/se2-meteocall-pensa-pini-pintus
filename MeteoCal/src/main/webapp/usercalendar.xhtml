@@ -14,7 +14,7 @@
             <h1 id="title">MeteoCal</h1>
             <h:form id="searchForm" class="float-left">
                 <p:inputText value="#{searchBean.searchInput}" id="keyword" maxlength="200"/>
-                <p:commandButton class="searchUsersButton" action="#{searchBean.findUser2()}" icon="ui-icon-search"/>
+                <p:commandButton class="searchUsersButton" action="#{searchBean.findUser()}" icon="ui-icon-search"/>
                 <p:watermark for="keyword" value="Search..." id="watermark" />
             </h:form>
             <ul id="landmarks">
@@ -29,19 +29,19 @@
             <h:form style="padding-bottom: 10px;">
                 <p:commandButton 
                     action="#{userCalendarBean.addContact()}"
-                    value="Add To Contacts" disabled="#{userCalendarBean.exist()}"/>
+                    value="Add To Contacts" disabled="#{userCalendarBean.contactExist()}"/>
                 <p:outputLabel style="margin:0px;padding:20px"
                     value="#{userCalendarBean.selectedUserName} #{userCalendarBean.selectedUserSurname} (#{userCalendarBean.selectedUserEmail})"/>
             </h:form>
 
 
             <h:form id="scheduleform">
-                <p:schedule id="schedule" value="#{userCalendarBean.eventModel}" widgetVar="myschedule"
+                <p:schedule id="schedule" value="#{userCalendarScheduleBean.scheduleModel}" widgetVar="myschedule"
                             draggable="false" resizable="false" axisFormat="H(:mm)" timeFormat="H(:mm)"
                             firstHour="0" showWeekends="true">
 
 
-                    <p:ajax event="eventSelect" listener="#{userCalendarBean.onEventSelect}"
+                    <p:ajax event="eventSelect" listener="#{userCalendarScheduleBean.onEventSelect}"
                             update="eventDetails" oncomplete="PF('eventDialog').show();" />
 
                 </p:schedule>
@@ -50,23 +50,23 @@
                     <h:panelGrid id="eventDetails" columns="2">
 
                         <p:outputLabel value="Name:"/>
-                        <p:outputLabel value="#{userCalendarBean.currentEvent.name}"/>
+                        <p:outputLabel value="#{userCalendarScheduleBean.currentEvent.name}"/>
 
                         <p:outputLabel value="Description"/>
-                        <p:outputLabel value="#{userCalendarBean.currentEvent.description}"/>
+                        <p:outputLabel value="#{userCalendarScheduleBean.currentEvent.description}"/>
 
                         <p:outputLabel value="Begin Time:"/>
-                        <p:outputLabel value="#{userCalendarBean.currentEvent.beginTime}"/>
+                        <p:outputLabel value="#{userCalendarScheduleBean.currentEvent.beginTime}"/>
 
                         <p:outputLabel value="End Time:"/>
-                        <p:outputLabel value="#{userCalendarBean.currentEvent.endTime}"/>
+                        <p:outputLabel value="#{userCalendarScheduleBean.currentEvent.endTime}"/>
 
                         <p:outputLabel value="Location:"/>
-                        <p:outputLabel value="#{userCalendarBean.currentEvent.location}"/>
+                        <p:outputLabel value="#{userCalendarScheduleBean.currentEvent.location}"/>
 
                         <p:commandButton id="goButton" value="Go in Event Page"
                                          action="/event?faces-redirect=true"
-                                         disabled="#{userCalendarBean.privateEvent}"/>
+                                         disabled="#{userCalendarScheduleBean.isPrivate()}"/>
                     </h:panelGrid>
                 </p:dialog>
             </h:form>

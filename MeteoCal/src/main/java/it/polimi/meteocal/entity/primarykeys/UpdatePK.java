@@ -11,9 +11,17 @@ public class UpdatePK implements Serializable{
     private long eventId;
     private String email;
 
-    public UpdatePK() {
-    }
+    /**
+     * Empty Constructor
+     */
+    public UpdatePK() {}
 
+    /**
+     * Constructor
+     * @param number
+     * @param eventId
+     * @param email 
+     */
     public UpdatePK(long number, long eventId, String email) {
         this.number = number;
         this.eventId = eventId;
