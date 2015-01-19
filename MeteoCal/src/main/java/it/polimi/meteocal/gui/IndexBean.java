@@ -92,7 +92,7 @@ public class IndexBean {
             user = new User();
             FacesContext.getCurrentInstance()
                 .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-                        info, registration_successfull));
+                        registration_successfull, registration_successfull));
         }
         else {
             FacesContext.getCurrentInstance()
@@ -117,7 +117,7 @@ public class IndexBean {
         } catch (ServletException e) {
             context.addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            error, login_failed));
+                            login_failed, login_failed));
             return null;
         }
     }

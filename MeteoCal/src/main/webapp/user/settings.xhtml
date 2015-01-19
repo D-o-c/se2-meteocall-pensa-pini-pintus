@@ -54,7 +54,7 @@
                                      value="Change"
                                      ajax="true"
                                      update="@all"
-                                     icon="ui-icon-wrench"/>
+                                     icon="ui-icon-gear"/>
                 </h:panelGrid>
             </h:form>
             <h:form style="padding:20px;">
@@ -100,19 +100,23 @@
                         <h:outputText value="#{event.location}" />
                     </p:column>
                     
-                    <!-- DA AGGIUNGERE ALTRE INFO -->
                 </p:dataTable>
                 
 
-                <h3 style="margin-top:0">Export Calendar:</h3>
-                <h:commandLink>
-                    <h:graphicImage library="images" name="xls.png" width="50px" height="50px" />
-                    <p:dataExporter type="xls" target="evntable" fileName="MeteoCalEvents" pageOnly="true"/>
-                </h:commandLink>
-
+                <h3 style="margin-top:0">Export Calendar</h3>
                 <h:commandLink>
                     <h:graphicImage library="images" name="pdf.png" width="50px" height="50px" />
                     <p:dataExporter type="pdf" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
+                </h:commandLink>
+                
+                <h:commandLink>
+                    <h:graphicImage library="images" name="xml.png" width="50px" height="50px" />
+                    <p:dataExporter type="xml" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
+                </h:commandLink>
+                
+                <h:commandLink>
+                    <h:graphicImage library="images" name="xls.png" width="50px" height="50px" />
+                    <p:dataExporter type="xls" target="evntable" fileName="MeteoCalEvents" pageOnly="true"/>
                 </h:commandLink>
 
                 <h:commandLink>
@@ -120,23 +124,17 @@
                     <p:dataExporter type="csv" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
                 </h:commandLink>
 
-                <h:commandLink>
-                    <h:graphicImage library="images" name="xml.png" width="50px" height="50px" />
-                    <p:dataExporter type="xml" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
-                </h:commandLink>
-
-                
             </h:form>
             <h:form id="uploadform" enctype="multipart/form-data" style="padding:20px;">
-                <h3 style="margin-top:0">Import Calendar (only xml, xls, csv from MeteoCal):</h3>
-                <p:fileUpload value="#{settingsBean.file}"  mode="simple" allowTypes="/(\.|\/)(xml|csv|xls)$/"/>
+                <h3 style="margin-top:0">Import Calendar (only xml, xls, csv from MeteoCal)</h3>
+                <p:fileUpload value="#{settingsBean.file}" mode="simple" allowTypes="/(\.|\/)(xml|csv|xls)$/"/>
 
-                <p:commandButton value="Submit" ajax="false" actionListener="#{settingsBean.upload}"/>
+                <p:commandButton value="Upload" icon="ui-icon-document" ajax="false" actionListener="#{settingsBean.upload}"/>
                 
             </h:form>
             <h:form style="padding:20px;">
                 <h3 style="margin-top:0">Unregister Your Account</h3>
-                <p:commandButton value="Unregister" action="#{settingsBean.unregister()}"/>
+                <p:commandButton value="Unregister" icon="ui-icon-close" action="#{settingsBean.unregister()}"/>
             </h:form>
         </section>
     </h:body>
