@@ -38,8 +38,10 @@ public class EventManager {
      */
     public boolean createEvent(Event event, List<String> invitedUsers, User creator) {
         //set flags to false
-        event.setBwodb(false);
-        event.setBwtdb(false);
+    //    event.setBwodb(false);
+    //    event.setBwtdb(false);
+        
+    //    em.merge(event);
         
         event.setCreator(creator);
         

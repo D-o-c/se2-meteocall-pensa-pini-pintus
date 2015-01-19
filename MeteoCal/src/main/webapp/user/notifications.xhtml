@@ -16,6 +16,7 @@
                 <p:commandButton class="searchUsersButton" action="#{searchBean.findUser()}" icon="ui-icon-search"/>
                 <p:watermark for="keyword" value="Search..." id="watermark" />
             </h:form>
+            <h:form id="menuform">
             <ul id="landmarks">
                 <li><p:link outcome="home" value="#{homeBean.name}'s Calendar"/></li>
                 <li><p:link outcome="notifications" value="Notifications (#{notificationBean.getNumberOfNotifies()})"/></li>
@@ -23,15 +24,22 @@
                 <li><p:link outcome="settings" value="Settings"/></li>
                 <li><h:form><p:commandLink action="#{indexBean.logout()}" value="Logout"/></h:form></li>
             </ul>
+            </h:form>
         </header>
         <section>
             <h:form id="form" >
-                <p:dataList value="#{notificationBean.getInvites()}" var="event" type="unordered"
-                            itemType="none" paginator="true" rows="10" styleClass="paginated"
-                            emptyMessage="No invite found" paginatorAlwaysVisible="false"  >
+                <p:dataTable value="#{notificationBean.getInvites()}" var="event"  paginator="true"
+                             rows="10" styleClass="paginated" sortBy="#{event.beginTime}"
+                             emptyMessage="No invite found" paginatorAlwaysVisible="false"  >
                     <f:facet name="header">
                         Invites
                     </f:facet>
+                    
+                 <!--   type="unordered"
+                            itemType="none"-->
+                            
+                            
+                    <p:column>
                     <p:commandLink update=":form:notifyDetail" oncomplete="PF('notifyDialog').show()"
                                    title="View Detail" styleClass="ui-icon ui-icon-search"
                                    style="float:left;margin-right:10px">
@@ -39,13 +47,14 @@
                         <h:outputText value="#{event.name}, #{event.location}" />
                     </p:commandLink>
                     <h:outputText value="#{event.name}, #{event.location}" style="display:inline-block"/>
-                </p:dataList>
+                    </p:column>
+                </p:dataTable>
             
             
                 <p:dialog header="Notify Info" widgetVar="notifyDialog" modal="true"
                           showEffect="blind" hideEffect="explode" resizable="false">
                     <p:outputPanel id="notifyDetail" style="text-align:center;">
-                        <p:panelGrid  columns="2"  columnClasses="label,value">
+                        <p:panelGrid  columns="2"  columnClasses="label,value" >
                             <h:outputText value="Name:" />
                             <h:outputText value="#{notificationBean.selectedEvent.name}" />
 
@@ -63,8 +72,8 @@
                             
                             <p></p>
                             <p:panelGrid columns="2" style="margin: 0 auto;">
-                                <p:commandButton ajax="true" value="Accept" action="#{notificationBean.accept()}"/>
-                                <p:commandButton value="Deny" action="#{notificationBean.deny()}" />
+                                <p:commandButton ajax="true" value="Accept" update=":form,:menuform" actionListener="#{notificationBean.accept()}"/>
+                                <p:commandButton value="Deny" update=":form,:menuform" actionListener="#{notificationBean.deny()}" />
                             </p:panelGrid>
                         </p:panelGrid>
                     </p:outputPanel>
@@ -74,10 +83,11 @@
             <br/>
             
             
-            <h:form>
-                <p:dataList value="#{notificationBean.updates}" var="update" type="definition"
+            <h:form id="notifiesform">
+                <p:dataList value="#{notificationBean.updates}" var="update" type="definition" 
                             itemType="none" paginator="true" rows="5" styleClass="paginated"
                             emptyMessage="No update found" paginatorAlwaysVisible="false"  >
+
                     <f:facet name="header">
                         Notifies
                     </f:facet>
@@ -85,8 +95,8 @@
                     <h:outputText value="#{update.event.name}, #{update.description}"
                                   style="display:inline-block" escape="false"/>
                     <br/>
-                    <p:commandButton value="Set as read"
-                                     action="#{notificationBean.setNotifyRead(update)}"
+                    <p:commandButton value="Set as read" update=":notifiesform,:menuform"
+                                     actionListener="#{notificationBean.setNotifyRead(update)}"
                                      disabled="#{update.read}"/>
                     </p:dataList>
             

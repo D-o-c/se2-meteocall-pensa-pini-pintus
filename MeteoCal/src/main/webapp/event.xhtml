@@ -40,7 +40,7 @@
                     <h:outputText value="Location: #{eventBean.eventLocation}" />
                     <h:outputText value="Created By: #{eventBean.eventCreator}" />
                 </h:panelGrid>
-                <p:dataTable var="wc" value="#{eventBean.getWeather()}" emptyMessage="No weather found"
+                <p:dataTable var="wc" value="#{eventBean.getWeather()}" emptyMessage="No weather found yet"
                              sortBy="#{wc.time}" style="display: #{eventBean.isWeatherVisible()}">
                     <p:column headerText="Date:">
                         <h:outputText value="#{wc.time}" />
