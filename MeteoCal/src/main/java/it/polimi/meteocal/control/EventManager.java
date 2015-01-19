@@ -78,9 +78,9 @@ public class EventManager {
     public boolean updateEvent(Event currentEvent, List<String> invitedUsers) {
         currentEvent.setBwodb(false);
         currentEvent.setBwtdb(false);
+        em.merge(currentEvent);
         
         boolean noErrors = sendInvite(currentEvent, invitedUsers);
-        currentEvent.setWeatherConditions(new ArrayList<WeatherCondition>());
         currentEvent.setWeatherConditions(new ArrayList<WeatherCondition>());
         em.merge(currentEvent);
         um.updateFromEventUpdate(currentEvent);

@@ -38,7 +38,7 @@ public class Update implements Serializable {
     private String description;
     
     @ManyToOne
-    @PrimaryKeyJoinColumn(name="USER", referencedColumnName="EMAIL")
+    @PrimaryKeyJoinColumn(name="RECIPIENT", referencedColumnName="EMAIL")
     private User user;
     
     @ManyToOne
