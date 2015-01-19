@@ -10,7 +10,6 @@ import it.polimi.meteocal.entity.Update;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.security.Principal;
 import java.util.HashSet;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -37,22 +36,17 @@ import jxl.read.biff.BiffException;
 @Stateless
 public class UserArea {
     
+    //Controls
     @Inject
-    Principal principal;
-    
+    UserManager userManager;
     @Inject
-    UserManager um;
-    
+    EventManager eventManager;
     @Inject
-    EventManager em;
+    GuestManager guestManager;
     
-    @Inject
-    GuestManager gm;
+    //event to accept or deny
+    Event selectedEvent;
     
-    Event selectedEvent; //event to accept or deny
-    
-    
-
     public Event getSelectedEvent() {
         return selectedEvent;
     }
@@ -61,130 +55,144 @@ public class UserArea {
         this.selectedEvent = selectedEvent;
     }
     
-    /*
-     * OKOK
+    /**************************************************************************/
+    
+    /**
+     * Calls userManager.changeCalendarVisibility(guestManager.getLoggedUser());
      */
     public void changeCalendarVisibility() {
-        um.changeCalendarVisibility(gm.getLoggedUser());
-    }
-    
-    /*
-     * OKOK 
-     */
-    public boolean changePassword(String inputPassword, String newPassword) {
-        
-        String enc_old_psw = gm.getLoggedUser().getPassword();
-        String enc_new_psw = PasswordEncrypter.encryptPassword(inputPassword);
-        
-        if (enc_old_psw.equals(enc_new_psw)){
-            um.changePassword(gm.getLoggedUser(), newPassword);
-            return true;
-        }
-        return false;
-        
-    }
-    
-    /*
-     * OKOK
-     */
-    public ScheduleModel getCalendar(){
-        return um.getCalendar(gm.getLoggedUser(), gm.getLoggedUser());
+        userManager.changeCalendarVisibility(guestManager.getLoggedUser());
     }
     
     /**
-     * Verify timeConsistency of the @param and between event (with inviteStatus == 1) of logged user and @param
+     * @param inputPassword
+     * @param newPassword
+     * @return true if change is ok
+     */
+    public boolean changePassword(String inputPassword, String newPassword) {
+        
+        String enc_old_psw = guestManager.getLoggedUser().getPassword();
+        String enc_new_psw = PasswordEncrypter.encryptPassword(inputPassword);
+        
+        if (enc_old_psw.equals(enc_new_psw)){
+            userManager.changePassword(guestManager.getLoggedUser(), newPassword);
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * @return userManager.getCalendar(guestManager.getLoggedUser());
+     */
+    public ScheduleModel getCalendar() {
+        return userManager.getCalendar(guestManager.getLoggedUser());
+    }
+    
+    /**
+     * -1: if beginTime is AFTER endTime<br/>
+     * -2: if the logged user has another event at the same time<br/>
+     *  0: no problems
      * @param event
-     * @return 
-     *      -1: if beginTime is AFTER endTime<br/>
-     *      -2: if the logged user has another event at the same time<br/>
-     *      0: if there isn't problem
+     * @return userManager.timeConsistency(guestManager.getLoggedUser(), event)
      */
     public int timeConsistency(Event event){
-        return um.timeConsistency(gm.getLoggedUser(), event);
+        return userManager.timeConsistency(guestManager.getLoggedUser(), event);
     }
     
-    /*
-     * OKOK 
+    /**
+     * Calls userManager.acceptInvite(guestManager.getLoggedUser(), selectedEvent);
      */
     public void accept(){
-        um.acceptInvite(gm.getLoggedUser(), selectedEvent);
-        
+        userManager.answerInvite(guestManager.getLoggedUser(), selectedEvent, 1);
     }
-    
-    /*
-     * OKOK
+   
+    /**
+     * Calls userManager.denyInvite(guestManager.getLoggedUser(), selectedEvent);
      */
     public void deny(){
-        um.denyInvite(gm.getLoggedUser(), selectedEvent);
+        userManager.answerInvite(guestManager.getLoggedUser(), selectedEvent, -1);
     }
 
-    /*
-     * OKOK
+    /**
+     * @return userManager.getUserEvent(loggedUser)
      */
     public List<Event> getUserEvent() {
-        return um.getUserEvent(gm.getLoggedUser());
+        return userManager.getUserEvent(guestManager.getLoggedUser());
         
     }
 
+    /**
+     * @param file
+     * @return 0 no problem, -1 file exceptions, -2 time inconsistent
+     */
     public int importXLScalendar(UploadedFile file) {
-        HashSet<Event> tempEvent = new HashSet<>();
+        
+        HashSet<Event> events = new HashSet<>();
         Workbook w;
-        try{
-            w=Workbook.getWorkbook(file.getInputstream());
+        
+        try {
+            w = Workbook.getWorkbook(file.getInputstream());
             Sheet sheet = w.getSheet(0);
             
             for (int i = 1; i < sheet.getRows(); i++) {
 
                 String id;
                 Cell cell = sheet.getCell(0, i);
+                
                 if (cell.getType() == CellType.LABEL) {
-                    LabelCell temp = (LabelCell) cell;
-                    id = temp.getString();
-                    try{
-                        tempEvent.add(em.find(Long.parseLong(id)));
-                    }
-                    catch(Exception e){
+                    LabelCell lcell = (LabelCell) cell;
+                    id = lcell.getString();
+                    
+                    try {
+                        events.add(eventManager.find(Long.parseLong(id)));
+                    } catch(Exception e){
                         return -1;
                     }
-                }
-
-            }
-            
-        }
-        catch(IOException | BiffException | IndexOutOfBoundsException | NullPointerException e){
+                }//endif
+            }//endfor
+        } catch(IOException | BiffException | IndexOutOfBoundsException | NullPointerException e) {
             return -1;
         }
-        
-        return um.importCalendar(gm.getLoggedUser(), tempEvent);
+        return userManager.importCalendar(guestManager.getLoggedUser(), events);
     }
 
+    /**
+     * @param file
+     * @return 0 no problem, -1 file exceptions, -2 time inconsistent
+     */
     public int importCSVcalendar(UploadedFile file) {
-        HashSet<Event> tempEvent = new HashSet<>();
+        
+        HashSet<Event> events = new HashSet<>();
         BufferedReader br;
         String line;
         
-        try{
+        try {
+            
             br = new BufferedReader(new InputStreamReader(file.getInputstream(), "UTF-8"));
+            
             while ((line = br.readLine()) != null){
                 String[] singleLine = line.split(",");
                 String id = singleLine[0].substring(1, singleLine[0].length()-1);
-                try{
-                    tempEvent.add(em.find(Long.parseLong(id)));
-                }
-                catch(Exception e){
+                try {
+                    events.add(eventManager.find(Long.parseLong(id)));
+                } catch(Exception e){
                     return -1;
                 }
-            }
-            
-        }
-        catch(Exception e){
+            }//endwhile
+        } catch(Exception e){
             return -1;
         }
-        return um.importCalendar(gm.getLoggedUser(),tempEvent);
+        return userManager.importCalendar(guestManager.getLoggedUser(),events);
     }
 
+    /**
+     * @param file
+     * @return 0 no problem, -1 file exceptions, -2 time inconsistent
+     */
     public int importXMLcalendar(UploadedFile file) {
-        HashSet<Event> tempEvent = new HashSet<>();
+        
+        HashSet<Event> events = new HashSet<>();
+        
         try {
  
             DocumentBuilder dBuilder = DocumentBuilderFactory.newInstance()
@@ -208,7 +216,7 @@ public class UserArea {
 				Event e = getEvent(el);
 
 				//add it to list
-				tempEvent.add(e);
+				events.add(e);
 			}
 		}
             
@@ -216,75 +224,93 @@ public class UserArea {
         } catch (ParserConfigurationException | IOException | SAXException e) {
             return -1;
         }
-        return um.importCalendar(gm.getLoggedUser(),tempEvent);
+        return userManager.importCalendar(guestManager.getLoggedUser(),events);
     }
     
-    
     /**
-     * Get event from xml Element
-     * @param e
-     * @return 
+     * Gets an event from an XML element
+     * @param root
+     * @return eventManager.find(Long.parseLong(id))
      */
-    private Event getEvent(Element e){
-        long id;
-        String temp = null;
+    private Event getEvent(Element root){
         
-        NodeList nl = e.getElementsByTagName("id");
-        if(nl != null && nl.getLength() > 0) {
-            Element el = (Element)nl.item(0);
-            temp = el.getFirstChild().getNodeValue();
+        String id = "";
+        
+        NodeList idList = root.getElementsByTagName("id");
+        
+        if(idList != null && idList.getLength() > 0) {
+            Element e = (Element) idList.item(0);
+            id = e.getFirstChild().getNodeValue();
         }
-        return em.find(Long.parseLong(temp)); 
-    }
-    
-    
-
-    public List<Update> getUpdate() {
-        return um.getNotifies(gm.getLoggedUser());
-    }
-
-    public void setNotifyRead(Update u) {
-        um.setNotifyRead(u);
         
+        return eventManager.find(Long.parseLong(id)); 
     }
     
-    public int getNumberOfNotifies(){
-        
-        return this.getInvites().size() + um.getNumberOfNotReadedNotifies(gm.getLoggedUser());
-    }
-
-    public List<Event> getInvites() {
-        return um.getInvites(gm.getLoggedUser());
-    }
-
-    public String getName() {
-        return gm.getLoggedUser().getName();
-    }
-    
-    public boolean isLoggedUserPublic(){
-        return gm.getLoggedUser().isPublic();
-    }
-
-    public List<Contact> getContact() {
-        return um.getContacts(gm.getLoggedUser());
+    /**
+     * @return userManager.getNotifies(loggedUser);
+     */
+    public List<Update> getUpdates() {
+        return userManager.getNotifies(guestManager.getLoggedUser());
     }
 
     /**
-     * Deletes a contact of the logged user
-     * Calls EntityManager.find(Contact.class, Primary Key)
-     * Calls EntityManager.remove(contact)
+     * Calls userManager.setNotifyRead(update)
+     * @param update 
+     */
+    public void setNotifyRead(Update update) {
+        userManager.setNotifyRead(update);
+    }
+    
+    /**
+     * @return getInvites().size() + getNumberOfNotReadNotifies()
+     */
+    public int getNumberOfNotifies(){
+        return getInvites().size() + getNumberOfNotReadNotifies();
+    }
+
+    /**
+     * @return userManager.getNumberOfNotReadNotifies(guestManager.getLoggedUser());
+     */
+    private int getNumberOfNotReadNotifies() {
+        return userManager.getNumberOfNotReadNotifies(guestManager.getLoggedUser());
+    }
+    
+    /**
+     * @return userManager.getInvites(loggedUser)
+     */
+    public List<Event> getInvites() {
+        return userManager.getInvites(guestManager.getLoggedUser());
+    }
+
+    /**
+     * @return guestManager.getLoggedUser().getName()
+     */
+    public String getName() {
+        return guestManager.getLoggedUser().getName();
+    }
+    
+    /**
+     * @return guestManager.getLoggedUser().isPublic()
+     */
+    public boolean isLoggedUserPublic(){
+        return guestManager.getLoggedUser().isPublic();
+    }
+
+    /**
+     * @return userManager.getContacts(loggedUser);
+     */
+    public List<Contact> getContact() {
+        return userManager.getContacts(guestManager.getLoggedUser());
+    }
+
+    /**
+     * Calls userManager.deleteContact(loggedUser, contact);
      * @param contact 
      */
-    public void deleteContact(String contactEmail) {
-        um.deleteContact(gm.getLoggedUser(), contactEmail);
-        
-        
+    public void deleteContact(Contact contact) {
+        userManager.deleteContact(guestManager.getLoggedUser(), contact);
     }
-        
-    
-    
-    
-    
+   
 }
 
 

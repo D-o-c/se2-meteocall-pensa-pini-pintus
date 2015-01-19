@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package it.polimi.meteocal.gui;
 
 import it.polimi.meteocal.boundary.PublicArea;
@@ -22,79 +17,94 @@ import javax.servlet.http.HttpServletRequest;
 @RequestScoped
 public class IndexBean {
     
+    //Strings
+    private static final String info = "Info";
+    private static final String error = "Error";
+    private static final String registration_successfull = "Registration Successfull";
+    private static final String registration_failed = "Registration Failed";
+    private static final String login_failed = "Login Failed";
     private static final String user_home_page_url = "/user/home?faces-redirect=true";
     private static final String index_page_url = "/index?faces-redirect=true";
     
+    //Boundary
     @EJB
-    PublicArea pa;
-    
- //   @Inject
- //   private Logger logger;
-    
+    PublicArea publicArea;
+        
+    //User credentials
+    private User user;
     private String username;
     private String password;
-    private User user;
 
     /**
      * Empty Constructor
      */
     public IndexBean() {}
 
-    /**************************** Getter and Setter ***************************/
-    public String getUsername() {
-        return this.username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return this.password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    /**
+     * @return user
+     */
     public User getUser() {
         if (user == null) {
             user = new User();
         }
         return user;
     }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-    /**************************************************************************/
-    
     
     /**
-     * Calls PublicArea.register() 
+     * @return username
+     */
+    public String getUsername() {
+        return this.username;
+    }
+
+    /**
+     * @return password
+     */
+    public String getPassword() {
+        return this.password;
+    }
+
+    /**
+     * @param username 
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    /**
+     * @param password 
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**************************************************************************/
+    
+    /**
+     * Calls publicArea.register(user) 
      */
     public void register() {
        
-        if(pa.register(user)) {
+        boolean registrationIsOk = publicArea.register(user);
+        
+        if(registrationIsOk) {
             this.username = user.getEmail();
             user = new User();
             FacesContext.getCurrentInstance()
                 .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-                        "Info", "Registration Successfull"));
+                        info, registration_successfull));
         }
         else {
             FacesContext.getCurrentInstance()
                 .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                        "Error", "Registration Failed"));
+                        error, registration_failed));
         }
         
     }
     
-    
-    
-    
     /**
      * Login
-     * @return user_home_page_url
+     * @return /user/home?faces-redirect=true
      */
     public String login() {
         
@@ -107,21 +117,19 @@ public class IndexBean {
         } catch (ServletException e) {
             context.addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            "Error","Login Failed"));
- //         logger.log(Level.SEVERE,"Login Failed");
+                            error, login_failed));
             return null;
         }
     }
     
     /**
      * Logout
-     * @return index_page_url
+     * @return /index?faces-redirect=true
      */
     public String logout() {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
         request.getSession().invalidate();
-  //      logger.log(Level.INFO, "User Logged out");
         return index_page_url;
     }
     

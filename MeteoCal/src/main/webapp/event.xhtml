@@ -5,7 +5,7 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
-        <title>#{scheduleBean.currentEvent.name}</title>
+        <title>#{homeScheduleBean.currentEvent.name}</title>
         <h:outputStylesheet library="css" name="stylesheet.css" />
     </h:head>
     <h:body>
@@ -13,7 +13,7 @@
             <h1 id="title">MeteoCal</h1>
             <h:form id="searchForm" class="float-left">
                 <p:inputText value="#{searchBean.searchInput}" id="keyword" maxlength="200"/>
-                <p:commandButton class="searchUsersButton" action="#{searchBean.findUser2()}" icon="ui-icon-search"/>
+                <p:commandButton class="searchUsersButton" action="#{searchBean.findUser()}" icon="ui-icon-search"/>
                 <p:watermark for="keyword" value="Search..." id="watermark" />
             </h:form>
             <ul id="landmarks">
@@ -24,7 +24,7 @@
                 <li><h:form><p:commandLink action="#{indexBean.logout()}" value="Logout"/></h:form></li>
             </ul>
         </header>
-        <section style="padding-top: 60px">
+        <section>
             
             <h:form>
                 <p:growl id="growl" showDetail="true" life="3000"/>
@@ -38,6 +38,7 @@
                     <h:outputText value="Begin Time: #{eventBean.eventBeginTime}" />
                     <h:outputText value="End Time: #{eventBean.eventEndTime}" />
                     <h:outputText value="Location: #{eventBean.eventLocation}" />
+                    <h:outputText value="Created By: #{eventBean.eventCreator}" />
                 </h:panelGrid>
                 <p:dataTable var="wc" value="#{eventBean.getWeather()}" emptyMessage="No weather found"
                              sortBy="#{wc.time}" style="display: #{eventBean.isWeatherVisible()}">
@@ -57,7 +58,7 @@
             <h:form>
                 <iframe
                     id="gmap"
-                    width="600"
+                    width="92%"
                     height="450"
                     frameborder="0"
                     style="margin:50px;"
@@ -71,8 +72,8 @@
                     </f:facet>
                     #{user.name} #{user.surname}
                 </p:dataList>
-                <p><p:commandButton action="/user/changeeventinfo?faces-redirect=true" value="Change event info" disabled="#{!eventBean.isCreator()}" /></p>
-                <p><p:commandButton action="#{eventBean.removePartecipation()}" value="Delete partecipation" disabled="#{eventBean.isPartecipants()}" /></p>
+                <p><p:commandButton action="#{eventBean.changeEventInfo()}" value="Change event info" disabled="#{eventBean.cannotChangeInfo()}" /></p>
+                <p><p:commandButton action="#{eventBean.removePartecipation()}" value="Delete partecipation" disabled="#{eventBean.cannotDeletePartecipation()}" /></p>
             </h:form>
         </section>
     </h:body>

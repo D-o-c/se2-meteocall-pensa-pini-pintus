@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package it.polimi.meteocal.control;
 
 import it.polimi.meteocal.entity.User;
@@ -18,6 +13,10 @@ import java.util.logging.Logger;
  */
 public class PasswordEncrypter {
 
+    /**
+     * @param password
+     * @return encoded password (SHA-256)
+     */
     public static String encryptPassword(String password) {
         String encPass = null;
         try {

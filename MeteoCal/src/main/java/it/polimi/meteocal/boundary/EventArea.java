@@ -8,7 +8,6 @@ import it.polimi.meteocal.entity.Calendar;
 import it.polimi.meteocal.entity.Contact;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.User;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -22,175 +21,141 @@ import javax.inject.Inject;
 @Stateless
 public class EventArea{
     
-    
-    
+    //Controls
     @Inject
-    GuestManager gm;
-    
+    GuestManager guestManager;
     @Inject
     UserManager userManager;
-    
     @Inject
-    EventManager em;
-    
+    EventManager eventManager;
     @Inject
-    EmailSender emailS;
+    EmailSender emailSender;
     
-    @Inject
-    Principal principal;
-    
+    // Event currently selected
     Event currentEvent;
     
-
-    
-    
     /**
-     * @return List of contacts of the logged user
-     *//*
-    public List<Contact> getContacts() {
-        return getLoggedUser().getContacts();
-    }*/
-    
+     * @return currentEvent
+     */
     public Event getCurrentEvent() {
         return currentEvent;
     }
     
     /**
-     * Return true if logged user is creator
-     * @return 
+     * Calls eventManager.find(id)
+     * @param id 
      */
-    public boolean isCreator(){
-        return currentEvent.getCreator().equals(gm.getLoggedUser());
+    public void setCurrentEvent(long id) {
+        currentEvent = eventManager.find(id);
     }
     
+    /**************************************************************************/
+    
+    /**
+     * @return true if loggedUser == creatorUser
+     */
+    public boolean isCreator(){
+        return currentEvent.getCreator().equals(guestManager.getLoggedUser());
+    }
+    
+    /**
+     * @return true if loggedUser partecipates to currentEvent
+     */
     public boolean isPartecipants() {
+        
         List<String> partecipants = new ArrayList<>();
+        
         for (Calendar c : currentEvent.getInvited()){
             if (c.getInviteStatus() == 1){
                 partecipants.add(c.getUser().getEmail());
             }
         }
-        return partecipants.contains(gm.getLoggedUser().getEmail());
+        
+        return partecipants.contains(guestManager.getLoggedUser().getEmail());
     }
     
     /**
-     * Adds creator user email to event
-     * Calls EntityManager.persist(event)
-     * Updates calendars of invited users
+     * Calls this.updateInviteList(invitesInput)
      * @param event
-     * @param invitedUsers
-     * @return if all invited users exist in the database
-     * 
-     * OKOK
+     * @param invitesInput : String containing emails
+     * @return eventManager.createEvent(event, invitedUsers, guestManager.getLoggedUser())
      */
-    public boolean createEvent(Event event, String invites){
-        List<String> invitedUsers = this.updateInviteList(invites);
-        
-        return em.createEvent(event, invitedUsers, gm.getLoggedUser());
-        
+    public boolean createEvent(Event event, String invitesInput){
+        List<String> invitedUsers = updateInviteList(invitesInput);
+        return eventManager.createEvent(event, invitedUsers, guestManager.getLoggedUser());
     }
-    /*
-     * OKOK
-     */
-    public boolean updateCurrentEvent(String invites){
-        List<String> invitedUsers = this.updateInviteList(invites);
-        
-        return em.updateEvent(currentEvent, invitedUsers);
-    }
-    
-    
     
     /**
-     * Cleans the Arraylist<String> invitedUsers
-     * From ; and " "
-     * 
-     * OKOK
+     * Calls this.updateInviteList(invitesInput)
+     * @param invitesInput : String containing emails
+     * @return eventManager.updateEvent(currentEvent, invitedUsers)
      */
-    private List<String> updateInviteList(String invites){
-        List<String> invitedUsers;
+    public boolean updateCurrentEvent(String invitesInput){
+        List<String> invitedUsers = updateInviteList(invitesInput);
+        return eventManager.updateEvent(currentEvent, invitedUsers);
+    }
+    
+    /**
+     * Builds a List<String> from the invitesInput
+     * @param invitesInput : String
+     * @return List<String> invitedUsers
+     */
+    private List<String> updateInviteList(String invitesInput){
         
-        if (invites == null){
-            invites = "";
+        List<String> invitedUsers;
+        HashSet hs = new HashSet();
+        
+        if (invitesInput == null){
+            invitesInput = "";
         }
-        invites = invites.replace("\n", "").replace("\r", "").replace("\t", "");
-        String[] part = invites.split(";");
-        HashSet temp = new HashSet();
+        
+        invitesInput = invitesInput.replace("\n", "").replace("\r", "").replace("\t", "");
+        String[] part = invitesInput.split(";");
         invitedUsers = Arrays.asList(part);
+        
         for (int i = 0; i < invitedUsers.size(); i++){
             invitedUsers.set(i, invitedUsers.get(i).replaceAll(" ", ""));
-            temp.add(invitedUsers.get(i));
+            hs.add(invitedUsers.get(i));
         }
-        temp.remove("");
-        invitedUsers = new ArrayList<>(temp);
+        
+        hs.remove("");
+        invitedUsers = new ArrayList<>(hs);
         
         return invitedUsers;
-        
     }
-    
-    
-    /**
-     * Finds all events
-     * @return List of Events
-     *//*
-    public List<Event> findAll(){
-        return em.createNamedQuery(Event.findAll, Event.class)
-                                .getResultList();
-    }*/
-
-    
-    public void setCurrentEvent(String id) {
-        if (id == null){
-            currentEvent = new Event();
-            
-        }
-        else{
-            currentEvent = em.find(Long.parseLong(id));
-        }
-    }
-/*
-    public Event findEvent(long id) {
-        return em.find(id);
-    }*/
 
     /**
-     * Remove current user from the list of partecipants of current event
-     * OKOK
+     * Calls eventManager.removeFromPartecipants(currentEvent, guestManager.getLoggedUser());
      */
     public void removeFromPartecipants() {
-        
-        em.removeFromPartecipants(currentEvent, gm.getLoggedUser());
-        
-        
+        eventManager.removeFromPartecipants(currentEvent, guestManager.getLoggedUser());
     }
 
-    
-    
+    /**
+     * @return eventManager.getPartecipants(currentEvent)
+     */
     public List<User> getPartecipants() {
-        return em.getPartecipants(currentEvent);
-        
-        
+        return eventManager.getPartecipants(currentEvent);
     }
 
-    
+    /**
+     * Calls eventManager.deleteEvent(currentEvent)
+     * currentEvent = null
+     */
     public void deleteEvent() {
-        
-        em.deleteEvent(currentEvent);
+        eventManager.deleteEvent(currentEvent);
         currentEvent = null;
-        
-        
     }
-    
-    
     
     /**
      * Method to suggest contacts during form compilation
-     * Calls UserManager.getContacts()
+     * Calls userManager.getContacts()
      * @param query
-     * @return possible contact emails matching the query
+     * @return invitedEmail : list of possible contact emails matching the query
      */
     public List<String> complete(String query){
         List<String> invitedEmail = new ArrayList<>();
-        List<Contact> contactList = userManager.getContacts(gm.getLoggedUser());
+        List<Contact> contactList = userManager.getContacts(guestManager.getLoggedUser());
         for (Contact c : contactList) {
             if (c.getEmail().startsWith(query)){
                 invitedEmail.add(c.getEmail() + "; ");
@@ -199,8 +164,4 @@ public class EventArea{
         return invitedEmail;
     }
 
-  
-
-    
-    
 }

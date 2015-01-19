@@ -110,7 +110,6 @@ public class Event implements Serializable {
         this.weatherConditions = weatherConditions;
     }
     
-    
     public String getName() {
         return name;
     }

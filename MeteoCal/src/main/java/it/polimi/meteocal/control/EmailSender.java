@@ -19,12 +19,15 @@ import javax.persistence.PersistenceContext;
 @Asynchronous
 public class EmailSender {
 
-    
     @PersistenceContext
     EntityManager em;
     
-    
-    
+    /**
+     * Sends an email
+     * @param recipient
+     * @param subject
+     * @param body 
+     */
     @Asynchronous
     public void send (String recipient, String subject, String body){
         List<String> temp = new ArrayList<>();
@@ -32,6 +35,12 @@ public class EmailSender {
         this.send(temp, subject, body);
     }
     
+    /**
+     * Sends one or more emails
+     * @param recipients
+     * @param subject
+     * @param body 
+     */
     @Asynchronous
     public void send(List<String> recipients, String subject, String body){
         try {
@@ -52,9 +61,6 @@ public class EmailSender {
             
             Transport.send(message);
         }
-        catch(NamingException | MessagingException e){
-            
-        }
-        
+        catch(NamingException | MessagingException e){}
     }
 }

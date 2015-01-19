@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package it.polimi.meteocal.control;
 
 import it.polimi.meteocal.entity.Calendar;
@@ -23,18 +18,18 @@ public class GuestManager {
     @PersistenceContext
     EntityManager em;
     
+    //Controls
     @Inject
     Principal principal;
-    
     @Inject
-    EmailSender emailS;
+    EmailSender emailSender;
     
     public boolean register(User user){
         if (em.find(User.class, user.getEmail())==null){
             user.setGroupName(Group.USERS);
             user.setPublic(true);
             em.persist(user);
-            emailS.send(user.getEmail() ,
+       emailSender.send(user.getEmail() ,
                         "MeteoCal Registration",
                         "Congratulations, you signed up on MeteoCal successfully");
             return true;

@@ -68,13 +68,13 @@
 
                         <p:outputLabel value="Begin time"/>
                         <p:calendar id="beginTime" value="#{changeEventInfoBean.getCurrentEvent().beginTime}"
-                                    pages="3" effect="fold" mindate="#{scheduleBean.today()}"
+                                    pages="3" effect="fold" mindate="#{homeScheduleBean.today()}"
                                     pattern="dd/MM/yyyy HH:mm"/>
                         <p:outputLabel value=""/>    
                        
                         <p:outputLabel value="End time"/>
                         <p:calendar id="endTime" value="#{changeEventInfoBean.getCurrentEvent().endTime}"
-                                    pages="3" effect="fold" mindate="#{scheduleBean.today()}"
+                                    pages="3" effect="fold" mindate="#{homeScheduleBean.today()}"
                                     pattern="dd/MM/yyyy HH:mm"/>
                         <p:outputLabel value=""/>
 
