@@ -33,7 +33,7 @@ public class User implements Serializable {
     @Id
     @Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",
             message = "invalid email")
-    @NotNull(message = "May not be empty")
+    @NotNull(message = "Email may not be empty")
     @Column(name = "EMAIL")
     private String email;
     
@@ -47,8 +47,8 @@ public class User implements Serializable {
     @OneToMany(mappedBy="user", orphanRemoval=true)
     private List<Contact> contacts;
     
-    @Size(min=4, message="At least 4 characters")
-    @NotNull(message = "May not be empty")
+    @Size(min=4, message="Password length at least 4 characters")
+    @NotNull(message = "Password may not be empty")
     @Column(name = "PASSWORD")
     private String password;
     
@@ -56,11 +56,11 @@ public class User implements Serializable {
     @Column(name = "GROUPNAME")
     private String groupName;
     
-    @NotNull(message = "May not be empty")
+    @NotNull(message = "Name may not be empty")
     @Column(name = "NAME")
     private String name;
     
-    @NotNull(message = "May not be empty")
+    @NotNull(message = "Surname may not be empty")
     @Column(name = "SURNAME")
     private String surname;
     
