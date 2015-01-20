@@ -59,9 +59,14 @@ public class WeatherManager {
             eventstList = em.createNamedQuery(Event.findAll, Event.class).getResultList();
 
             for (Event event : eventstList) {
-                if (event.getBeginTime().getTime() <= today.getTime() + five_days && 
+                //SEARCH WEATHER IF
+                //event is outdoor
+                //event.begin <= today + 5 (event begins in the next five days)
+                //(Yahoo cannot retrieve weather of day > today + 5)
+                //!event.end < today (event is not ended yet)
+                if (event.getBeginTime().getTime() <= today.getTime() + five_days &&
                         event.isOutdoor() &&
-                        event.getEndTime().after(today)) {
+                        !event.getEndTime().before(today)) {
 
                     int start = event.getLocation().indexOf(",")+1;
                     int end = event.getLocation().lastIndexOf(",");

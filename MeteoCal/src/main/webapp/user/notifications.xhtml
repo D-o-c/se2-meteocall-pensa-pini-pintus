@@ -34,11 +34,6 @@
                     <f:facet name="header">
                         Invites
                     </f:facet>
-                    
-                 <!--   type="unordered"
-                            itemType="none"-->
-                            
-                            
                     <p:column>
                     <p:commandLink update=":form:notifyDetail" oncomplete="PF('notifyDialog').show()"
                                    title="View Detail" styleClass="ui-icon ui-icon-search"
@@ -84,10 +79,13 @@
             
             
             <h:form id="notifiesform">
-                <p:dataList value="#{notificationBean.updates}" var="update" type="definition" 
+                <p:commandButton value="Set all notifies as read" update=":notifiesform,:menuform"
+                                 action="#{notificationBean.setAllNotifyRead()}"
+                                 disabled="#{notificationBean.allRead()}"
+                                 icon="ui-icon-check" style="margin-bottom:30px;"/>
+                <p:dataList value="#{notificationBean.updates}" var="update" type="ordered" 
                             itemType="none" paginator="true" rows="5" styleClass="paginated"
                             emptyMessage="No update found" paginatorAlwaysVisible="false"  >
-
                     <f:facet name="header">
                         Notifies
                     </f:facet>
@@ -97,7 +95,7 @@
                     <br/>
                     <p:commandButton value="Set as read" update=":notifiesform,:menuform"
                                      actionListener="#{notificationBean.setNotifyRead(update)}"
-                                     disabled="#{update.read}"/>
+                                     disabled="#{update.read}" icon="ui-icon-check"/>
                     </p:dataList>
             
             

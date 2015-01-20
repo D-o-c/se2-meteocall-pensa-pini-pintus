@@ -263,6 +263,17 @@ public class UserArea {
     }
     
     /**
+     * Calls userManager.setAllNotifyRead()
+     */
+    public void setAllNotifyRead() {
+        userManager.setAllNotifyRead(guestManager.getLoggedUser());
+    }
+    
+    public boolean allRead() {
+        return userManager.allRead(guestManager.getLoggedUser());
+    }
+    
+    /**
      * @return getInvites().size() + getNumberOfNotReadNotifies()
      */
     public int getNumberOfNotifies(){

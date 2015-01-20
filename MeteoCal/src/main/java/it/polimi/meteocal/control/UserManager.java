@@ -189,6 +189,28 @@ public class UserManager {
         update.setRead(true);
         em.merge(update);
     }
+    
+    /**
+     * Updates all "update" of user and merge
+     * @param user 
+     */
+    public void setAllNotifyRead(User user) {
+        for(Update update : user.getNotifies()) {
+            update.setRead(true);
+            em.merge(update);
+        }
+        em.merge(user);
+    }
+    
+    public boolean allRead(User user) {
+        for(Update update : user.getNotifies()) {
+            //one notify not read is enough to return false
+            if(!update.isRead()) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     /**
      * Accept invitation decision = 1</br>

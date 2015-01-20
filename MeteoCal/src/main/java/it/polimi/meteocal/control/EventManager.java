@@ -37,11 +37,14 @@ public class EventManager {
      * @return if all invitations have been sent correctly
      */
     public boolean createEvent(Event event, List<String> invitedUsers, User creator) {
-        //set flags to false
-    //    event.setBwodb(false);
-    //    event.setBwtdb(false);
         
-    //    em.merge(event);
+        /*******NON SERVE TANTO DI DEFAULT ALLA CREAZIONE SONO = 0*************/
+        //no notifies have been sent from the system(one day before)
+        //event.setBwodb(false);
+        //no notifies have been sent from the system(3 days before)
+        //event.setBwtdb(false);
+        
+        //em.merge(event);
         
         event.setCreator(creator);
         
@@ -59,27 +62,83 @@ public class EventManager {
      * @return true if all invitations have been sent correctly
      */
     private boolean sendInvite(Event event, List<String> invitedEmails){
-        //delete people already invited
+        
         List<Calendar> calendars = event.getInvited();
+        List<String> usersPartecEmail = new ArrayList<>();
+        List<String> usersPendinEmail = new ArrayList<>();
+        List<String> usersRefuseEmail = new ArrayList<>();
         for (Calendar c : calendars) {
-            invitedEmails.remove(c.getUserEmail());
-        }
-        
-        //deletes the creator from users invited to the event
-        invitedEmails.remove(event.getCreator().getEmail());
-        
-        //Checks the existance of the emails in the user database
-        for (String s : invitedEmails) {
-            User u = em.find(User.class, s);
-            try {
-                //if exists, add event to his calendar
-                event.addInvited(u, 0);
-                emailSender.send(s, invite, text);
-            } catch (NullPointerException e){
-                return false;
+            if(c.getInviteStatus() == 1) {
+                usersPartecEmail.add(c.getUserEmail());
+            }
+            else if (c.getInviteStatus() == 0) {
+                usersPendinEmail.add(c.getUserEmail());
+            }
+            else {
+                usersRefuseEmail.add(c.getUserEmail());
             }
         }
-        return true;
+        
+        for(int i = 0; i < invitedEmails.size(); i++) {
+            String s = invitedEmails.get(i);
+            //remove emails of people partecipating to the event yet
+            //(of course this removes also the creator)
+            if(usersPartecEmail.contains(s)) {
+                invitedEmails.remove(s);
+                i--;
+            }
+            //remove emails of people who have not answered yet
+            else if(usersPendinEmail.contains(s)) {
+                invitedEmails.remove(s);
+                i--;
+            }
+            //remove emails of people who refused the event
+            else if(usersRefuseEmail.contains(s)) {
+                invitedEmails.remove(s);
+                i--;
+            }                
+        }   
+        
+        //NOW
+        //invitedEmails contains only new emails
+        //usersRefuseEmail contains emails of people who refused
+        
+        boolean allUsersInvited = true;
+        
+        //Managing new emails
+        for (String pk : invitedEmails) {
+            User u = em.find(User.class, pk);
+            //if user exists
+            if(u != null) {
+                event.addInvited(u, 0);
+                emailSender.send(u.getEmail(), invite, text);
+            } 
+            else {
+                //at least one of the new emails do not exists
+                allUsersInvited = false;
+            }
+        }
+        
+        //Managing users who refused (maybe for error)
+        //They exist for sure
+        //for each user email
+        for (String email : usersRefuseEmail) {
+            //for each calendar of the event
+            for (Calendar c : event.getInvited()) {
+                if (c.getUserEmail().equals(email)) {
+                    //userManager will generate notify
+                    c.setInviteStatus(0);
+                    em.merge(c);
+                    //em.merge(em.find(User.class, c.getUserEmail()));
+                    emailSender.send(email, invite, text);
+                }
+            }
+        }
+        
+        em.merge(event);
+        
+        return allUsersInvited;
+        
     }
 
     /**
@@ -89,9 +148,13 @@ public class EventManager {
      * @return true if all invitations have been sent correctly
      */
     public boolean updateEvent(Event currentEvent, List<String> invitedUsers) {
-        currentEvent.setBwodb(false);
-        currentEvent.setBwtdb(false);
-        em.merge(currentEvent);
+        
+        //no notifies have been sent from the system(one day before)
+        //event.setBwodb(false);
+        //no notifies have been sent from the system(3 days before)
+        //event.setBwtdb(false);
+        
+        //em.merge(event);
         
         //send invites
         boolean noErrors = sendInvite(currentEvent, invitedUsers);

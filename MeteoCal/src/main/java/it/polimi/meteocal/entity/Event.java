@@ -196,7 +196,7 @@ public class Event implements Serializable {
         this.invited.add(calendar);
         user.getEvents().add(calendar);
     }
-
+    
     public void setPublic(boolean b) {
         pub = b;
     }

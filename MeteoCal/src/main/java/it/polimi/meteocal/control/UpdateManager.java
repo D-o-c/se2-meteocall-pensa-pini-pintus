@@ -3,6 +3,7 @@ package it.polimi.meteocal.control;
 import it.polimi.meteocal.entity.Calendar;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.Update;
+import it.polimi.meteocal.entity.User;
 import it.polimi.meteocal.entity.WeatherCondition;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,8 +42,14 @@ public class UpdateManager {
         
         //Bad weather one day before (for all partecipants):
         for (Event event : events) {
-            if(event.getBeginTime().getTime() - one_day <= (new Date()).getTime()
-                    && !event.isBwodb() && event.getBeginTime().after(today)){
+            //SEND NOTIFY IF
+            //no notifies yet
+            //today < event.begin <= today + 1 (less than a day to the event begin)
+            //!event.end < today (event is not ended yet)
+            if(event.getBeginTime().getTime() <= (new Date()).getTime() + one_day
+                    && !event.isBwodb() &&
+                    event.getBeginTime().after(today) &&
+                    !event.getEndTime().before(today)){
                 
                 List<WeatherCondition> wcs = event.getWeatherConditions();
                 for (WeatherCondition wc : wcs){
@@ -85,8 +92,14 @@ public class UpdateManager {
         
         //Bad weather three day before (only for creator):
         for (Event event : events) {
-            if(event.getBeginTime().getTime() - three_days <= (new Date()).getTime()
-                    && !event.isBwtdb()  && event.getBeginTime().after(today)){
+            //SEND NOTIFY IF
+            //no notifies yet
+            //today < event.begin <= today + 3 (less than 3 days to the event begin)
+            //!event.end < today (event is not ended yet)
+            if(event.getBeginTime().getTime() <= (new Date()).getTime() + three_days
+                    && !event.isBwtdb()  &&
+                    event.getBeginTime().after(today) &&
+                    !event.getEndTime().before(today)){
                 
                 List<WeatherCondition> wcs = event.getWeatherConditions();
                 for (WeatherCondition wc : wcs){
@@ -126,8 +139,14 @@ public class UpdateManager {
         
         //Update if weather changes
         for (Event event : events){
-            
-            if (!event.getBeginTime().after(today)){
+            //STOP UPDATE WHEATHER CHANGES IF EVENT IS BEGIN YET
+            //!(event.begin > today) --> (event.begin <= today)
+            /*if (!event.getBeginTime().after(today)){
+                break;
+            }*/
+            //STOP UPDATE WHEATHER CHANGES IF
+            //event.end < today (event is ended)
+            if (event.getEndTime().before(today)){
                 break;
             }
             List<WeatherCondition> wcs = event.getWeatherConditions();
@@ -178,8 +197,17 @@ public class UpdateManager {
      * @param event 
      */
     public void updateFromEventUpdate(Event event) {
+        User creator = event.getCreator();
+        Date today = new Date();
         for (Calendar c : event.getInvited()){
-            if (c.getInviteStatus() == 1){
+            //UPDATE EVENT CHANGES IF
+            //user is invited
+            //user is not the creator
+            //!event.end < today  (event is not ended yet)
+            //(It's still possible to change event info after event is ended)
+            if (c.getInviteStatus() == 1 &&
+                !c.getUser().equals(creator) &&
+                !event.getEndTime().before(today)){
                 String desc = "The info for this event is just changed\n\n" + 
                         "Name: " + event.getName() + "\n" + 
                         "Description: " + event.getDescription() + "\n"+

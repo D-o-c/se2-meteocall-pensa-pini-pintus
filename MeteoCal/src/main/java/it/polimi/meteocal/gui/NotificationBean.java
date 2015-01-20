@@ -60,6 +60,19 @@ public class NotificationBean {
     }
     
     /**
+     * Calls userArea.setAllNotifyRead
+     * @return /user/notifications?faces-redirect=true
+     */
+    public String setAllNotifyRead(){
+        userArea.setAllNotifyRead();
+        return user_notifications_page_url;        
+    }
+    
+    public boolean allRead() {
+        return userArea.allRead();
+    }
+    
+    /**
      * @return userArea.getSelectedEvent()
      */
     public Event getSelectedEvent() {
@@ -83,9 +96,8 @@ public class NotificationBean {
     
     /**
      * Calls userArea.accept()
-     * @return home?faces-redirect=true
      */
-    public String accept() {
+    public void accept() {
         
         Event event = userArea.getSelectedEvent();
         
@@ -94,27 +106,23 @@ public class NotificationBean {
         if (checkTimeConsistency == -2){
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, info, another_event_error);
             RequestContext.getCurrentInstance().showMessageInDialog(message);
-            return null;
         }
         userArea.accept();
         FacesContext context = FacesContext.getCurrentInstance();
         context.addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_INFO, info, accepted));
         context.getExternalContext().getFlash().setKeepMessages(true);
-        return home_page_url;
     }
     
     /**
      * Calls userArea.deny()
-     * @return home?faces-redirect=true
      */
-    public String deny(){
+    public void deny(){
         userArea.deny();
         FacesContext context = FacesContext.getCurrentInstance();
         context.addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_INFO, info, refused));
         context.getExternalContext().getFlash().setKeepMessages(true);
-        return home_page_url;
     }
     
 }
