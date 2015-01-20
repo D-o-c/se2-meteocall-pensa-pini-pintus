@@ -128,12 +128,13 @@ public class GuestManager {
     public int changeLostPassword(String email, UUID tokenNumber, String password){
         Token t = em.find(Token.class, tokenNumber);
         User u = em.find(User.class, email);
-        if (t == null){
+        if (t == null || t.getStatus() != 1){
             return -1;
         }
         else if (!t.getUser().equals(u) || u == null){
             return -2;
         }
+
         
         u.setPassword(password);
         em.merge(u);

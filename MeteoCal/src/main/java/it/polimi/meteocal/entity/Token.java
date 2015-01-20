@@ -13,13 +13,21 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 
 /**
  *
  */
 @Entity (name="TOKEN")
+@NamedQueries({
+        @NamedQuery(name = Token.findAll, 
+                query = "SELECT t FROM TOKEN t")
+})
 public class Token implements Serializable {
+    
+    public final static String findAll = "Token.findAll";
     
     @Id
     @Column(name = "TOKEN")
