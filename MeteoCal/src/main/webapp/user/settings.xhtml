@@ -125,12 +125,16 @@
                 </h:commandLink>
 
             </h:form>
-            <h:form id="uploadform" enctype="multipart/form-data" style="padding:20px;">
+            <h:form id="uploadform" enctype="multipart/form-data" style="padding:20px; width: 600px;">
                 <h3 style="margin-top:0">Import Calendar (only xml, xls, csv from MeteoCal)</h3>
-                <p:fileUpload value="#{settingsBean.file}" mode="simple" allowTypes="/(\.|\/)(xml|csv|xls)$/"/>
-
-                <p:commandButton value="Upload" icon="ui-icon-document" ajax="false" actionListener="#{settingsBean.upload}"/>
                 
+                <p:fileUpload fileUploadListener="#{settingsBean.upload}" mode="advanced"
+                              dragDropSupport="true" update="@all" sizeLimit="10000" fileLimit="1"
+                              allowTypes="/(\.|\/)(xml|csv|xls)$/" auto="true"/>
+                
+                
+                <h6>Events no longer existing will not be imported.</h6>
+
             </h:form>
             <h:form style="padding:20px;">
                 <h3 style="margin-top:0">Unregister Your Account</h3>

@@ -143,10 +143,9 @@ public class UserArea {
                     LabelCell lcell = (LabelCell) cell;
                     id = lcell.getString();
                     
-                    try {
-                        events.add(eventManager.find(Long.parseLong(id)));
-                    } catch(Exception e){
-                        return -1;
+                    Event tempEvent = eventManager.find(Long.parseLong(id));
+                    if (tempEvent != null){
+                        events.add(tempEvent);
                     }
                 }//endif
             }//endfor
@@ -173,10 +172,10 @@ public class UserArea {
             while ((line = br.readLine()) != null){
                 String[] singleLine = line.split(",");
                 String id = singleLine[0].substring(1, singleLine[0].length()-1);
-                try {
-                    events.add(eventManager.find(Long.parseLong(id)));
-                } catch(Exception e){
-                    return -1;
+                
+                Event tempEvent = eventManager.find(Long.parseLong(id));
+                if (tempEvent != null){
+                    events.add(tempEvent);
                 }
             }//endwhile
         } catch(Exception e){
@@ -214,9 +213,11 @@ public class UserArea {
 
                     //get the Event object
                     Event e = getEvent(el);
-
-                    //add it to list
-                    events.add(e);
+                    
+                    if (e != null){
+                        //add it to list
+                        events.add(e);
+                    }
                 }
             }
             

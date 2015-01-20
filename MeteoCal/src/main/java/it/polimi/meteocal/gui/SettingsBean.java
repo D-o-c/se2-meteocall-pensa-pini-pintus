@@ -10,6 +10,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
 /**
@@ -112,6 +113,15 @@ public class SettingsBean {
      */
     public List<Event> getUserEvent(){
         return userArea.getUserEvent();
+    }
+    
+    public String done(FileUploadEvent event){
+        return home_page_url;
+    }
+    
+    public void upload(FileUploadEvent event){
+        this.file=event.getFile();
+        this.upload();
     }
     
     /**
