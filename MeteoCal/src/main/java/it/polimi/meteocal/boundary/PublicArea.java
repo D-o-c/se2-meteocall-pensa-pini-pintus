@@ -31,4 +31,8 @@ public class PublicArea {
         guestManager.unregister(guestManager.getLoggedUser());
     }
     
+    public int sendPasswordToken(String s){
+        return guestManager.sendToken(s);
+    }
+    
 }

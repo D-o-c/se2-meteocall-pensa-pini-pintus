@@ -9,6 +9,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import org.primefaces.event.FlowEvent;
 
 /**
  *
@@ -34,6 +35,9 @@ public class IndexBean {
     private User user;
     private String username;
     private String password;
+    
+    private String token;
+    private String newPassword;
 
     /**
      * Empty Constructor
@@ -76,6 +80,22 @@ public class IndexBean {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
     }
 
     /**************************************************************************/
@@ -130,6 +150,21 @@ public class IndexBean {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
         request.getSession().invalidate();
+        return index_page_url;
+    }
+    
+    public void recoveryPasswordProcess(FlowEvent event){
+        if (event.getOldStep().equals("email")){
+            if (publicArea.sendPasswordToken(username) == -1){
+                //user doesn't exist
+                FacesContext.getCurrentInstance()
+                .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                        "User doesn't exist", "User doesn't exist"));
+            }
+        }
+    }
+    
+    public String changeLostPassword(){
         return index_page_url;
     }
     
