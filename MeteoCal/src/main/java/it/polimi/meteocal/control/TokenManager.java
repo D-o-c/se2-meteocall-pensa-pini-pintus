@@ -41,7 +41,7 @@ public class TokenManager {
         
         for (Token t : tokenList){
             if (today-t.getTime().getTime() >= one_day){
-                t.setStatus(-1);
+                t.disable();
                 em.merge(t);
             }
         }

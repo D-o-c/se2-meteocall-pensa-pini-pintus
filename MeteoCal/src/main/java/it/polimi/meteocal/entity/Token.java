@@ -7,7 +7,6 @@ package it.polimi.meteocal.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -30,15 +29,15 @@ public class Token implements Serializable {
     public final static String findAll = "Token.findAll";
     
     @Id
-    @Column(name = "TOKEN")
-    private final UUID token;
+    @Column(name = "TOKEN", length = 767)
+    private final String token;
     
     @ManyToOne
     @JoinColumn(name="USER", referencedColumnName="EMAIL")
     private final User user;
     
     @Column(name = "STATUS")
-    private int status;
+    private boolean active;
     
     @Column(name = "TIME_")
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
@@ -50,22 +49,22 @@ public class Token implements Serializable {
         time = null;
     }
 
-    public Token(UUID token, User user, int status) {
+    public Token(String token, User user) {
         this.token = token;
         this.user = user;
-        this.status = status;
+        this.active = true;
         this.time = new Date();
     }
 
-    public int getStatus() {
-        return status;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void disable() {
+        this.active = false;
     }
 
-    public UUID getToken() {
+    public String getToken() {
         return token;
     }
 

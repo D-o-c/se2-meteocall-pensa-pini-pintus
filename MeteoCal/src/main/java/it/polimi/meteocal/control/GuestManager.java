@@ -101,12 +101,12 @@ public class GuestManager {
             return -1;
         }
         
-        UUID temp = UUID.randomUUID();
+        String temp = UUID.randomUUID().toString();
         while (em.find(Token.class, temp) != null){
-            temp = UUID.randomUUID();
+            temp = UUID.randomUUID().toString();
         }
         
-        Token t = new Token(temp, u, 1);
+        Token t = new Token(temp, u);
         em.persist(t);
         
         emailSender.send(email ,
@@ -119,16 +119,16 @@ public class GuestManager {
     /**
      * 
      * @param email
-     * @param tokenNumber
+     * @param tokenString
      * @param password
      * @return -1: if token doesn't exist <br/>
      *         -2: if user doesn't exist <br/>
      *          0: if password is changed successfully
      */
-    public int changeLostPassword(String email, UUID tokenNumber, String password){
-        Token t = em.find(Token.class, tokenNumber);
+    public int changeLostPassword(String email, String tokenString, String password){
+        Token t = em.find(Token.class, tokenString);
         User u = em.find(User.class, email);
-        if (t == null || t.getStatus() != 1){
+        if (t == null || !t.isActive()){
             return -1;
         }
         else if (!t.getUser().equals(u) || u == null){
@@ -139,7 +139,7 @@ public class GuestManager {
         u.setPassword(password);
         em.merge(u);
         
-        t.setStatus(-1);
+        t.disable();
         em.merge(t);
         
         return 0;
