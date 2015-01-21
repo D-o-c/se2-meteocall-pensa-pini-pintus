@@ -7,6 +7,24 @@
     <h:head>
         <title>#{homeScheduleBean.currentEvent.name}</title>
         <h:outputStylesheet library="css" name="stylesheet.css" />
+        <script>
+            window.onload = function myFunction() {
+                var str = document.getElementById("location").innerHTML;
+                str = str.substr(10,str.length);
+                var patt = new RegExp("[\\w*[ ]*]*[,][\\w*[ ]*]*[,][\\w*[ ]*]*");
+                if(patt.test(str)){
+                    var parts = str.split(",");
+                    var address = parts[0].split(" ").join("+");
+                    var city = parts[1].split(" ").join("");
+                    var state = parts[2].split(" ").join("");
+                    var location = address+","+city+"+"+state;
+                    document.getElementById("gmap").src = "https://www.google.com/maps/embed/v1/place?key=AIzaSyDDm0i7Jy_achXhFjVg8LcT1kbmi8wmdV4&amp;q="+location;
+                }
+                else{
+                    window.alert("Location not found.");
+                }
+            }
+        </script>
     </h:head>
     <h:body>
         <header>
@@ -37,7 +55,7 @@
                     <h:outputText value="Outdoor: #{eventBean.eventOutdoorStatus}" />
                     <h:outputText value="Begin Time: #{eventBean.eventBeginTime}" />
                     <h:outputText value="End Time: #{eventBean.eventEndTime}" />
-                    <h:outputText value="Location: #{eventBean.eventLocation}" />
+                    <h:outputText id="location" value="Location: #{eventBean.eventLocation}" />
                     <h:outputText value="Created By: #{eventBean.eventCreator}" />
                 </h:panelGrid>
                 <p:dataTable var="wc" value="#{eventBean.getWeather()}" emptyMessage="No weather found yet"
@@ -55,16 +73,14 @@
                     </p:column>
                 </p:dataTable>
             </p:fieldset>
-            <h:form>
-                <iframe
-                    id="gmap"
-                    width="92%"
-                    height="450"
-                    frameborder="0"
-                    style="margin:50px;"
-                    src="#{eventBean.googleMap}">
-                </iframe>
-            </h:form>
+            <iframe
+                id="gmap"
+                width="92%"
+                height="450"
+                frameborder="0"
+                style="margin:50px;"
+                src="">
+            </iframe>
             <h:form>
                 <p:dataList value="#{eventBean.getPartecipants()}" var="user">
                     <f:facet name="header">
