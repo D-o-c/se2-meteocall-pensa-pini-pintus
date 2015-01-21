@@ -8,7 +8,7 @@
         <h:outputStylesheet library="css" name="stylesheet.css" />
         <script>
             function myFunction() {
-                var str = document.getElementById("createeventform:location").value;
+                var str = document.getElementById("modifyeventform:location").value;
                 var patt = new RegExp("[\\w*[ ]*]*[,][\\w*[ ]*]*[,][\\w*[ ]*]*");
                 if(patt.test(str)){
                     var parts = str.split(",");
