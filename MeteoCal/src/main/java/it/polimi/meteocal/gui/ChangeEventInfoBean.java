@@ -20,11 +20,13 @@ public class ChangeEventInfoBean {
     //Strings
     private static final String info = "Info";
     private static final String warning = "Warning";
+    private static final String error = "Error";
+    private static final String try_again = "An error occurred, please try again.";
     private static final String overlapped_events_error = "You cannot have more events at the same time!";
     private static final String time_consistency_error = "Begin Time must be before End Time";
     private static final String creation_successfull = "Event info changed succesfully";
     private static final String deletion_successfull = "Event deleted succesfully";
-    private static final String some_users_not_found = "Some Invited Users Not Found!";
+    private static final String some_users_not_found = "Event changed succesfully, but some Invited Users Not Found!";
     private static final String event_page_url = "/event?faces-redirect=true";
     private static final String user_home_page_url = "/user/home?faces-redirect=true";
     
@@ -104,16 +106,22 @@ public class ChangeEventInfoBean {
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, time_consistency_error, null));
                 return null;
             case 0:
-                boolean allUsersInvited = eventArea.updateCurrentEvent(invites);
-                context.addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_INFO, info, creation_successfull));
-                context.getExternalContext().getFlash().setKeepMessages(true);
-                if (allUsersInvited){
-                    return event_page_url;
-                }  
-                context.addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_WARN, warning, some_users_not_found));
-                context.getExternalContext().getFlash().setKeepMessages(true);
+                int allUsersInvited = eventArea.updateCurrentEvent(invites);
+                if (allUsersInvited == -2){
+                    context.addMessage(null,
+                            new FacesMessage(FacesMessage.SEVERITY_ERROR, error, try_again));
+                    context.getExternalContext().getFlash().setKeepMessages(true);
+                }
+                else if (allUsersInvited == -1){
+                    context.addMessage(null,
+                            new FacesMessage(FacesMessage.SEVERITY_WARN, warning, some_users_not_found));
+                    context.getExternalContext().getFlash().setKeepMessages(true);
+                }
+                else{
+                    context.addMessage(null,
+                            new FacesMessage(FacesMessage.SEVERITY_INFO, info, creation_successfull));
+                    context.getExternalContext().getFlash().setKeepMessages(true);
+                }
                 return event_page_url;
             default:
                 return null;
@@ -125,15 +133,24 @@ public class ChangeEventInfoBean {
      * @return /user/home?faces-redirect=true
      */
     public String deleteEvent() {
-        
-        eventArea.deleteEvent();
-        
         FacesContext context = FacesContext.getCurrentInstance();
-        context.addMessage(null,
+        
+        if (eventArea.deleteEvent() == 0){
+            context.addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_INFO, info, deletion_successfull));
-        context.getExternalContext().getFlash().setKeepMessages(true);
+            context.getExternalContext().getFlash().setKeepMessages(true);
                 
-        return user_home_page_url;
+            return user_home_page_url;
+        }
+        else{
+            context.addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, error, try_again));
+            context.getExternalContext().getFlash().setKeepMessages(true);
+            return event_page_url;
+        }
+        
+        
+        
     }
     
 }

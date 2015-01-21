@@ -6,6 +6,7 @@
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
       <property name="eclipselink.logging.level" value="FINE"/>
+      <property name="javax.persistence.lock.timeout" value="1000"/>
     </properties>
   </persistence-unit>
 </persistence>

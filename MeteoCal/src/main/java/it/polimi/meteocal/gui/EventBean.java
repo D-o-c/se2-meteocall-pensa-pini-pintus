@@ -126,26 +126,7 @@ public class EventBean{
         return eventArea.getPartecipants();
     }
     
-    /**
-     * Calls eventArea.getCurrentEvent().getLocation()
-     * @return gmap_url+location
-     */
-    public String getGoogleMap() {
        
-        String str = eventArea.getCurrentEvent().getLocation();
-        //creates an array of address-city-state
-        String[] parts = str.split(",");
-       
-        String address = parts[0].replaceAll(" ","+");
-        String city = parts[1].replaceAll(" ","");
-        String state = parts[2].replaceAll(" ","");
-       
-        String  location = address+","+city+"+"+state;
-       
-        return gmap_url+location;
-       
-    }
-    
     /**
      * @return /user/changeeventinfo?faces-redirect=true
      */

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 
 /**
@@ -28,7 +29,9 @@ public class EventManager {
     @Inject
     EmailSender emailSender;
     @Inject
-    UpdateManager userManager;
+    UpdateManager updateManager;
+    @Inject
+    WeatherManager weatherManager;
 
     /**
      * @param event
@@ -51,6 +54,8 @@ public class EventManager {
         em.persist(event);
         
         event.addInvited(creator, 1);
+        
+        weatherManager.searchWeather();
         
         return sendInvite(event,invitedUsers);
     }
@@ -142,28 +147,48 @@ public class EventManager {
     }
 
     /**
-     * Calls userManager.updateFromEventUpdate(currentEvent)
-     * @param currentEvent
+     * Calls updateManager.updateFromEventUpdate(currentEvent)
+     * @param currEvent
      * @param invitedUsers
-     * @return true if all invitations have been sent correctly
+     * @return 0: if all invitations have been sent correctly<br/>
+     *         -1: if not all invitations have been sent correctly<br/>
+     *         -2: if you must retry
      */
-    public boolean updateEvent(Event currentEvent, List<String> invitedUsers) {
+    public int updateEvent(Event currEvent, List<String> invitedUsers) {
+        
+     //   em.setProperty("javax.persistence.lock.timeout", 2000);
+        Event currentEvent = em.merge(currEvent);
+        Boolean cont = true;
+        while(cont){
+            try{
+                em.lock(currentEvent, LockModeType.PESSIMISTIC_WRITE);
+                cont=false;
+            }
+            catch(Exception e){
+                return -2;
+            }
+        }
         
         //no notifies have been sent from the system(one day before)
-        //event.setBwodb(false);
+        currentEvent.setBwodb(false);
         //no notifies have been sent from the system(3 days before)
-        //event.setBwtdb(false);
+        currentEvent.setBwtdb(false);
         
-        //em.merge(event);
+       
         
         //send invites
         boolean noErrors = sendInvite(currentEvent, invitedUsers);
         //removes weather conditions
         currentEvent.setWeatherConditions(new ArrayList<WeatherCondition>());
         em.merge(currentEvent);
+        updateManager.updateFromEventUpdate(currentEvent);
+        em.lock(currentEvent, LockModeType.NONE);
         
-        userManager.updateFromEventUpdate(currentEvent);
-        return noErrors;
+        weatherManager.searchWeather();
+        if (noErrors){
+            return 0;
+        }
+        return -1;
     }
 
     /**
@@ -210,9 +235,22 @@ public class EventManager {
 
     /**
      * Removes an event
-     * @param event 
+     * @param e 
+     * @return  
      */
-    public void deleteEvent(Event event) {
+    public int deleteEvent(Event e) {
+        Event event = em.merge(e);
+        Boolean cont = true;
+        while(cont){
+            try{
+                em.lock(event, LockModeType.PESSIMISTIC_WRITE);
+                cont=false;
+            }
+            catch(Exception exc){
+                return -2;
+            }
+        }
+        
         for (Calendar calendar : event.getInvited()){
             if (calendar.getInviteStatus() == 1){
                 emailSender.send(calendar.getUserEmail(),
@@ -238,8 +276,10 @@ public class EventManager {
             em.merge(u);
         }
         
-        Event e = em.merge(event);
-        em.remove(e);
+        
+        em.remove(event);
+        em.lock(event, LockModeType.NONE);
+        return 0;
     }
     
 }

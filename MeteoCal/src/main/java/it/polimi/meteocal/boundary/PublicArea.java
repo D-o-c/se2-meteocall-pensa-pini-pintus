@@ -2,7 +2,10 @@ package it.polimi.meteocal.boundary;
 
 import it.polimi.meteocal.control.GuestManager;
 import it.polimi.meteocal.entity.User;
+import java.net.InetAddress;
 import javax.ejb.Stateless;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
 /**
@@ -10,6 +13,8 @@ import javax.inject.Inject;
  */
 @Stateless
 public class PublicArea {
+
+    
     
     //Controls
     @Inject

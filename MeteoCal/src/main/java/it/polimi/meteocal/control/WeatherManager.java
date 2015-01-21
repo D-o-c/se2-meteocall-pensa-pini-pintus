@@ -1,13 +1,19 @@
 package it.polimi.meteocal.control;
 
+import it.polimi.meteocal.boundary.PublicArea;
 import it.polimi.meteocal.entity.WeatherCondition;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.primarykeys.WeatherConditionPK;
+import it.polimi.meteocal.gui.IndexBean;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.net.URL;
+import java.net.URLConnection;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import javax.ejb.Asynchronous;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Schedule;
@@ -15,6 +21,8 @@ import javax.ejb.Singleton;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
+import javax.persistence.LockTimeoutException;
 import javax.persistence.PersistenceContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -25,9 +33,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+
+//@Lock(LockType.WRITE) // not allows timers to execute in parallel
 @Singleton
-@Lock(LockType.WRITE) // not allows timers to execute in parallel
-@Stateless
 public class WeatherManager {
     
     //Constants
@@ -47,18 +55,34 @@ public class WeatherManager {
     List<Event> eventstList;
     Date today;
     
+    @Schedule(second="*/30", minute="*/2", hour="*")
+    public void sunSearchWeather(){
+        this.searchWeather();
+    }
+    
     /**
      * Calls
-     * Method performed every * minutes *hours
+     * Method performed every * minutes * hours
      */
-    @Schedule(minute="*", hour="*")
+    @Asynchronous
     public void searchWeather(){
-        try{
         
+        try{
+           // em.setProperty("javax.persistence.lock.timeout", 3600000);
             today = new Date();
             eventstList = em.createNamedQuery(Event.findAll, Event.class).getResultList();
 
             for (Event event : eventstList) {
+                Boolean cont = true;
+                
+                while(cont){
+                    try{
+                        em.lock(event, LockModeType.PESSIMISTIC_WRITE);
+                        cont=false;
+                    }
+                    catch(Exception e){
+                    }
+                }
                 //SEARCH WEATHER IF
                 //event is outdoor
                 //event.begin <= today + 5 (event begins in the next five days)
@@ -80,6 +104,7 @@ public class WeatherManager {
                     saveWeatherConditions(document, event);
 
                 }//endif
+                em.lock(event, LockModeType.NONE);
             }//endfor
             um.sendNotifies();
         }
@@ -95,7 +120,10 @@ public class WeatherManager {
     public static Document generateXML(String city) throws IOException {
 
         URL xmlUrl = new URL(yahoo_url_part1+city+yahoo_url_part2);
-        InputStream in = xmlUrl.openStream();
+        URLConnection conn = xmlUrl.openConnection();
+        conn.setConnectTimeout(2000);
+        
+        InputStream in = conn.getInputStream();
 
         // parsing the XmlUrl
         Document document = parse(in);

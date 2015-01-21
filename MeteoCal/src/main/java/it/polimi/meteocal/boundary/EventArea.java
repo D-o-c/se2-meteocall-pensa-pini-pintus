@@ -97,7 +97,7 @@ public class EventArea{
      * @param invitesInput : String containing emails
      * @return eventManager.updateEvent(currentEvent, invitedUsers)
      */
-    public boolean updateCurrentEvent(String invitesInput){
+    public int updateCurrentEvent(String invitesInput){
         List<String> invitedUsers = updateInviteList(invitesInput);
         return eventManager.updateEvent(currentEvent, invitedUsers);
     }
@@ -149,9 +149,11 @@ public class EventArea{
      * Calls eventManager.deleteEvent(currentEvent)
      * currentEvent = null
      */
-    public void deleteEvent() {
-        eventManager.deleteEvent(currentEvent);
-        currentEvent = null;
+    public int deleteEvent() {
+        int r = eventManager.deleteEvent(currentEvent);
+        if (r == 0)
+            currentEvent = null;
+        return r;
     }
     
     /**

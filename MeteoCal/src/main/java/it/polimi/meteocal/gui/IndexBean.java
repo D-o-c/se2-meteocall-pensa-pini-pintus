@@ -25,6 +25,8 @@ public class IndexBean {
     private static final String login_failed = "Login Failed";
     private static final String user_home_page_url = "/user/home?faces-redirect=true";
     private static final String index_page_url = "/index?faces-redirect=true";
+
+    
     
     //Boundary
     @EJB
