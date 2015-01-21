@@ -65,7 +65,7 @@ public class SearchingManager {
      * @param user
      * @return calendar of a user
      */
-    public ScheduleModel getCalendar(User user) {
+    public ScheduleModel getCalendar(User user, User loggedUser) {
         
         ScheduleModel calendar = new DefaultScheduleModel();
         
@@ -81,7 +81,7 @@ public class SearchingManager {
                                                                         e.getEndTime());
                     //DefaultScheduleEvent.setData() is used to set the ID
                     
-                    if(e.isPub()) {
+                    if(e.isPub() || partecipates(e,loggedUser)) {
                         dse.setData(e.getEventId());
                     }
                     else{
@@ -97,6 +97,15 @@ public class SearchingManager {
         } catch (Exception e) {}
         
         return calendar;
+    }
+    
+    public boolean partecipates(Event e, User u){
+        for (Calendar c : e.getInvited()){
+            if (c.getInviteStatus() == 1 && c.getUser().equals(u)){
+                return true;
+            }
+        }
+        return false;
     }
     
 }

@@ -48,6 +48,7 @@ public class EventArea{
     public void setCurrentEvent(Object id) {
         if (id == null){
             currentEvent = new Event();
+            currentEvent.setInvited(new ArrayList<Calendar>());
             currentEvent.setPub(false);
            
         }

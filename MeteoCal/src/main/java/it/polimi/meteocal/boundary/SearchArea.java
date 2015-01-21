@@ -3,6 +3,7 @@ package it.polimi.meteocal.boundary;
 import it.polimi.meteocal.control.GuestManager;
 import it.polimi.meteocal.control.SearchingManager;
 import it.polimi.meteocal.control.UserManager;
+import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.User;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -68,6 +69,10 @@ public class SearchArea {
      * @return searchingManager.getCalendar(selectedUser)
      */
     public ScheduleModel getCalendar() {
-        return searchingManager.getCalendar(selectedUser);
+        return searchingManager.getCalendar(selectedUser, guestManager.getLoggedUser());
+    }
+
+    public boolean isPartecipants(Event e) {
+        return searchingManager.partecipates(e,guestManager.getLoggedUser());
     }
 }

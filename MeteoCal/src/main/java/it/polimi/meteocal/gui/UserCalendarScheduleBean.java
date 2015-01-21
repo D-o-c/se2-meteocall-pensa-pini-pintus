@@ -80,7 +80,9 @@ public class UserCalendarScheduleBean implements Serializable {
      */
     public boolean isPrivate() {
         try{
-            return !eventArea.getCurrentEvent().isPub();
+            boolean a = eventArea.getCurrentEvent().isPub();
+            boolean b = searchArea.isPartecipants(eventArea.getCurrentEvent());
+            return !(a || b);
         }
         catch(Exception e){
             return false;
