@@ -82,7 +82,7 @@ public class Event implements Serializable {
    
     @NotNull(message = "May not be empty")
     @ManyToOne
-    @JoinColumn(name="CREATOR_EMAIL", referencedColumnName="EMAIL")
+    @JoinColumn(name="CREATOR", referencedColumnName="EMAIL")
     private User creator;
    
     @Pattern(regexp="[\\w*[ ]*]*[,][\\w*[ ]*]*[,][\\w*[ ]*]*",

@@ -6,6 +6,7 @@
 package it.polimi.meteocal.control;
 
 import it.polimi.meteocal.entity.Token;
+import it.polimi.meteocal.entity.User;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Lock;
@@ -14,6 +15,7 @@ import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 
 /**
@@ -39,12 +41,26 @@ public class TokenManager {
         tokenList = em.createNamedQuery(Token.findAll, Token.class).getResultList();
         
         for (Token t : tokenList){
+            em.lock(t, LockModeType.PESSIMISTIC_WRITE);
             if (today-t.getTime().getTime() >= one_day){
                 t.disable();
                 em.merge(t);
             }
+            em.lock(t, LockModeType.NONE);
         }
         
+    }
+
+    public void deleteAllToken(User u) {
+        List<Token> userTokenList = em.createNamedQuery(Token.findByUser, Token.class).setParameter(1, u.getEmail()).getResultList();
+        for (Token t : userTokenList){
+            em.lock(t, LockModeType.PESSIMISTIC_WRITE);
+            
+            t.disable();
+            em.merge(t);
+            
+            em.lock(t, LockModeType.NONE);
+        }
     }
     
 }

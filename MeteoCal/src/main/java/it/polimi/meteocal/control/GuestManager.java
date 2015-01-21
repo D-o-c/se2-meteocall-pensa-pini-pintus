@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.UUID;
+import javax.persistence.LockModeType;
 
 /**
  *
@@ -25,6 +26,8 @@ public class GuestManager {
     Principal principal;
     @Inject
     EmailSender emailSender;
+    @Inject
+    TokenManager tokenManager;
     
     public boolean register(User user){
         if (em.find(User.class, user.getEmail())==null){
@@ -101,6 +104,8 @@ public class GuestManager {
             return -1;
         }
         
+        tokenManager.deleteAllToken(u);
+        
         String temp = UUID.randomUUID().toString();
         while (em.find(Token.class, temp) != null){
             temp = UUID.randomUUID().toString();
@@ -127,6 +132,9 @@ public class GuestManager {
      */
     public int changeLostPassword(String email, String tokenString, String password){
         Token t = em.find(Token.class, tokenString);
+        
+        em.lock(t, LockModeType.PESSIMISTIC_WRITE);
+        
         User u = em.find(User.class, email);
         if (t == null || !t.isActive()){
             return -1;
@@ -141,6 +149,8 @@ public class GuestManager {
         
         t.disable();
         em.merge(t);
+        
+        em.lock(t, LockModeType.NONE);
         
         return 0;
     }

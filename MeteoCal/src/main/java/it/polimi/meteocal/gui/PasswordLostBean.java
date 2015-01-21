@@ -68,7 +68,7 @@ public class PasswordLostBean implements Serializable{
     
     
     public String recoveryPasswordProcess(FlowEvent event){
-        if (event.getOldStep().equals("email")){
+        if (event.getOldStep().equals("emailtab")){
             if (publicArea.sendPasswordToken(username) == -1){
                 //user doesn't exist
                 FacesContext.getCurrentInstance()
@@ -76,7 +76,7 @@ public class PasswordLostBean implements Serializable{
                         error , no_user_found));
                 return "email";
             }
-            return "token";
+            return "tokentab";
         }
         return event.getNewStep();
     }

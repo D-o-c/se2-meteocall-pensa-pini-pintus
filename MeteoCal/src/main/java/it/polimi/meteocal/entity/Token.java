@@ -22,11 +22,14 @@ import javax.persistence.Temporal;
 @Entity (name="TOKEN")
 @NamedQueries({
         @NamedQuery(name = Token.findAll, 
-                query = "SELECT t FROM TOKEN t")
+                query = "SELECT t FROM TOKEN t"),
+        @NamedQuery(name = Token.findByUser,
+                query = "SELECT t FROM TOKEN t WHERE t.user.email = ?1")
 })
 public class Token implements Serializable {
     
     public final static String findAll = "Token.findAll";
+    public final static String findByUser = "Token.findByUser";
     
     @Id
     @Column(name = "TOKEN")
