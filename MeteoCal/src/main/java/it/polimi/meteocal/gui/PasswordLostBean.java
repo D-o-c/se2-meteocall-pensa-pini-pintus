@@ -6,14 +6,12 @@
 package it.polimi.meteocal.gui;
 
 import it.polimi.meteocal.boundary.PublicArea;
-import static java.awt.SystemColor.info;
 import java.io.Serializable;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import static org.apache.log4j.helpers.LogLog.error;
 import org.primefaces.event.FlowEvent;
 
 /**
