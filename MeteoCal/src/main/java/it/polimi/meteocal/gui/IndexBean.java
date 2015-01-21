@@ -9,7 +9,6 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import org.primefaces.event.FlowEvent;
 
 /**
  *
@@ -155,40 +154,6 @@ public class IndexBean {
     
     
     
-    public String recoveryPasswordProcess(FlowEvent event){
-        if (event.getOldStep().equals("email")){
-            if (publicArea.sendPasswordToken(username) == -1){
-                //user doesn't exist
-                FacesContext.getCurrentInstance()
-                .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                        "User doesn't exist", "User doesn't exist"));
-                return "email";
-            }
-            return "token";
-        }
-        return event.getNewStep();
-    }
     
-    public String changeLostPassword(){
-        FacesContext context = FacesContext.getCurrentInstance();
-        switch(publicArea.changeLostPassword(username, token, newPassword)){
-            case -2:
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                        error, "User doesn't exist"));
-                return null;
-            case -1:
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                        error, "Token doesn't exist"));
-                return null;
-            case 0:
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, info,
-                        "Password changed successfully"));
-                context.getExternalContext().getFlash().setKeepMessages(true);
-                return index_page_url;
-            default:
-                return null;
-        }  
-        
-    }
     
 }

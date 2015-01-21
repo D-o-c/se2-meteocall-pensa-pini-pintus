@@ -5,7 +5,6 @@
  */
 package it.polimi.meteocal.control;
 
-import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.Token;
 import java.util.Date;
 import java.util.List;
