@@ -50,11 +50,11 @@ footer {
 
 #mainTitle {
     margin:0px;
-    padding-top:20px;
+    padding-top:57px;
     font-size: 40px;
     width:180px;
     float:left;
-    line-height: 65px;
+    //line-height: 65px;
     color:#FFFFFF;
     text-shadow: 1px 1px #000000;
 }
