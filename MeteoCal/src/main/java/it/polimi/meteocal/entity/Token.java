@@ -29,7 +29,7 @@ public class Token implements Serializable {
     public final static String findAll = "Token.findAll";
     
     @Id
-    @Column(name = "TOKEN", length = 767)
+    @Column(name = "TOKEN")
     private final String token;
     
     @ManyToOne
