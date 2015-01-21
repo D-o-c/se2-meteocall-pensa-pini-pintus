@@ -23,6 +23,7 @@
                                         required="true" />
                             <p:commandButton id="submit" value="Log in" ajax="true" update="logGrid"
                                              action="#{indexBean.login()}"/>
+                            <p:link value="Forgot your password?" outcome="passwordlost"/>
                             <p:growl id="growl" life="3000"/>
                         </h:panelGrid>
                     </p:panel>
