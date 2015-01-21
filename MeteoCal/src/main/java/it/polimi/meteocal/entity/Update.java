@@ -21,11 +21,14 @@ import javax.validation.constraints.NotNull;
 @IdClass(UpdatePK.class)
 @NamedQueries({
     @NamedQuery(name = Update.countNotRead, 
-                    query = "SELECT COUNT(u) FROM UPDATE_ u WHERE u.read = false AND u.email = ?1")
+                    query = "SELECT COUNT(u) FROM UPDATE_ u WHERE u.read = false AND u.email = ?1"),
+    @NamedQuery(name = Update.findByRecipient, 
+                query = "SELECT u FROM UPDATE_ u WHERE u.user.email = ?1")
 })
 public class Update implements Serializable {
     private static final long serialVersionUID = 1L;
     public static final String countNotRead = "Update.countNotRead";
+    public static final String findByRecipient = "Update.findByRecipient";
     
     @Id
     @Column(name = "EVENT")

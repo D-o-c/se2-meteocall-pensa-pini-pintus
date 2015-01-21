@@ -4,8 +4,10 @@ import it.polimi.meteocal.entity.Calendar;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.Group;
 import it.polimi.meteocal.entity.Token;
+import it.polimi.meteocal.entity.Update;
 import it.polimi.meteocal.entity.User;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -49,6 +51,10 @@ public class GuestManager {
         List<Event> events = em.createNamedQuery(Event.findByCreator)
                 .setParameter(1, loggedUser.getEmail())
                 .getResultList();
+        List<Update> updates = em.createNamedQuery(Update.findByRecipient)
+                .setParameter(1,loggedUser.getEmail())
+                .getResultList();
+        
         //creazione di uno user "undefined" ed eventuale persist
         User u = em.find(User.class, "undefined@email.com");
         if(u == null){
@@ -84,6 +90,13 @@ public class GuestManager {
             }
         }
         
+        for (Update upd : updates){
+            em.remove(upd);
+        }
+        
+        loggedUser.setNotifies(new ArrayList<Update>());
+        loggedUser.setEvents(new ArrayList<Calendar>());
+        em.merge(loggedUser);
         //rimozione dal database di loggedUser
         em.remove(loggedUser);
     }
