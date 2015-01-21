@@ -36,4 +36,12 @@ public class PublicArea {
         guestManager.unregister(guestManager.getLoggedUser());
     }
     
+    public int sendPasswordToken(String s){
+        return guestManager.sendToken(s);
+    }
+
+    public int changeLostPassword(String email, String token, String password) {
+        return guestManager.changeLostPassword(email, token, password);
+    }
+    
 }

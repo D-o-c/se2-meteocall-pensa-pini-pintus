@@ -36,6 +36,9 @@ public class IndexBean {
     private User user;
     private String username;
     private String password;
+    
+    private String token;
+    private String newPassword;
 
     /**
      * Empty Constructor
@@ -78,6 +81,22 @@ public class IndexBean {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
     }
 
     /**************************************************************************/
@@ -134,5 +153,9 @@ public class IndexBean {
         request.getSession().invalidate();
         return index_page_url;
     }
+    
+    
+    
+    
     
 }

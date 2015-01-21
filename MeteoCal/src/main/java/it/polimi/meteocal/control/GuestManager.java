@@ -3,12 +3,14 @@ package it.polimi.meteocal.control;
 import it.polimi.meteocal.entity.Calendar;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.Group;
+import it.polimi.meteocal.entity.Token;
 import it.polimi.meteocal.entity.User;
 import java.security.Principal;
 import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.UUID;
 
 /**
  *
@@ -30,7 +32,7 @@ public class GuestManager {
             user.setPublic(true);
             em.persist(user);
         emailSender.send(user.getEmail() ,
-                        "MeteoCal Registration",
+                        "Registration",
                         "Congratulations, you signed up on MeteoCal successfully");
             return true;
         }
@@ -85,6 +87,62 @@ public class GuestManager {
     
     public User getLoggedUser(){
         return em.find(User.class, principal.getName());
+    }
+    
+    /**
+     * 
+     * @param email
+     * @return -1: User doesn't exist <br/>
+     *          0: Token sent
+     */
+    public int sendToken(String email) {
+        User u = em.find(User.class, email);
+        if (u == null){
+            return -1;
+        }
+        
+        String temp = UUID.randomUUID().toString();
+        while (em.find(Token.class, temp) != null){
+            temp = UUID.randomUUID().toString();
+        }
+        
+        Token t = new Token(temp, u);
+        em.persist(t);
+        
+        emailSender.send(email ,
+                        "Recovery password",
+                        "To recover your MeteoCal password use this token:\n" + t.getToken());
+        
+        return 0;
+    }
+    
+    /**
+     * 
+     * @param email
+     * @param tokenString
+     * @param password
+     * @return -1: if token doesn't exist <br/>
+     *         -2: if user doesn't exist <br/>
+     *          0: if password is changed successfully
+     */
+    public int changeLostPassword(String email, String tokenString, String password){
+        Token t = em.find(Token.class, tokenString);
+        User u = em.find(User.class, email);
+        if (t == null || !t.isActive()){
+            return -1;
+        }
+        else if (!t.getUser().equals(u) || u == null){
+            return -2;
+        }
+
+        
+        u.setPassword(password);
+        em.merge(u);
+        
+        t.disable();
+        em.merge(t);
+        
+        return 0;
     }
     
 }
