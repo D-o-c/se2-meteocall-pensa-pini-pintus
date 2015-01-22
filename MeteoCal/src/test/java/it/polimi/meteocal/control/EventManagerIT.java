@@ -131,7 +131,7 @@ public class EventManagerIT {
         
         invitedUser.add("EmailUser4");
         
-        eventManager.updateEvent(newEvent, invitedUser);
+        eventManager.updateEvent(newEvent, newEvent, invitedUser);
         
         i=0;
         for(Calendar c : newEvent.getInvited()){
