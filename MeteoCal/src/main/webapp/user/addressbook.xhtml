@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <title>Addressbook Page</title>
+        <h:outputStylesheet library="css" name="stylesheet.css" />
+    </h:head>
+    <h:body>
+        <header>
+            <h1 id="title">MeteoCal</h1>
+            <h:form id="searchForm" class="float-left">
+                <p:inputText value="#{searchBean.searchInput}" id="keyword" maxlength="200"/>
+                <p:commandButton class="searchUsersButton" action="#{searchBean.findUser()}" icon="ui-icon-search"/>
+                <p:watermark for="keyword" value="Search..." id="watermark" />
+            </h:form>
+            <ul id="landmarks">
+                <li><p:link outcome="home" value="#{homeBean.name}'s Calendar"/></li>
+                <li><p:link outcome="notifications" value="Notifications (#{notificationBean.numberOfNotifies})"/></li>
+                <li><p:link outcome="addressbook" value="Addressbook"/></li>
+                <li><p:link outcome="settings" value="Settings"/></li>
+                <li><h:form><p:commandLink action="#{indexBean.logout()}" value="Logout"/></h:form></li>
+            </ul>
+        </header>
+        <section>
+            <h:form class="clear-left">
+                <p:dataTable var="contact" value="#{addressBookBean.contacts}">
+                    <p:column headerText="Name">
+                        <h:outputText value="#{contact.name}" />
+                    </p:column>
+
+                    <p:column headerText="Surname">
+                        <h:outputText value="#{contact.surname}" />
+                    </p:column>
+
+                    <p:column headerText="Email">
+                        <h:outputText value="#{contact.email}" />
+                    </p:column>
+
+                    <p:column headerText="Delete">
+                        <p:commandButton action="#{addressBookBean.deleteContact(contact)}"
+                                         value="Delete"/>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </section>
+    </h:body>
+</html>
+

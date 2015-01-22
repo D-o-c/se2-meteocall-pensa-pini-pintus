@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>#{homeScheduleBean.currentEvent.name}</title>
+        <h:outputStylesheet library="css" name="stylesheet.css" />
+        <script>
+            window.onload = function myFunction() {
+                var str = document.getElementById("location").innerHTML;
+                str = str.substr(10,str.length);
+                var patt = new RegExp("[\\w*[ ]*]*[,][\\w*[ ]*]*[,][\\w*[ ]*]*");
+                if(patt.test(str)){
+                    var parts = str.split(",");
+                    var address = parts[0].split(" ").join("+");
+                    var city = parts[1].split(" ").join("");
+                    var state = parts[2].split(" ").join("");
+                    var location = address+","+city+"+"+state;
+                    document.getElementById("gmap").src = "https://www.google.com/maps/embed/v1/place?key=AIzaSyDDm0i7Jy_achXhFjVg8LcT1kbmi8wmdV4&amp;q="+location;
+                }
+                else{
+                    window.alert("Location not found.");
+                }
+            }
+        </script>
+    </h:head>
+    <h:body>
+        <header>
+            <h1 id="title">MeteoCal</h1>
+            <h:form id="searchForm" class="float-left">
+                <p:inputText value="#{searchBean.searchInput}" id="keyword" maxlength="200"/>
+                <p:commandButton class="searchUsersButton" action="#{searchBean.findUser()}" icon="ui-icon-search"/>
+                <p:watermark for="keyword" value="Search..." id="watermark" />
+            </h:form>
+            <ul id="landmarks">
+                <li><p:link outcome="user/home" value="#{homeBean.name}'s Calendar"/></li>
+                <li><p:link outcome="user/notifications" value="Notifications (#{notificationBean.getNumberOfNotifies()})"/></li>
+                <li><p:link outcome="user/addressbook" value="Addressbook"/></li>
+                <li><p:link outcome="user/settings" value="Settings"/></li>
+                <li><h:form><p:commandLink action="#{indexBean.logout()}" value="Logout"/></h:form></li>
+            </ul>
+        </header>
+        <section>
+            
+            <h:form>
+                <p:growl id="growl" showDetail="true" life="3000"/>
+            </h:form>
+            
+            <p:fieldset legend="#{eventBean.eventName}" style="position:relative;top:20px;">
+                <h:panelGrid columns="1">
+                    <h:outputText value="Name: #{eventBean.eventName}" />
+                    <h:outputText value="Description: #{eventBean.eventDescription}" />
+                    <h:outputText value="Outdoor: #{eventBean.eventOutdoorStatus}" />
+                    <h:outputText value="Begin Time: #{eventBean.eventBeginTime}" />
+                    <h:outputText value="End Time: #{eventBean.eventEndTime}" />
+                    <h:outputText id="location" value="Location: #{eventBean.eventLocation}" />
+                    <h:outputText value="Created By: #{eventBean.eventCreator}" />
+                </h:panelGrid>
+                <p:dataTable var="wc" value="#{eventBean.getWeather()}" emptyMessage="No weather found yet"
+                             sortBy="#{wc.time}" style="display: #{eventBean.isWeatherVisible()}">
+                    <p:column headerText="Date:">
+                        <h:outputText value="#{wc.time}" />
+                    </p:column>
+
+                    <p:column headerText="Weather:">
+                        <h:outputText value="#{wc.type}" />
+                    </p:column>
+                    
+                    <p:column headerText="Temperature:">
+                        <h:outputText value="#{wc.temp}" />
+                    </p:column>
+                </p:dataTable>
+            </p:fieldset>
+            <iframe
+                id="gmap"
+                width="92%"
+                height="450"
+                frameborder="0"
+                style="margin:50px;"
+                src="">
+            </iframe>
+            <h:form>
+                <p:dataList value="#{eventBean.getPartecipants()}" var="user">
+                    <f:facet name="header">
+                        List of partecipants:
+                    </f:facet>
+                    #{user.name} #{user.surname}
+                </p:dataList>
+                <p><p:commandButton action="#{eventBean.changeEventInfo()}" value="Change event info" disabled="#{eventBean.cannotChangeInfo()}" /></p>
+                <p><p:commandButton action="#{eventBean.removePartecipation()}" value="Delete partecipation" disabled="#{eventBean.cannotDeletePartecipation()}" /></p>
+            </h:form>
+        </section>
+    </h:body>
+</html>

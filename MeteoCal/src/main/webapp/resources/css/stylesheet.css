@@ -1,0 +1,108 @@
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin:0px;
+    min-width:1000px;
+}
+
+section{
+    padding-top: 60px;
+    background-color: #FFFFCC;
+    min-height:550px;
+}
+
+.fc-event{
+    cursor: pointer!important;
+
+}
+
+header, #mainHeader {
+    background-color: #FF0000;
+    min-width: 1000px;
+    border-bottom: 1px solid #000000;
+    position: fixed;
+    z-index: 9;
+    width: 100%;
+}
+
+#registrationform {
+    width:300px;
+    padding-top:50px;
+}
+
+#loginform {
+    width:540px;
+    float:right;
+}
+
+.searchUsersButton {
+    position:relative;
+    top:5px;
+    left:-45px;
+    height:28px;
+    border:none;
+    background:white;
+}
+
+footer {
+    border-top: 1px solid #000000;
+    
+}
+
+#mainTitle {
+    margin:0px;
+    padding-top:57px;
+    font-size: 40px;
+    width:180px;
+    float:left;
+    //line-height: 65px;
+    color:#FFFFFF;
+    text-shadow: 1px 1px #000000;
+}
+
+#title {
+    margin:0px;
+    padding: 0px 20px 0px 20px;
+    display: inline;
+    line-height: 50px;
+    float: left;
+    color:#FFFFFF;
+    text-shadow: 1px 1px #000000; 
+}
+
+ul, #landmarks {
+    list-style:none;
+    padding:0px;
+    margin:0px;
+}
+
+#landmarks li {
+    float:left;
+    padding: 14px 0px 0px 20px;
+}
+
+#landmarks li a {
+    color:#FFFFFF;
+    text-decoration:none;
+}
+
+#landmarks li a:hover {
+    text-decoration:underline;
+}
+
+#landmarks li a:visited {
+    color:#FFFFFF;
+    text-decoration:none;
+}
+
+.clear-left {
+    clear:left;
+}
+
+.float-left {
+    float:left;
+}
+
+#searchForm {
+    margin-top: 7px;
+}
+
