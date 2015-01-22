@@ -149,14 +149,17 @@ public class EventManager {
     /**
      * Calls updateManager.updateFromEventUpdate(currentEvent)
      * @param currEvent
+     * @param tempEvent
      * @param invitedUsers
      * @return 0: if all invitations have been sent correctly<br/>
      *         -1: if not all invitations have been sent correctly<br/>
      *         -2: if you must retry
      */
-    public int updateEvent(Event currEvent, List<String> invitedUsers) {
+    public int updateEvent(Event currEvent, Event tempEvent, List<String> invitedUsers) {
         
      //   em.setProperty("javax.persistence.lock.timeout", 2000);
+    //    currentEvent = em.merge(currentEvent);
+    //    currentEvent = em.find(Event.class, currentEvent.getEventId());
         Event currentEvent = em.merge(currEvent);
         Boolean cont = true;
         while(cont){
@@ -168,7 +171,7 @@ public class EventManager {
                 return -2;
             }
         }
-        
+        currentEvent = tempEvent;
         //no notifies have been sent from the system(one day before)
         currentEvent.setBwodb(false);
         //no notifies have been sent from the system(3 days before)
@@ -180,9 +183,13 @@ public class EventManager {
         boolean noErrors = sendInvite(currentEvent, invitedUsers);
         //removes weather conditions
         currentEvent.setWeatherConditions(new ArrayList<WeatherCondition>());
+    //    em.persist(currentEvent);
+        
         em.merge(currentEvent);
         updateManager.updateFromEventUpdate(currentEvent);
-        em.lock(currentEvent, LockModeType.NONE);
+        
+    //    em.lock(currentEvent, LockModeType.NONE);
+        
         
         weatherManager.searchWeather();
         if (noErrors){

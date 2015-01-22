@@ -20,9 +20,9 @@ public class IndexBean {
     //Strings
     private static final String info = "Info";
     private static final String error = "Error";
-    private static final String registration_successfull = "Registration Successfull";
-    private static final String registration_failed = "Registration Failed";
-    private static final String login_failed = "Login Failed";
+    private static final String registration_successfull = "Registration Successfull! Eureka!";
+    private static final String registration_failed = "Registration Failed! User may already exist, did you loose your password?";
+    private static final String login_failed = "Login Failed! Try try again, ";
     private static final String user_home_page_url = "/user/home?faces-redirect=true";
     private static final String index_page_url = "/index?faces-redirect=true";
 

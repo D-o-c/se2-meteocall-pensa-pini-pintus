@@ -21,10 +21,10 @@ public class CreateEventBean {
     //Strings
     private static final String info = "Info";
     private static final String warning = "Warning";
-    private static final String overlapped_events_error = "You cannot have more events at the same time!";
-    private static final String time_consistency_error = "Begin Time must be before End Time";
+    private static final String overlapped_events_error = "You cannot have more events at the same time! Do you think you are God?";
+    private static final String time_consistency_error = "Begin Time must be before End Time! Are you a friend of Doc?";
     private static final String creation_successfull = "Event Successfully Created";
-    private static final String some_users_not_found = "Some Invited Users Not Found!";
+    private static final String some_users_not_found = "Some Invited Users Not Found! Are you alone?";
     private final static String user_home_page_url = "/user/home?faces-redirect=true";
 
     //Boundaries

@@ -79,9 +79,9 @@ public class UserManager {
      * @param user
      * @param event
      * @return
-     * </br>0 no problems
-     * </br>-1 begin time is after end time
-     * </br>-2 user has another event at the same time
+     * <br/>0 no problems
+     * <br/>-1 begin time is after end time
+     * <br/>-2 user has another event at the same time
      */
     public int timeConsistency(User user, Event event){
         

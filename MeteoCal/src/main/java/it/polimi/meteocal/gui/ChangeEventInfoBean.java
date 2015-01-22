@@ -22,11 +22,11 @@ public class ChangeEventInfoBean {
     private static final String warning = "Warning";
     private static final String error = "Error";
     private static final String try_again = "An error occurred, please try again.";
-    private static final String overlapped_events_error = "You cannot have more events at the same time!";
-    private static final String time_consistency_error = "Begin Time must be before End Time";
+    private static final String overlapped_events_error = "You have another event at the same time! Do you think you are Dolly?";
+    private static final String time_consistency_error = "Begin Time must be before End Time! Do you have a DeLorean Time Machine?";
     private static final String creation_successfull = "Event info changed succesfully";
     private static final String deletion_successfull = "Event deleted succesfully";
-    private static final String some_users_not_found = "Event changed succesfully, but some Invited Users Not Found!";
+    private static final String some_users_not_found = "Event changed succesfully, but some Invited Users Not Found! Stop inviting unknown person!";
     private static final String event_page_url = "/event?faces-redirect=true";
     private static final String user_home_page_url = "/user/home?faces-redirect=true";
     
@@ -35,6 +35,8 @@ public class ChangeEventInfoBean {
     UserArea userArea;
     @EJB
     EventArea eventArea;
+    
+    Event tempEvent;
     
     //Input string of emails of invited users
     private String invites;
@@ -71,7 +73,10 @@ public class ChangeEventInfoBean {
      * @return eventArea.getCurrentEvent()
      */
     public Event getCurrentEvent() {
-        return eventArea.getCurrentEvent();
+        if (tempEvent == null){
+            tempEvent = new Event(eventArea.getCurrentEvent());
+        }
+        return tempEvent;
     }
     
     /**
@@ -92,21 +97,26 @@ public class ChangeEventInfoBean {
         
         FacesContext context = FacesContext.getCurrentInstance();
         
-        Event currentEvent = eventArea.getCurrentEvent();
+       // Event currentEvent = eventArea.getCurrentEvent();
         
-        int checkTimeConsistency = userArea.timeConsistency(currentEvent);
+        int checkTimeConsistency = userArea.timeConsistency(tempEvent);
         
         switch (checkTimeConsistency){
             case -2:
                 context.addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, overlapped_events_error, null));
-                return null;
+                        new FacesMessage(FacesMessage.SEVERITY_WARN, overlapped_events_error, ""));
+                context.getExternalContext().getFlash().setKeepMessages(true);
+                break;
             case -1:
                 context.addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, time_consistency_error, null));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, time_consistency_error, ""));
                 return null;
             case 0:
-                int allUsersInvited = eventArea.updateCurrentEvent(invites);
+               break;
+            default:
+                return null;
+        }
+         int allUsersInvited = eventArea.updateCurrentEvent(invites, tempEvent);
                 if (allUsersInvited == -2){
                     context.addMessage(null,
                             new FacesMessage(FacesMessage.SEVERITY_ERROR, error, try_again));
@@ -123,9 +133,6 @@ public class ChangeEventInfoBean {
                     context.getExternalContext().getFlash().setKeepMessages(true);
                 }
                 return event_page_url;
-            default:
-                return null;
-        }
     }
     
     /**

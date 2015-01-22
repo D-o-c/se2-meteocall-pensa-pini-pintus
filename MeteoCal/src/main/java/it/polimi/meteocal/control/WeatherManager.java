@@ -104,7 +104,7 @@ public class WeatherManager {
                     saveWeatherConditions(document, event);
 
                 }//endif
-                em.lock(event, LockModeType.NONE);
+                
             }//endfor
             um.sendNotifies();
         }

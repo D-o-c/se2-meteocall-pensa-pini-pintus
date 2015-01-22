@@ -96,11 +96,14 @@ public class EventArea{
     /**
      * Calls this.updateInviteList(invitesInput)
      * @param invitesInput : String containing emails
+     * @param tempEvent
      * @return eventManager.updateEvent(currentEvent, invitedUsers)
      */
-    public int updateCurrentEvent(String invitesInput){
+    public int updateCurrentEvent(String invitesInput, Event tempEvent){
         List<String> invitedUsers = updateInviteList(invitesInput);
-        return eventManager.updateEvent(currentEvent, invitedUsers);
+        int ret = eventManager.updateEvent(currentEvent, tempEvent, invitedUsers);
+        currentEvent = eventManager.find(currentEvent.getEventId());
+        return ret;
     }
     
     /**

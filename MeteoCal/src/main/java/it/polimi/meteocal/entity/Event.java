@@ -102,6 +102,25 @@ public class Event implements Serializable {
     @OneToMany(mappedBy="event", orphanRemoval=true)
     private List<WeatherCondition> weatherConditions;
 
+    public Event(Event e) {
+        this.name = e.name;
+        this.description = e.description;
+        this.beginTime = e.beginTime;
+        this.bwodb = e.bwodb;
+        this.bwtdb = e.bwtdb;
+        this.creator = e.creator;
+        this.endTime = e.endTime;
+        this.eventId = e.eventId;
+        this.invited = e.invited;
+        this.location = e.location;
+        this.outdoor = e.outdoor;
+        this.pub = e.pub;
+        this.update = e.update;
+        this.weatherConditions = e.weatherConditions;
+    }
+
+    public Event() {}
+
     public List<WeatherCondition> getWeatherConditions() {
         return weatherConditions;
     }

@@ -20,8 +20,8 @@ public class NotificationBean {
     
     //Strings
     private static final String info = "Info";
-    private static final String accepted = "Invitation accepted";
-    private static final String refused = "Invitation refused";
+    private static final String accepted = "Invitation accepted! :)";
+    private static final String refused = "Invitation refused! :(";
     private static final String another_event_error = "You already have another event at the same time! Delete it before!";
     private static final String user_notifications_page_url = "/user/notifications?faces-redirect=true";
     private static final String home_page_url = "home?faces-redirect=true";
