@@ -106,6 +106,7 @@ public class NotificationBean {
         if (checkTimeConsistency == -2){
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, info, another_event_error);
             RequestContext.getCurrentInstance().showMessageInDialog(message);
+            return;
         }
         userArea.accept();
         FacesContext context = FacesContext.getCurrentInstance();

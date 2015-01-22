@@ -8,14 +8,11 @@ package it.polimi.meteocal.control;
 import it.polimi.meteocal.entity.Calendar;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.User;
-import it.polimi.meteocal.entity.primarykeys.CalendarPK;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.validation.ConstraintViolationException;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -25,7 +22,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
 import static org.hamcrest.CoreMatchers.*;
-import org.junit.After;
+import org.jboss.arquillian.junit.InSequence;
 import org.junit.Before;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -33,11 +30,11 @@ import static org.mockito.Mockito.verify;
 /**
  *
  */
-//@RunWith(Arquillian.class)
-public class EventManagerTest{
+@RunWith(Arquillian.class)
+public class EventManagerIT {
     
     @Inject
-    private EventManager eventManager;
+    EventManager eventManager;
     
     @PersistenceContext
     EntityManager em;
@@ -45,28 +42,23 @@ public class EventManagerTest{
     Event newEvent;
     User u1;
     User u2;
-
-    public EventManagerTest() {
-    }
     
     @Deployment
     public static WebArchive createArchiveAndDeploy() {
-        return ShrinkWrap.create(WebArchive.class)
-                .addClass(EventManager.class)
-                .addPackage(Event.class.getPackage())
-                .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+        WebArchive war = ShrinkWrap.create(WebArchive.class)
+                            .addPackage(EventManager.class.getPackage())
+                            .addPackage(User.class.getPackage())
+                            .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
+                            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+        System.out.println(war.toString(true));
+        return war;
     }
     
     @Before
-    public void setUp() {/*
-        eventManager = new EventManager();
-        eventManager.em = mock(EntityManager.class);
-        eventManager.emailSender = mock(EmailSender.class);
-        eventManager.updateManager = mock(UpdateManager.class);*/
+    public void setUp() {
         
         newEvent = new Event();
-        /*
+        
         u1 = new User();
         u2 = new User();
         u1.setEmail("EmailUser1");
@@ -74,37 +66,29 @@ public class EventManagerTest{
         u1.setEvents(new ArrayList<Calendar>());
         u2.setEvents(new ArrayList<Calendar>());
         em.persist(u1);
-        em.persist(u2);*/
+        em.persist(u2);
         
         
         
     }
     
-    @After
-    public void tearDown() {
-    }
-    /*
     @Test
-    public void UserManagerShouldBeInjected() {
+    @InSequence(1)
+    public void eventManagerAndEntityManagerShouldBeInjected() {
         assertNotNull(eventManager);
-    }
-    
-    @Test
-    public void EntityManagerShouldBeInjected() {
+        assertNotNull(eventManager.em);
+        assertNotNull(eventManager.emailSender);
+        assertNotNull(eventManager.updateManager);
+        assertNotNull(eventManager.weatherManager);
         assertNotNull(em);
     }
-    */
     
-
-    /**
-     * Test of createEvent method, of class EventManager.
-     *//*
     @Test
-    public void testCreateAndUpdateEventAndRemoveFromPartecipants() {
-        eventManager.em.persist(u1);
-        eventManager.em.persist(u2);
-        assertNotNull(eventManager.em.find(User.class, u1.getEmail()));
-        assertNotNull(eventManager.em.find(User.class, u2.getEmail()));
+    @InSequence(2)
+    public void testCreateAndUpdateEventAndRemoveFromPartecipantsAndGetPartecipants() {
+        System.out.println("First");
+        assertNotNull(em.find(User.class, u1.getEmail()));
+        assertNotNull(em.find(User.class, u2.getEmail()));
         
         
         List<String> invitedUser = new ArrayList<>();
@@ -138,6 +122,7 @@ public class EventManagerTest{
         
         if (i != 2)
             fail("Two and only two person was invited");
+        
         
         //Update Event
         User u4 = new User();
@@ -177,6 +162,8 @@ public class EventManagerTest{
         
         assertThat(newEvent.getWeatherConditions().size(), is(0));
         
+        //Remove from partecipants
+        
         eventManager.removeFromPartecipants(newEvent, u4);
         
         i=0;
@@ -206,47 +193,40 @@ public class EventManagerTest{
         if (i != 2)
             fail("Two and only two person was invited");
         
+        //get partecipants
         
+        List<User> partecipants = eventManager.getPartecipants(newEvent);
+        List<User> partecipantsToCompare = new ArrayList<>();
+        partecipantsToCompare.add(u1);
+        partecipantsToCompare.add(u2);
+        assertThat(partecipants, is(partecipantsToCompare));
         
         
     }
-
-    /**
-     * Test of find method, of class EventManager.
-     *//*
+    
     @Test
+    @InSequence(3)
     public void testFind() {
-        eventManager.em.persist(u1);
-        eventManager.createEvent(newEvent, new ArrayList<String>(), u1);
+        System.out.println("Second");
         assertThat(eventManager.find(newEvent.getEventId()).getEventId(), is(newEvent.getEventId()));
     }
-
-    /**
-     * Test of getPartecipants method, of class EventManager.
-     *//*
+    
     @Test
-    public void testGetPartecipants() {
-        System.out.println("getPartecipants");
-        Event event = null;
-        EventManager instance = new EventManager();
-        List<User> expResult = null;
-        List<User> result = instance.getPartecipants(event);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    @InSequence(4)
+    public void deleteEvent(){
+        eventManager.deleteEvent(newEvent);
+        assertNull(em.find(Event.class, newEvent.getEventId()));
+        
+        for (Calendar c : u1.getEvents()){
+            if (c.getEvent().equals(newEvent))
+                fail("Event needs to be removed from calendar");
+        }
+        for (Calendar c : u2.getEvents()){
+            if (c.getEvent().equals(newEvent))
+                fail("Event needs to be removed from calendar");
+        }
     }
 
-    /**
-     * Test of deleteEvent method, of class EventManager.
-     *//*
-    @Test
-    public void testDeleteEvent() {
-        System.out.println("deleteEvent");
-        Event event = null;
-        EventManager instance = new EventManager();
-        instance.deleteEvent(event);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }*/
+    
     
 }

@@ -26,8 +26,10 @@ public class GuestManager {
     //Controls
     @Inject
     Principal principal;
+    
     @Inject
     EmailSender emailSender;
+    
     @Inject
     TokenManager tokenManager;
     

@@ -278,7 +278,6 @@ public class EventManager {
         
         
         em.remove(event);
-        em.lock(event, LockModeType.NONE);
         return 0;
     }
     

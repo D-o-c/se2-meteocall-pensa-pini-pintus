@@ -18,32 +18,12 @@
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.10</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>1.10.8</version>
             <scope>test</scope>
             <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.container</groupId>
-            <artifactId>arquillian-container-test-api</artifactId>
-            <version>1.1.5.Final</version>
-            <scope>test</scope>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.junit</groupId>
-            <artifactId>arquillian-junit-container</artifactId>
-            <version>1.1.5.Final</version>
-            <scope>test</scope>
-            <type>jar</type>
-        </dependency>
+        </dependency>        
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
@@ -71,6 +51,42 @@
             <artifactId>all-themes</artifactId>
             <version>1.0.10</version>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.spec</groupId>
+            <artifactId>jboss-javaee-7.0</artifactId>
+            <version>1.0.2.Final</version>
+            <type>pom</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-glassfish-embedded-3.1</artifactId>
+            <version>1.0.0.CR4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.weld</groupId>
+            <artifactId>weld-core</artifactId>
+            <version>1.1.28.Final</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.10</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>
@@ -84,6 +100,20 @@
         </dependencies>
     </dependencyManagement>
     <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.12</version>
+            </plugin>
+        </plugins>
         <finalName>MeteoCalSoftEng2</finalName>
     </build>
     <repositories>
@@ -100,39 +130,3 @@
         <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
 </project>
-
-<profile>
-			<id>arquillian-glassfish-embedded</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<dependencies>
-				<dependency>
-					<groupId>org.jboss.arquillian.container</groupId>
-					<artifactId>arquillian-glassfish-embedded-3.1</artifactId>
-					<version>1.0.0.CR4</version>
-					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>org.glassfish.main.extras</groupId>
-					<artifactId>glassfish-embedded-all</artifactId>
-					<version>4.0</version>
-					<scope>provided</scope>
-				</dependency>
-
-				<dependency>
-					<groupId>org.glassfish.jersey.core</groupId>
-					<artifactId>jersey-client</artifactId>
-					<version>2.4.1</version>
-					<scope>provided</scope>
-				</dependency>
-
-				<dependency>
-					<groupId>org.glassfish.jersey.containers</groupId>
-					<artifactId>jersey-container-servlet</artifactId>
-					<version>2.4.1</version>
-					<scope>provided</scope>
-				</dependency>
-
-			</dependencies>
-		</profile>
