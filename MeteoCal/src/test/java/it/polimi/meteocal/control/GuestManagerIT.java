@@ -46,6 +46,7 @@ public class GuestManagerIT {
     
     @Deployment
     public static WebArchive createArchiveAndDeploy() {
+        System.out.println("Before deployment");
         WebArchive war = ShrinkWrap.create(WebArchive.class)
                             .addPackage(GuestManager.class.getPackage())
                             .addPackage(User.class.getPackage())

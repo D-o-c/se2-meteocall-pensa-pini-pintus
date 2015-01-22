@@ -1,0 +1,26 @@
+----------------------------------------------------------------
+Thu Jan 22 18:36:05 CET 2015:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.10.2.0 - (1582446): instance a816c00e-014b-12b7-1b6b-00000c510f28 
+on database directory /tmp/gfembed3772955412004569244tmp/lib/databases/embedded_default with class loader sun.misc.Launcher$AppClassLoader@3fb2bb77 
+Loaded from file:/home/doc/.m2/repository/org/glassfish/main/extras/glassfish-embedded-all/4.1/glassfish-embedded-all-4.1.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.7.0_65-b32
+user.dir=/home/doc/NetBeansProjects/se2-meteocall-pensa-pini-pintus/MeteoCal
+os.name=Linux
+os.arch=amd64
+os.version=3.13.0-44-generic
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Thu Jan 22 18:36:18 CET 2015:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.10.2.0 - (1582446): instance 771b0168-014b-12b7-1b6b-00000c510f28 
+on database directory /tmp/gfembed3772955412004569244tmp/lib/databases/ejbtimer with class loader sun.misc.Launcher$AppClassLoader@3fb2bb77 
+Loaded from file:/home/doc/.m2/repository/org/glassfish/main/extras/glassfish-embedded-all/4.1/glassfish-embedded-all-4.1.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.7.0_65-b32
+user.dir=/home/doc/NetBeansProjects/se2-meteocall-pensa-pini-pintus/MeteoCal
+os.name=Linux
+os.arch=amd64
+os.version=3.13.0-44-generic
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''
