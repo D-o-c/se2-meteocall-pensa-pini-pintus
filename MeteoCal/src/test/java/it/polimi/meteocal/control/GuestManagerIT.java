@@ -10,9 +10,15 @@ import it.polimi.meteocal.entity.Group;
 import it.polimi.meteocal.entity.Token;
 import it.polimi.meteocal.entity.User;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.NotSupportedException;
+import javax.transaction.SystemException;
+import javax.transaction.UserTransaction;
 import static org.hamcrest.CoreMatchers.is;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -41,6 +47,9 @@ public class GuestManagerIT {
     
     @PersistenceContext
     EntityManager em;
+    
+    @Resource
+    private UserTransaction utx;
     
     User newUser;
     
@@ -82,9 +91,13 @@ public class GuestManagerIT {
     
     @Test
     @InSequence(1)
-    public void testRegister(){
+    public void testRegister() throws Exception{
+        utx.begin();
+        
         guestManager.register(newUser);
-        assertThat(newUser.getGroupName(), is(Group.USERS));
+        
+        utx.commit();
+        assertTrue(newUser.getGroupName().equals(Group.USERS));
         assertThat(newUser.isPublic(), is(true));
         verify(guestManager.em,times(1)).persist(newUser);
         
