@@ -81,7 +81,7 @@ public class SearchingManager {
                                                                         e.getEndTime());
                     //DefaultScheduleEvent.setData() is used to set the ID
                     
-                    if(e.isPub() || partecipates(e,loggedUser)) {
+                    if(e.isPublic() || partecipates(e,loggedUser)) {
                         dse.setData(e.getEventId());
                     }
                     else{

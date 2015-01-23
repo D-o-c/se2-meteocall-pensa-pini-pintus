@@ -49,7 +49,7 @@ public class EventArea{
         if (id == null){
             currentEvent = new Event();
             currentEvent.setInvited(new ArrayList<Calendar>());
-            currentEvent.setPub(false);
+            currentEvent.setPublic(false);
            
         }
         else{

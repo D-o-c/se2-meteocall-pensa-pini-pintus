@@ -185,7 +185,7 @@ public class SettingsBean {
         
         FacesContext context = FacesContext.getCurrentInstance();
         
-        if (newPassword.length() < 4){
+        if (newPassword.length() < 9){
             context.addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, error, password_short));
             return null;

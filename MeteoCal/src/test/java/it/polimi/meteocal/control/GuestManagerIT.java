@@ -5,10 +5,13 @@
  */
 package it.polimi.meteocal.control;
 
+import it.polimi.meteocal.entity.Calendar;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.Group;
 import it.polimi.meteocal.entity.Token;
+import it.polimi.meteocal.entity.Update;
 import it.polimi.meteocal.entity.User;
+import it.polimi.meteocal.entity.WeatherCondition;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,9 +40,6 @@ public class GuestManagerIT {
     
     @Inject
     GuestManager guestManager;
-    
-    @Inject
-    EventManager eventManager;
     
     @PersistenceContext
     EntityManager em;
@@ -193,7 +193,8 @@ public class GuestManagerIT {
             assertTrue(guestManager.changeLostPassword(newUser.getEmail(), secondToken, "newPassword") == 0);
         utx.commit();
         
-        assertTrue(newUser.getPassword().equals(PasswordEncrypter.encryptPassword("newPassword")));
+        
+        assertTrue(em.find(User.class, newUser.getEmail()).getPassword().equals(PasswordEncrypter.encryptPassword("newPassword")));
         assertFalse(em.find(Token.class, secondToken).isActive());        
     }
 
@@ -205,15 +206,22 @@ public class GuestManagerIT {
     public void unregister() throws Exception{
         
         Event tmpevnt = new Event();
-        tmpevnt.setBeginTime(new Date());
-        tmpevnt.setDescription("");
-        tmpevnt.setEndTime(new Date());
-        tmpevnt.setLocation("");
-        tmpevnt.setPub(true);
-        tmpevnt.setName("");
+        tmpevnt.setBeginTime(new Date(new Date().getTime() + 86400000));    //tomorrow
+        tmpevnt.setDescription("Event Description");
+        tmpevnt.setEndTime(new Date(new Date().getTime() + 172800000));     //the day after tomorrow
+        tmpevnt.setLocation("a,b,c");
+        tmpevnt.setPublic(true);
+        tmpevnt.setName("Event Name");
+        tmpevnt.setCreator(newUser);
+        tmpevnt.setEventId(1);
+        tmpevnt.setBwodb(true);
+        tmpevnt.setBwtdb(true);
+        tmpevnt.setInvited(new ArrayList<Calendar>());
+        tmpevnt.setUpdate(new ArrayList<Update>());
+        tmpevnt.setWeatherConditions(new ArrayList<WeatherCondition>());
         
         utx.begin();
-            eventManager.createEvent(tmpevnt, new ArrayList<String>(), newUser);
+            em.persist(tmpevnt);
         utx.commit();
         
         utx.begin();
@@ -222,7 +230,7 @@ public class GuestManagerIT {
             
         utx.commit();
         
-        assertTrue(tmpevnt.getCreator().getEmail().equals("undefined@email.com"));
+        assertTrue(em.find(Event.class, tmpevnt.getEventId()).getCreator().getEmail().equals("undefined@email.com"));
         
         assertNull(em.find(User.class, newUser.getEmail()));
     }

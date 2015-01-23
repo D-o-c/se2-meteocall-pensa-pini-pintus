@@ -161,14 +161,6 @@ public class Event implements Serializable {
         this.description = description;
     }
 
-    public boolean isPub() {
-        return pub;
-    }
-
-    public void setPub(boolean pub) {
-        this.pub = pub;
-    }
-
     public User getCreator() {
         return creator;
     }
@@ -263,6 +255,10 @@ public class Event implements Serializable {
 
     public void setInvited(List<Calendar> invited) {
         this.invited = invited;
+    }
+    
+    public boolean isPublic(){
+        return pub;
     }
     
     

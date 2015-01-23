@@ -7,12 +7,16 @@ package it.polimi.meteocal.control;
 
 import it.polimi.meteocal.entity.Calendar;
 import it.polimi.meteocal.entity.Event;
+import it.polimi.meteocal.entity.Group;
 import it.polimi.meteocal.entity.User;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.UserTransaction;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -21,11 +25,8 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
-import static org.hamcrest.CoreMatchers.*;
 import org.jboss.arquillian.junit.InSequence;
 import org.junit.Before;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 /**
  *
@@ -39,6 +40,9 @@ public class EventManagerIT {
     @PersistenceContext
     EntityManager em;
     
+    @Resource
+    private UserTransaction utx;
+    
     Event newEvent;
     User u1;
     User u2;
@@ -47,7 +51,7 @@ public class EventManagerIT {
     public static WebArchive createArchiveAndDeploy() {
         WebArchive war = ShrinkWrap.create(WebArchive.class)
                             .addPackage(EventManager.class.getPackage())
-                            .addPackage(User.class.getPackage())
+                            .addPackage(Event.class.getPackage())
                             .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
                             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
         System.out.println(war.toString(true));
@@ -55,18 +59,33 @@ public class EventManagerIT {
     }
     
     @Before
-    public void setUp() {
+    public void setUp() throws Exception{
         
         newEvent = new Event();
+        newEvent.setBeginTime(new Date(new Date().getTime() + 86400000));    //tomorrow
+        newEvent.setDescription("Event Description");
+        newEvent.setEndTime(new Date(new Date().getTime() + 172800000));     //the day after tomorrow
+        newEvent.setLocation("a,b,c");
+        newEvent.setPublic(true);
+        newEvent.setName("Event Name");
+    //    newEvent.setEventId(1);
         
         u1 = new User();
         u2 = new User();
-        u1.setEmail("EmailUser1");
-        u2.setEmail("EmailUser2");
-        u1.setEvents(new ArrayList<Calendar>());
-        u2.setEvents(new ArrayList<Calendar>());
-        em.persist(u1);
-        em.persist(u2);
+        u1.setEmail("Email@User.n1");
+        u1.setGroupName(Group.USERS);
+        u1.setName("NameUser1");
+        u1.setPassword("PasswordUser1");
+        u1.setPublic(true);
+        u1.setSurname("SurnameUser1");
+        u2.setEmail("Email@User.n2");
+        u2.setGroupName(Group.USERS);
+        u2.setName("NameUser2");
+        u2.setPassword("PasswordUser2");
+        u2.setPublic(true);
+        u2.setSurname("SurnameUser2");
+        
+        
         
         
         
@@ -85,31 +104,42 @@ public class EventManagerIT {
     
     @Test
     @InSequence(2)
-    public void testCreateAndUpdateEventAndRemoveFromPartecipantsAndGetPartecipants() {
-        System.out.println("First");
+    public void testCreateAndUpdateEventAndRemoveFromPartecipantsAndGetPartecipants() throws Exception{
+        
+        utx.begin();
+            em.persist(u1);
+            em.persist(u2);
+        utx.commit();
+        
         assertNotNull(em.find(User.class, u1.getEmail()));
         assertNotNull(em.find(User.class, u2.getEmail()));
         
         
         List<String> invitedUser = new ArrayList<>();
-        invitedUser.add("EmailUser1");
-        invitedUser.add("EmailUser2");
-        invitedUser.add("EmailUser3");
+        invitedUser.add("Email@User.n1");
+        invitedUser.add("Email@User.n2");
+        invitedUser.add("Email@User.n3");
         
-        eventManager.createEvent(newEvent, invitedUser, u2);
-        verify(eventManager.em,times(1)).persist(newEvent);
-        assertThat(newEvent.isBwodb(), is(false));
-        assertThat(newEvent.isBwtdb(), is(false));
+        utx.begin();
+            eventManager.createEvent(newEvent, invitedUser, u2);
+        utx.commit();
+        
+     /*   newEvent = em.find(Event.class, newEvent.getEventId());
+        u1 = em.find(User.class, u1.getEmail());
+        u2 = em.find(User.class, u2.getEmail());*/
+        
+        assertFalse(newEvent.isBwodb());
+        assertFalse(newEvent.isBwtdb());
         
         int i=0;
         for(Calendar c : newEvent.getInvited()){
             switch(c.getUserEmail()){
-                case "EmailUser1":
+                case "Email@User.n1":
                     i++;
                     if (c.getInviteStatus() != 0)
                         fail("Invited status must be equals to 0");
                     break;
-                case "EmailUser2":
+                case "Email@User.n2":
                     if (c.getInviteStatus() != 1)
                         fail("Invited status must be equals to 1 (creator)");
                     i++;
@@ -126,27 +156,42 @@ public class EventManagerIT {
         
         //Update Event
         User u4 = new User();
-        u4.setEmail("EmailUser4");
-        eventManager.em.persist(u4);
+        u4.setEmail("Email@User.n4");
+        u4.setGroupName(Group.USERS);
+        u4.setName("NameUser4");
+        u4.setPassword("PasswordUser4");
+        u4.setPublic(true);
+        u4.setSurname("SurnameUser4");
         
-        invitedUser.add("EmailUser4");
+        utx.begin();
+            eventManager.em.persist(u4);
+        utx.commit();
         
-        eventManager.updateEvent(newEvent, newEvent, invitedUser);
+        invitedUser.add("Email@User.n4");
         
+        utx.begin();
+            eventManager.updateEvent(newEvent, newEvent, invitedUser);
+        utx.commit();
+        
+    /*    newEvent = em.find(Event.class, newEvent.getEventId());
+        u1 = em.find(User.class, u1.getEmail());
+        u2 = em.find(User.class, u2.getEmail());
+        u4 = em.find(User.class, u4.getEmail());
+        */
         i=0;
         for(Calendar c : newEvent.getInvited()){
             switch(c.getUserEmail()){
-                case "EmailUser1":
+                case "Email@User.n1":
                     i++;
                     if (c.getInviteStatus() != 0)
                         fail("Invited status must be equals to 0");
                     break;
-                case "EmailUser2":
+                case "Email@User.n2":
                     if (c.getInviteStatus() != 1)
                         fail("Invited status must be equals to 1 (creator)");
                     i++;
                     break;
-                case "EmailUser4":
+                case "Email@User.n4":
                     if(c.getInviteStatus() != 0)
                         fail("Invited status must be equals to 0");
                     i++;
@@ -160,29 +205,34 @@ public class EventManagerIT {
         if (i != 3)
             fail("Three and only Three person was invited");
         
-        assertThat(newEvent.getWeatherConditions().size(), is(0));
+        assertTrue(newEvent.getWeatherConditions().isEmpty());
         
         //Remove from partecipants
+        utx.begin();
+            eventManager.removeFromPartecipants(newEvent, u4);
+        utx.commit();
         
-        eventManager.removeFromPartecipants(newEvent, u4);
+   /*     newEvent = em.find(Event.class, newEvent.getEventId());
+        u1 = em.find(User.class, u1.getEmail());
+        u2 = em.find(User.class, u2.getEmail());
+        u4 = em.find(User.class, u4.getEmail());*/
         
         i=0;
         for(Calendar c : newEvent.getInvited()){
             switch(c.getUserEmail()){
-                case "EmailUser1":
+                case "Email@User.n1":
                     i++;
                     if (c.getInviteStatus() != 0)
                         fail("Invited status must be equals to 0");
                     break;
-                case "EmailUser2":
+                case "Email@User.n2":
                     if (c.getInviteStatus() != 1)
                         fail("Invited status must be equals to 1 (creator)");
                     i++;
                     break;
-                case "EmailUser4":
+                case "Email@User.n4":
                     if(c.getInviteStatus() != -1)
                         fail("Invited status must be equals to -1");
-                    i++;
                     break;
                 default:
                     i++;
@@ -196,10 +246,14 @@ public class EventManagerIT {
         //get partecipants
         
         List<User> partecipants = eventManager.getPartecipants(newEvent);
-        List<User> partecipantsToCompare = new ArrayList<>();
-        partecipantsToCompare.add(u1);
-        partecipantsToCompare.add(u2);
-        assertThat(partecipants, is(partecipantsToCompare));
+        List<String> emailOfPartecipants = new ArrayList<>();
+        List<String> partecipantsToCompare = new ArrayList<>();
+        partecipantsToCompare.add(u2.getEmail());
+        
+        for (User u : partecipants)
+            emailOfPartecipants.add(u.getEmail());
+        
+        assertTrue(emailOfPartecipants.equals(partecipantsToCompare));
         
         
     }
@@ -207,15 +261,19 @@ public class EventManagerIT {
     @Test
     @InSequence(3)
     public void testFind() {
-        System.out.println("Second");
-        assertThat(eventManager.find(newEvent.getEventId()).getEventId(), is(newEvent.getEventId()));
+        assertTrue(eventManager.find(newEvent.getEventId()).getEventId() == newEvent.getEventId());
     }
     
     @Test
     @InSequence(4)
-    public void deleteEvent(){
-        eventManager.deleteEvent(newEvent);
+    public void deleteEvent() throws Exception{
+        utx.begin();
+            eventManager.deleteEvent(newEvent);
+        utx.commit();
         assertNull(em.find(Event.class, newEvent.getEventId()));
+        
+        u1 = em.find(User.class, u1.getEmail());
+        u2 = em.find(User.class, u2.getEmail());
         
         for (Calendar c : u1.getEvents()){
             if (c.getEvent().equals(newEvent))

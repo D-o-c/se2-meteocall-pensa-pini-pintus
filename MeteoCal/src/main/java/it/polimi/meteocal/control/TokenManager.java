@@ -51,7 +51,7 @@ public class TokenManager {
         
     }
 
-   public void deleteAllToken(User u) {
+   public void disableAllToken(User u) {
         List<Token> userTokenList = em.createNamedQuery(Token.findByUser, Token.class).setParameter(1, u.getEmail()).getResultList();
         for (Token t : userTokenList){
             em.lock(t, LockModeType.PESSIMISTIC_WRITE);

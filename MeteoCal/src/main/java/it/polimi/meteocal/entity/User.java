@@ -2,6 +2,7 @@ package it.polimi.meteocal.entity;
 
 import it.polimi.meteocal.control.PasswordEncrypter;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -47,7 +48,7 @@ public class User implements Serializable {
     @OneToMany(mappedBy="user", orphanRemoval=true)
     private List<Contact> contacts;
     
-    @Size(min=4, message="Password length at least 4 characters")
+    @Size(min=9, message="Password length at least 9 characters")
     @NotNull(message = "Password may not be empty")
     @Column(name = "PASSWORD")
     private String password;
@@ -124,6 +125,9 @@ public class User implements Serializable {
     }
 
     public List<Calendar> getEvents() {
+        if (events == null){
+            events = new ArrayList<Calendar>();
+        }
         return events;
     }
 

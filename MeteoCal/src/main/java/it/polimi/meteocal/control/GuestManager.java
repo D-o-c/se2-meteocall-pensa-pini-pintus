@@ -56,6 +56,10 @@ public class GuestManager {
         List<Update> updates = em.createNamedQuery(Update.findByRecipient)
                 .setParameter(1,loggedUser.getEmail())
                 .getResultList();
+        List<Token> userTokenList = em.createNamedQuery(Token.findByUser, Token.class)
+                .setParameter(1, loggedUser.getEmail())
+                .getResultList();
+
         
         //creazione di uno user "undefined" ed eventuale persist
         User u = em.find(User.class, "undefined@email.com");
@@ -96,6 +100,10 @@ public class GuestManager {
             em.remove(upd);
         }
         
+        for (Token t : userTokenList){
+            em.remove(t);
+        }
+        
         loggedUser.setNotifies(new ArrayList<Update>());
         loggedUser.setEvents(new ArrayList<Calendar>());
         User toRemove = em.merge(loggedUser);
@@ -119,7 +127,7 @@ public class GuestManager {
             return -1;
         }
         
-        tokenManager.deleteAllToken(u);
+        tokenManager.disableAllToken(u);
         
         String temp = UUID.randomUUID().toString();
         while (em.find(Token.class, temp) != null){
@@ -151,7 +159,10 @@ public class GuestManager {
         if (t == null || !t.isActive()){
             return -1;
         }
-        else if (!t.getUser().equals(u) || u == null){
+        else if (u == null){
+            return -2;
+        }
+        else if (!t.getUser().equals(u)){
             return -2;
         }
         
