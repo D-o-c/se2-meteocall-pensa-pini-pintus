@@ -1,51 +1,71 @@
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
     margin:0px;
-    min-width:1000px;
+    background: #FFF0B2;
 }
 
-section{
-    padding-top: 60px;
-    background-color: #FFFFCC;
-    min-height:550px;
+#indexBody {
+    background: url(../resources/images/background.jpg);
+    background-repeat: no;
+    background-position: 50% 50%;
 }
 
-.fc-event{
-    cursor: pointer!important;
-
-}
-
-header, #mainHeader {
+header {
     background-color: #FF0000;
-    min-width: 1000px;
     border-bottom: 1px solid #000000;
     position: fixed;
     z-index: 9;
     width: 100%;
+    min-width: 1000px;
+    opacity:0.8;
 }
+
+#mainHeader {
+    position: static;
+    opacity: 0.8;
+}
+
+#mainHeader h1 {
+    color:#fece2f;
+}
+
+#mainHeader a {
+    text-decoration: none;
+    color:#fece2f;
+}
+#mainHeader a:hover{
+    color:#000000;
+}
+section{
+    padding-top: 60px;
+}
+
+#homeSection {
+    padding-top: 0px;
+}
+
 
 #registrationform {
     width:300px;
     padding-top:50px;
+    opacity:0.8;
+}
+
+#registrationform h1{
+    width:300px;
+    padding:50px 0px 0px 20px;
+    margin:0px;
+    font-size: 30px;
+    color:#fece2f;
+}
+
+.ui-password-panel-overlay {
+    opacity:0.8;
 }
 
 #loginform {
     width:540px;
     float:right;
-}
-
-.searchUsersButton {
-    position:relative;
-    top:5px;
-    left:-45px;
-    height:28px;
-    border:none;
-    background:white;
-}
-
-footer {
-    border-top: 1px solid #000000;
-    
 }
 
 #mainTitle {
@@ -65,7 +85,7 @@ footer {
     display: inline;
     line-height: 50px;
     float: left;
-    color:#FFFFFF;
+    color:#FFFF66;
     text-shadow: 1px 1px #000000; 
 }
 
@@ -78,19 +98,20 @@ ul, #landmarks {
 #landmarks li {
     float:left;
     padding: 14px 0px 0px 20px;
+    font-weight: bold;
 }
 
 #landmarks li a {
-    color:#FFFFFF;
+    color:#FFFF66;
     text-decoration:none;
 }
 
 #landmarks li a:hover {
-    text-decoration:underline;
+    color:white;
 }
 
 #landmarks li a:visited {
-    color:#FFFFFF;
+    //color:#fece2f;
     text-decoration:none;
 }
 
@@ -106,3 +127,37 @@ ul, #landmarks {
     margin-top: 7px;
 }
 
+.searchUsersButton {
+    position:relative;
+    top:5px;
+    left:-45px;
+    height:28px;
+    border:none;
+    background:#FFF0B2;
+}
+
+#searchForm .ui-inputfield {
+    background:#FFF0B2!important;
+}
+
+.ui-state-active {
+    color:#fece2f;
+}
+
+section h2 {
+    color:#fece2f;
+    text-shadow:1px 1px black;
+}
+
+.ui-widget-header {
+    background:red!important;
+}
+
+
+.fc-event{
+    cursor: pointer!important;
+    background:red!important;
+    border: 1px solid black!important;
+    color:white!important;
+    font-weight: bold;
+}

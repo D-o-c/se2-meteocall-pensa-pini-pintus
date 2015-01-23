@@ -7,7 +7,7 @@
         <title>Welcome Page</title>
         <h:outputStylesheet library="css" name="stylesheet.css" />
     </h:head>
-    <h:body>
+    <h:body id = "indexBody">
         <header id="mainHeader">
             <div style="width:1000px;height:110px;margin:auto;">
                 <h1 id="mainTitle">MeteoCal</h1> 
@@ -24,17 +24,17 @@
                             <p:commandButton id="submit" value="Log in" ajax="true" update="logGrid"
                                              action="#{indexBean.login()}"/>
                             <p:link value="Forgot your password?" outcome="passwordlost"/>
-                            <p:growl id="growl" life="3000"/>
+                            <p:growl id="growl" life="3000"/>   
                         </h:panelGrid>
                     </p:panel>
                 </h:form>
             </div>
         </header>
-        <section>
-            <div style="width:1000px;margin:auto;height:550px;">
+        <section id="homeSection">
+                <div style="width:1000px;margin:auto;">
                 <h:form id="registrationform">
-                    <h1 style="width:300px;padding:50px 0px 0px 20px;margin:0px;font-size: 30px;">Create an account</h1>
-                    <p:panel style="height: 329px;background:#FFFFCC;border:none;">
+                    <h1>Create an account</h1>
+                    <p:panel style="height: 329px;background:none;border:none;">
                         <h:panelGrid columns="" id="regGrid">
                             <p:inputText id="name" value="#{indexBean.user.name}" maxlength="200"/>
                             <p:watermark for="name" value="First name"/>
