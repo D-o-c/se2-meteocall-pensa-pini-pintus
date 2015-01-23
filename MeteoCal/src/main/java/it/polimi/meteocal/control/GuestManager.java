@@ -98,9 +98,9 @@ public class GuestManager {
         
         loggedUser.setNotifies(new ArrayList<Update>());
         loggedUser.setEvents(new ArrayList<Calendar>());
-        em.merge(loggedUser);
+        User toRemove = em.merge(loggedUser);
         //rimozione dal database di loggedUser
-        em.remove(loggedUser);
+        em.remove(toRemove);
     }
     
     public User getLoggedUser(){
@@ -147,9 +147,6 @@ public class GuestManager {
      */
     public int changeLostPassword(String email, String tokenString, String password){
         Token t = em.find(Token.class, tokenString);
-        
-        em.lock(t, LockModeType.PESSIMISTIC_WRITE);
-        
         User u = em.find(User.class, email);
         if (t == null || !t.isActive()){
             return -1;
@@ -157,6 +154,8 @@ public class GuestManager {
         else if (!t.getUser().equals(u) || u == null){
             return -2;
         }
+        
+        em.lock(t, LockModeType.PESSIMISTIC_WRITE);
 
         
         u.setPassword(password);
@@ -169,5 +168,7 @@ public class GuestManager {
         
         return 0;
     }
+    
+    
     
 }

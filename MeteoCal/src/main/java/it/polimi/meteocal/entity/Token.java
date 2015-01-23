@@ -36,7 +36,7 @@ public class Token implements Serializable {
     private final String token;
     
     @ManyToOne
-    @JoinColumn(name="USER", referencedColumnName="EMAIL")
+    @JoinColumn(name="USER_", referencedColumnName="EMAIL")
     private final User user;
     
     @Column(name = "STATUS")
