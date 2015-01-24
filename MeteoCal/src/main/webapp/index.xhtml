@@ -10,7 +10,7 @@
     <h:body id = "indexBody">
         <header id="mainHeader">
             <div style="width:1000px;height:110px;margin:auto;">
-                <h1 id="mainTitle">MeteoCal</h1> 
+                <h1 id="mainTitle">MeteoCal</h1>
                 <h:form id="loginform">
                     <p:panel style="height:78px;background:red;border:none;">
                         <h:panelGrid columns="3" id="logGrid" style="color:white;">
@@ -51,7 +51,7 @@
 
                             <p:password id="pwd2" label="Confirm Password"/>
                             <p:watermark for="pwd2" value="Re-enter password"/>
-
+                            
                             <p:commandButton id="submit" value="Create an account" ajax="true"
                                              style="margin-top:10px;"
                                              update=":loginform:logGrid,regGrid"

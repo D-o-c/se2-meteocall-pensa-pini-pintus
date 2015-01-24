@@ -81,4 +81,8 @@ public class Contact implements Serializable {
         this.user = user;
     }
     
+    public boolean equals(Contact contact) {
+        return (this.user.equals(contact.getUser()))&&(this.email.equals(contact.getEmail()));
+    }
+    
 }

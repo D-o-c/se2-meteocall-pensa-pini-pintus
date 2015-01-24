@@ -32,8 +32,11 @@ public class SearchingManager {
                                     .setParameter(1, searchInput+"%")
                                     .setParameter(2, searchInput)
                                     .getResultList();
-        
-        if(resultList.contains(whoSearched)) resultList.remove(whoSearched);
+        for(User u : resultList) {
+            if(u.equals(whoSearched)) {
+                resultList.remove(u);
+            }
+        }
         
         return resultList;
     }
@@ -57,7 +60,7 @@ public class SearchingManager {
      */
     public boolean contactExist(User user, User friend) {
         ContactPK pk = new ContactPK(friend.getEmail(), user.getEmail());
-        return user.getContacts().contains(em.find(Contact.class, pk));
+        return contains(user.getContacts(), em.find(Contact.class, pk));
     }
     
     /**
@@ -102,6 +105,15 @@ public class SearchingManager {
     public boolean partecipates(Event e, User u){
         for (Calendar c : e.getInvited()){
             if (c.getInviteStatus() == 1 && c.getUser().equals(u)){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private boolean contains(List<Contact> list, Contact contact) {
+        for(Contact c : list) {
+            if(c.equals(contact)) {
                 return true;
             }
         }
