@@ -5,13 +5,11 @@
  */
 package it.polimi.meteocal.control;
 
-import it.polimi.meteocal.entity.Calendar;
 import it.polimi.meteocal.entity.Contact;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.Group;
 import it.polimi.meteocal.entity.Update;
 import it.polimi.meteocal.entity.User;
-import it.polimi.meteocal.entity.WeatherCondition;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -27,21 +25,17 @@ import org.jboss.arquillian.junit.InSequence;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
-import org.primefaces.model.DefaultScheduleEvent;
-import org.primefaces.model.DefaultScheduleModel;
 import org.primefaces.model.ScheduleEvent;
-import org.primefaces.model.ScheduleModel;
 
 /**
  *
  */
 @RunWith(Arquillian.class)
-public class UserManagerTest {
+public class UserManagerIT {
     
     @Inject
     UserManager userManager;
@@ -129,7 +123,7 @@ public class UserManagerTest {
     }
 
     @Test
-    public void testGetCalendarAndTimeConsistencyAndGetUserEvents() throws Exception{
+    public void testGetCalendarAndTimeConsistencyAndGetUserEventsAndGetInvites() throws Exception{
         Event e1 = new Event();
         Event e2 = new Event();
         e1.setBeginTime(new Date(new Date().getTime() + 86400000));    //tomorrow
@@ -148,9 +142,24 @@ public class UserManagerTest {
         e2.setName("Event2");
         e2.setEventId(2);
         
+        User invitedUser = new User();
+        invitedUser.setEmail("invited@user.it");
+        invitedUser.setName("Invited");
+        invitedUser.setPassword("InvitedUser");
+        invitedUser.setSurname("User");
+        invitedUser.setGroupName(Group.USERS);
+        invitedUser.setPublic(true);
+        
         utx.begin();
-            eventManager.createEvent(e1, new ArrayList<String>(), user);
-            eventManager.createEvent(e2, new ArrayList<String>(), user);
+            em.persist(invitedUser);
+        utx.commit();
+        
+        List<String> invite = new ArrayList<>();
+        invite.add(invitedUser.getEmail());
+        
+        utx.begin();
+            eventManager.createEvent(e1, invite, user);
+            eventManager.createEvent(e2, invite, user);
         utx.commit();
         
         List<Long> calendar = new ArrayList<>();
@@ -162,6 +171,7 @@ public class UserManagerTest {
             
         
         assertTrue(calendar.equals(eventToCompare));
+        
         
         //getUserEvents
         List<Long> listOfUserEvents = new ArrayList<>();
@@ -205,19 +215,18 @@ public class UserManagerTest {
         assertTrue(userManager.timeConsistency(user, tempEvent2) == -2);
         assertTrue(userManager.timeConsistency(user, tempEvent3) == 0);
         
-    }
-
-    
-    @Test
-    public void testGetInvites() {
-        System.out.println("getInvites");
-        User user = null;
-        UserManager instance = new UserManager();
-        List<Event> expResult = null;
-        List<Event> result = instance.getInvites(user);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
+        //getInvites
+        
+        List<Long> listOfInvitedUserEvents = new ArrayList<>();
+        for (Event e : userManager.getUserEvent(invitedUser))
+            listOfUserEvents.add(e.getEventId());
+        
+        assertTrue(calendar.equals(listOfInvitedUserEvents));
+        
+        
+        
+        
     }
 
     /**

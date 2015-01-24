@@ -180,8 +180,7 @@ public class GuestManagerIT {
         wrongUser.setPublic(true);
         
         utx.begin();
-        
-        em.persist(wrongUser);
+            em.persist(wrongUser);
         utx.commit();
         
         
