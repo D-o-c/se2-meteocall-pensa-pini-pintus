@@ -168,7 +168,7 @@ public class EventArea{
      */
     public List<String> complete(String query){
         List<String> invitedEmail = new ArrayList<>();
-        List<Contact> contactList = userManager.getContacts(guestManager.getLoggedUser());
+        List<Contact> contactList = guestManager.getLoggedUser().getContacts();
         for (Contact c : contactList) {
             if (c.getEmail().startsWith(query)){
                 invitedEmail.add(c.getEmail() + "; ");

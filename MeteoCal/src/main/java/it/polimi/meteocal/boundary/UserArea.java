@@ -251,7 +251,7 @@ public class UserArea {
      * @return userManager.getNotifies(loggedUser);
      */
     public List<Update> getUpdates() {
-        return userManager.getNotifies(guestManager.getLoggedUser());
+        return guestManager.getLoggedUser().getNotifies();
     }
 
     /**
@@ -312,7 +312,7 @@ public class UserArea {
      * @return userManager.getContacts(loggedUser);
      */
     public List<Contact> getContact() {
-        return userManager.getContacts(guestManager.getLoggedUser());
+        return guestManager.getLoggedUser().getContacts();
     }
 
     /**

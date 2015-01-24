@@ -117,6 +117,10 @@ public class Update implements Serializable {
     public void setRead(boolean read) {
         this.read = read;
     }
+    
+    public boolean equals(Update u){
+        return event.equals(u.event) && user.equals(u.user) && number == u.number;
+    }
 
     
     

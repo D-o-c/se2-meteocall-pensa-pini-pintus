@@ -5,6 +5,7 @@
  */
 package it.polimi.meteocal.control;
 
+import it.polimi.meteocal.entity.Calendar;
 import it.polimi.meteocal.entity.Contact;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.Group;
@@ -50,6 +51,10 @@ public class UserManagerIT {
     UserTransaction utx;
     
     User user;
+    User invitedUser;
+    Event e1;
+    Event e2;
+    Event import1;
     
     @Deployment
     public static WebArchive createArchiveAndDeploy() {
@@ -123,9 +128,10 @@ public class UserManagerIT {
     }
 
     @Test
+    @InSequence(2)
     public void testGetCalendarAndTimeConsistencyAndGetUserEventsAndGetInvites() throws Exception{
-        Event e1 = new Event();
-        Event e2 = new Event();
+        e1 = new Event();
+        e2 = new Event();
         e1.setBeginTime(new Date(new Date().getTime() + 86400000));    //tomorrow
         e1.setDescription("Event1");
         e1.setEndTime(new Date(new Date().getTime() + 172800000));     //the day after tomorrow
@@ -142,7 +148,7 @@ public class UserManagerIT {
         e2.setName("Event2");
         e2.setEventId(2);
         
-        User invitedUser = new User();
+        invitedUser = new User();
         invitedUser.setEmail("invited@user.it");
         invitedUser.setName("Invited");
         invitedUser.setPassword("InvitedUser");
@@ -229,121 +235,123 @@ public class UserManagerIT {
         
     }
 
-    /**
-     * Test of importCalendar method, of class UserManager.
-     */
+    
     @Test
-    public void testImportCalendar() {
-        System.out.println("importCalendar");
-        User user = null;
-        HashSet<Event> e = null;
-        UserManager instance = new UserManager();
-        int expResult = 0;
-        int result = instance.importCalendar(user, e);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    @InSequence(3)
+    public void testAnswerInviteAndImportCalendar() throws Exception{
+        import1 = new Event();
+        import1.setBeginTime(new Date(new Date().getTime() + 172800000));
+        import1.setDescription("Import1");
+        import1.setEndTime(new Date(new Date().getTime() + 86400000));
+        import1.setLocation("a,b,c");
+        import1.setPublic(false);
+        import1.setName("Import1");
+        import1.setEventId(6);
+        
+        List<String> invite = new ArrayList<>();
+        invite.add(user.getEmail());
+        
+        utx.begin();
+            eventManager.createEvent(import1, invite, invitedUser);
+        utx.commit();
+        
+        for (Calendar c : user.getEvents()){
+            if (c.getEvent().equals(import1)){
+                assertTrue(c.getInviteStatus() == 0);
+            }
+        }
+        
+        utx.begin();
+            userManager.answerInvite(user, import1, 1);
+        utx.commit();
+        
+        for (Calendar c : user.getEvents()){
+            if (c.getEvent().equals(import1)){
+                assertTrue(c.getInviteStatus() == 1);
+            }
+        }
+        utx.begin();
+            userManager.answerInvite(user, import1, -1);
+        utx.commit();
+        
+        for (Calendar c : user.getEvents()){
+            if (c.getEvent().equals(import1)){
+                assertTrue(c.getInviteStatus() == -1);
+            }
+        }
+        
+        HashSet<Event> toImport = new HashSet<>();
+        toImport.add(import1);
+        
+        utx.begin();
+            userManager.importCalendar(user, toImport);
+        utx.commit();
+        
+        for (Calendar c : user.getEvents()){
+            if (c.getEvent().equals(import1)){
+                assertTrue(c.getInviteStatus() == 1);
+            }
+            if (c.getEvent().equals(e1)){
+                assertTrue(c.getInviteStatus() == 1);
+            }
+            if (c.getEvent().equals(e2)){
+                assertTrue(c.getInviteStatus() == 1);
+            }
+        }
+        
+        
+        
+        
     }
 
-    /**
-     * Test of getNotifies method, of class UserManager.
-     */
+    
     @Test
-    public void testGetNotifies() {
-        System.out.println("getNotifies");
-        User user = null;
-        UserManager instance = new UserManager();
-        List<Update> expResult = null;
-        List<Update> result = instance.getNotifies(user);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of setNotifyRead method, of class UserManager.
-     */
-    @Test
-    public void testSetNotifyRead() {
-        System.out.println("setNotifyRead");
-        Update update = null;
-        UserManager instance = new UserManager();
-        instance.setNotifyRead(update);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of setAllNotifyRead method, of class UserManager.
-     */
-    @Test
-    public void testSetAllNotifyRead() {
-        System.out.println("setAllNotifyRead");
-        User user = null;
-        UserManager instance = new UserManager();
-        instance.setAllNotifyRead(user);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of allRead method, of class UserManager.
-     */
-    @Test
-    public void testAllRead() {
-        System.out.println("allRead");
-        User user = null;
-        UserManager instance = new UserManager();
-        boolean expResult = false;
-        boolean result = instance.allRead(user);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of answerInvite method, of class UserManager.
-     */
-    @Test
-    public void testAnswerInvite() {
-        System.out.println("answerInvite");
-        User user = null;
-        Event selectedEvent = null;
-        int decision = 0;
-        UserManager instance = new UserManager();
-        instance.answerInvite(user, selectedEvent, decision);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getNumberOfNotReadNotifies method, of class UserManager.
-     */
-    @Test
-    public void testGetNumberOfNotReadNotifies() {
-        System.out.println("getNumberOfNotReadNotifies");
-        User user = null;
-        UserManager instance = new UserManager();
-        int expResult = 0;
-        int result = instance.getNumberOfNotReadNotifies(user);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getContacts method, of class UserManager.
-     */
-    @Test
-    public void testGetContacts() {
-        System.out.println("getContacts");
-        User user = null;
-        UserManager instance = new UserManager();
-        List<Contact> expResult = null;
-        List<Contact> result = instance.getContacts(user);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    @InSequence(4)
+    public void testSetNotifyReadAndSetAllNotifiesReadAndAllReadAndGetNumberOfNotReadNotifies() throws Exception{
+        assertTrue(user.getNotifies().isEmpty());
+        utx.begin();
+            eventManager.updateEvent(import1, import1, new ArrayList<String>());
+            eventManager.updateEvent(import1, import1, new ArrayList<String>());
+            eventManager.updateEvent(import1, import1, new ArrayList<String>());
+        utx.commit();
+        
+        List<Update> userNotifies = user.getNotifies();
+        Update temp = null;
+        
+        assertTrue(userNotifies.size() == 3);
+        for (Update u : userNotifies){
+            assertTrue(u.getEvent().equals(import1));
+            assertTrue(u.getUser().equals(user));
+            assertFalse(u.isRead());
+            temp = u;
+        }
+        
+        assertFalse(userManager.allRead(user));
+        assertTrue(userManager.getNumberOfNotReadNotifies(user) == 3);
+        assertNotNull(temp);
+        //SET NOTIFIES READ
+        utx.begin();
+            userManager.setNotifyRead(temp);
+        utx.commit();
+        
+        assertTrue(userManager.getNumberOfNotReadNotifies(user) == 2);
+        assertTrue(temp.isRead());
+        //SET ALL NOTIFIES READ
+        utx.begin();
+            userManager.setAllNotifyRead(user);
+        utx.commit();
+        
+        userNotifies = user.getNotifies();
+        
+        assertTrue(userNotifies.size() == 3);
+        for (Update u : userNotifies){
+            assertTrue(u.getEvent().equals(import1));
+            assertTrue(u.getUser().equals(user));
+            assertTrue(u.isRead());
+        }
+        
+        assertTrue(userManager.allRead(user));
+        assertTrue(userManager.getNumberOfNotReadNotifies(user) == 0);
     }
 
     /**

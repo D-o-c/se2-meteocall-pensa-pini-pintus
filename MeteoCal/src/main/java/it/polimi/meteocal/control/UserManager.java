@@ -142,7 +142,9 @@ public class UserManager {
         int status = 0;
         for (int i=0;i<user.getEvents().size();i++){
             if (!user.getEvents().get(i).getEvent().getCreator().equals(user)){
-                user.getEvents().get(i).setInviteStatus(-1);
+                if (user.getEvents().get(i).getInviteStatus() == 1){
+                    user.getEvents().get(i).setInviteStatus(-1);
+                }
             }
         }
         List<Event> events = new ArrayList<>(e);
@@ -173,13 +175,7 @@ public class UserManager {
     
     }
 
-    /**
-     * @param user
-     * @return user.getNotifies()
-     */
-    public List<Update> getNotifies(User user) {
-        return user.getNotifies();
-    }
+    
 
     /**
      * Updates "update" and merge "update"
@@ -247,14 +243,6 @@ public class UserManager {
         return ((Number)em.createNamedQuery(Update.countNotRead)
                     .setParameter(1, user.getEmail()).getSingleResult())
                         .intValue();
-    }
-
-    /**
-     * @param user
-     * @return user.getContacts()
-     */
-    public List<Contact> getContacts(User user) {
-        return user.getContacts();
     }
 
     /**
