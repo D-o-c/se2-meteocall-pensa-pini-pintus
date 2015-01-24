@@ -72,13 +72,13 @@ public class EventManagerIT {
         
         u1 = new User();
         u2 = new User();
-        u1.setEmail("Email@User.n1");
+        u1.setEmail("email@user.n1");
         u1.setGroupName(Group.USERS);
         u1.setName("NameUser1");
         u1.setPassword("PasswordUser1");
         u1.setPublic(true);
         u1.setSurname("SurnameUser1");
-        u2.setEmail("Email@User.n2");
+        u2.setEmail("email@user.n2");
         u2.setGroupName(Group.USERS);
         u2.setName("NameUser2");
         u2.setPassword("PasswordUser2");
@@ -116,9 +116,9 @@ public class EventManagerIT {
         
         
         List<String> invitedUser = new ArrayList<>();
-        invitedUser.add("Email@User.n1");
-        invitedUser.add("Email@User.n2");
-        invitedUser.add("Email@User.n3");
+        invitedUser.add("email@user.n1");
+        invitedUser.add("email@user.n2");
+        invitedUser.add("email@user.n3");
         
         utx.begin();
             eventManager.createEvent(newEvent, invitedUser, u2);
@@ -134,12 +134,12 @@ public class EventManagerIT {
         int i=0;
         for(Calendar c : newEvent.getInvited()){
             switch(c.getUserEmail()){
-                case "Email@User.n1":
+                case "email@user.n1":
                     i++;
                     if (c.getInviteStatus() != 0)
                         fail("Invited status must be equals to 0");
                     break;
-                case "Email@User.n2":
+                case "email@user.n2":
                     if (c.getInviteStatus() != 1)
                         fail("Invited status must be equals to 1 (creator)");
                     i++;
@@ -156,7 +156,7 @@ public class EventManagerIT {
         
         //Update Event
         User u4 = new User();
-        u4.setEmail("Email@User.n4");
+        u4.setEmail("email@user.n4");
         u4.setGroupName(Group.USERS);
         u4.setName("NameUser4");
         u4.setPassword("PasswordUser4");
@@ -167,7 +167,7 @@ public class EventManagerIT {
             eventManager.em.persist(u4);
         utx.commit();
         
-        invitedUser.add("Email@User.n4");
+        invitedUser.add("email@user.n4");
         
         utx.begin();
             eventManager.updateEvent(newEvent, newEvent, invitedUser);
@@ -181,17 +181,17 @@ public class EventManagerIT {
         i=0;
         for(Calendar c : newEvent.getInvited()){
             switch(c.getUserEmail()){
-                case "Email@User.n1":
+                case "email@user.n1":
                     i++;
                     if (c.getInviteStatus() != 0)
                         fail("Invited status must be equals to 0");
                     break;
-                case "Email@User.n2":
+                case "email@user.n2":
                     if (c.getInviteStatus() != 1)
                         fail("Invited status must be equals to 1 (creator)");
                     i++;
                     break;
-                case "Email@User.n4":
+                case "email@user.n4":
                     if(c.getInviteStatus() != 0)
                         fail("Invited status must be equals to 0");
                     i++;
@@ -220,17 +220,17 @@ public class EventManagerIT {
         i=0;
         for(Calendar c : newEvent.getInvited()){
             switch(c.getUserEmail()){
-                case "Email@User.n1":
+                case "email@user.n1":
                     i++;
                     if (c.getInviteStatus() != 0)
                         fail("Invited status must be equals to 0");
                     break;
-                case "Email@User.n2":
+                case "email@user.n2":
                     if (c.getInviteStatus() != 1)
                         fail("Invited status must be equals to 1 (creator)");
                     i++;
                     break;
-                case "Email@User.n4":
+                case "email@user.n4":
                     if(c.getInviteStatus() != -1)
                         fail("Invited status must be equals to -1");
                     break;

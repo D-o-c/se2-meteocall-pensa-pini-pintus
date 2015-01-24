@@ -11,6 +11,7 @@ import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.Group;
 import it.polimi.meteocal.entity.Update;
 import it.polimi.meteocal.entity.User;
+import it.polimi.meteocal.entity.primarykeys.CalendarPK;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -61,6 +62,7 @@ public class UserManagerIT {
         WebArchive war = ShrinkWrap.create(WebArchive.class)
                             .addPackage(UserManager.class.getPackage())
                             .addPackage(User.class.getPackage())
+                            .addPackage(CalendarPK.class.getPackage())
                             .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
                             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
         System.out.println(war.toString(true));
@@ -70,19 +72,50 @@ public class UserManagerIT {
     
     @Before
     public void setUp() throws Exception{
-        user = new User();
-        user.setEmail("Email@User.tst");
-        user.setGroupName(Group.USERS);
-        user.setName("NameUserTest");
-        user.setPassword("PasswordUserTest");
-        user.setPublic(true);
-        user.setSurname("SurnameUserTest");
+        user = em.find(User.class, "email@user.tst");
         
-        if(em.find(User.class, "Email@User.tst") == null){
+        
+        if(user == null){
+            user = new User();
+            user.setEmail("email@user.tst");
+            user.setGroupName(Group.USERS);
+            user.setName("NameUserTest");
+            user.setPassword("PasswordUserTest");
+            user.setPublic(true);
+            user.setSurname("SurnameUserTest");
             utx.begin();
                 em.persist(user);
             utx.commit();
         }
+        invitedUser = em.find(User.class, "invited@user.it");
+        
+        
+        if(invitedUser == null){
+            invitedUser = new User();
+            invitedUser.setEmail("invited@user.it");
+            invitedUser.setName("Invited");
+            invitedUser.setPassword("InvitedUser");
+            invitedUser.setSurname("User");
+            invitedUser.setGroupName(Group.USERS);
+            invitedUser.setPublic(true);
+            utx.begin();
+                em.persist(invitedUser);
+            utx.commit();
+        }
+        
+        import1 = em.find(Event.class, (long) 6);
+        if (import1 == null){
+            import1 = new Event();
+            import1.setBeginTime(new Date(new Date().getTime() + 86400000));
+            import1.setDescription("Import1");
+            import1.setEndTime(new Date(new Date().getTime() + 172800000));
+            import1.setLocation("a,b,c");
+            import1.setPublic(false);
+            import1.setName("Import1");
+            import1.setEventId(6);
+        }
+        
+        
         
         
     }
@@ -148,17 +181,7 @@ public class UserManagerIT {
         e2.setName("Event2");
         e2.setEventId(2);
         
-        invitedUser = new User();
-        invitedUser.setEmail("invited@user.it");
-        invitedUser.setName("Invited");
-        invitedUser.setPassword("InvitedUser");
-        invitedUser.setSurname("User");
-        invitedUser.setGroupName(Group.USERS);
-        invitedUser.setPublic(true);
         
-        utx.begin();
-            em.persist(invitedUser);
-        utx.commit();
         
         List<String> invite = new ArrayList<>();
         invite.add(invitedUser.getEmail());
@@ -223,12 +246,17 @@ public class UserManagerIT {
         
         
         //getInvites
-        
+        invitedUser = em.find(User.class, invitedUser.getEmail());
         List<Long> listOfInvitedUserEvents = new ArrayList<>();
-        for (Event e : userManager.getUserEvent(invitedUser))
-            listOfUserEvents.add(e.getEventId());
+        for (Event e : userManager.getInvites(invitedUser))
+            listOfInvitedUserEvents.add(e.getEventId());
         
-        assertTrue(calendar.equals(listOfInvitedUserEvents));
+        for (Long l : calendar){
+            assertTrue(listOfInvitedUserEvents.contains(l));
+        }
+        for (Long l : listOfUserEvents){
+            assertTrue(calendar.contains(l));
+        }
         
         
         
@@ -239,15 +267,6 @@ public class UserManagerIT {
     @Test
     @InSequence(3)
     public void testAnswerInviteAndImportCalendar() throws Exception{
-        import1 = new Event();
-        import1.setBeginTime(new Date(new Date().getTime() + 172800000));
-        import1.setDescription("Import1");
-        import1.setEndTime(new Date(new Date().getTime() + 86400000));
-        import1.setLocation("a,b,c");
-        import1.setPublic(false);
-        import1.setName("Import1");
-        import1.setEventId(6);
-        
         List<String> invite = new ArrayList<>();
         invite.add(user.getEmail());
         
@@ -308,19 +327,47 @@ public class UserManagerIT {
     @Test
     @InSequence(4)
     public void testSetNotifyReadAndSetAllNotifiesReadAndAllReadAndGetNumberOfNotReadNotifies() throws Exception{
-        assertTrue(user.getNotifies().isEmpty());
+        
+        Event import2 = new Event();
+        import2.setBeginTime(new Date(new Date().getTime() + 864000000));
+        import2.setDescription("Import2");
+        import2.setEndTime(new Date(new Date().getTime() + 880000000));
+        import2.setLocation("a,b,c");
+        import2.setPublic(false);
+        import2.setName("Import2");
+        import2.setEventId(7);
+        
+        
+        assertNotNull(import2);
+        List<String> invite = new ArrayList<>();
+        invite.add(user.getEmail());
+        
         utx.begin();
-            eventManager.updateEvent(import1, import1, new ArrayList<String>());
-            eventManager.updateEvent(import1, import1, new ArrayList<String>());
-            eventManager.updateEvent(import1, import1, new ArrayList<String>());
+            eventManager.createEvent(import2, invite, invitedUser);
+            user = em.merge(user);
         utx.commit();
         
+        assertFalse(user.getEvents().isEmpty());
+        assertTrue(user.getNotifies().isEmpty());
+        utx.begin();
+        
+            userManager.answerInvite(user, import2, 1);
+            
+        utx.commit();
+        user = em.find(User.class, user.getEmail());
+        utx.begin();
+            eventManager.updateEvent(import2, import2, new ArrayList<String>());
+            eventManager.updateEvent(import2, import2, new ArrayList<String>());
+            eventManager.updateEvent(import2, import2, new ArrayList<String>());
+        utx.commit();
+        
+        user = em.find(User.class,user.getEmail());
         List<Update> userNotifies = user.getNotifies();
         Update temp = null;
         
         assertTrue(userNotifies.size() == 3);
         for (Update u : userNotifies){
-            assertTrue(u.getEvent().equals(import1));
+            assertTrue(u.getEvent().equals(import2));
             assertTrue(u.getUser().equals(user));
             assertFalse(u.isRead());
             temp = u;
@@ -345,27 +392,13 @@ public class UserManagerIT {
         
         assertTrue(userNotifies.size() == 3);
         for (Update u : userNotifies){
-            assertTrue(u.getEvent().equals(import1));
+            assertTrue(u.getEvent().equals(import2));
             assertTrue(u.getUser().equals(user));
             assertTrue(u.isRead());
         }
         
         assertTrue(userManager.allRead(user));
         assertTrue(userManager.getNumberOfNotReadNotifies(user) == 0);
-    }
-
-    /**
-     * Test of deleteContact method, of class UserManager.
-     */
-    @Test
-    public void testDeleteContact() {
-        System.out.println("deleteContact");
-        User user = null;
-        Contact contact = null;
-        UserManager instance = new UserManager();
-        instance.deleteContact(user, contact);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
     
 }

@@ -59,7 +59,7 @@
                         <h:outputText id="display" />
 
                         <p:outputLabel value="Public"/>
-                        <p:selectBooleanCheckbox value="#{changeEventInfoBean.getCurrentEvent().pub}"/>
+                        <p:selectBooleanCheckbox value="#{changeEventInfoBean.getCurrentEvent().public}"/>
                         <p:outputLabel value=""/>
                        
                         <p:outputLabel value="Outdoor"/>
@@ -86,7 +86,7 @@
                         <p:inputTextarea value="#{changeEventInfoBean.invites}" rows="10" cols="50"
                                          completeMethod="#{changeEventInfoBean.complete}"
                                          queryDelay="500" minQueryLength="2"/>
-                        <p:outputLabel value=""/>
+                        <p:outputLabel value="Insert lower case email address"/>
 
                         <p:outputLabel value=""/>
                         <p:commandButton value="Save Event"
