@@ -20,7 +20,7 @@
                 <li><p:link outcome="home" value="#{homeBean.name}'s Calendar"/></li>
                 <li><p:link outcome="notifications" value="Notifications (#{notificationBean.getNumberOfNotifies()})"/></li>
                 <li><p:link outcome="addressbook" value="Addressbook"/></li>
-                <li><p:link outcome="settings" value="Settings"/></li>
+                <li><p:link outcome="settings" value="Settings"  style="color:white"/></li>
                 <li><h:form><p:commandLink action="#{indexBean.logout()}" value="Logout"/></h:form></li>
             </ul>
         </header>
@@ -29,117 +29,126 @@
             <h:form>
                 <p:growl id="growl" showDetail="true" life="3000"/>
             </h:form>
-            
-            <h:form class="clear-left" style="padding:20px;">
-                <p:commandButton value="Make calendar public"
-                                 action="#{settingsBean.changeCalendarVisibility()}"
-                                 icon="ui-icon-check"
-                                 disabled="#{settingsBean.loggedUserPublic}"/>
-                <p:commandButton value="Make calendar private"
-                                 action="#{settingsBean.changeCalendarVisibility()}"
-                                 icon="ui-icon-check"
-                                 disabled="#{!settingsBean.loggedUserPublic}"/>
-            </h:form>
-            <h:form id="passform" style="padding:20px;">
-                <h3 style="margin-top:0">Change password</h3>
-                <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
-                    <p:outputLabel for="oldpsw" value="Confirm old Password"/>
-                    <p:password id="oldpsw" value="#{settingsBean.password}" 
-                                 required="true" />
-                    <p:outputLabel for="newpsw" value="Insert new Password"/>
-                    <p:password id="newpsw" value="#{settingsBean.newPassword}" 
-                                feedback="true" required="true" />
-                    <p:commandButton id="submit"
-                                     action="#{settingsBean.changePassword()}"
-                                     value="Change"
-                                     ajax="true"
-                                     update="@all"
-                                     icon="ui-icon-gear"/>
-                </h:panelGrid>
-            </h:form>
-            <h:form style="padding:20px;">
-                <p:dataTable id="evntable" var="event" value="#{settingsBean.getUserEvent()}"
-                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}" 
-                             paginator="true" rows="10" style="display: none;">
-                    <p:column>
-                        <f:facet name="header">
-                            <h:outputText value="Id" />
-                        </f:facet>
-                        <h:outputText value="#{event.eventId}" />
-                    </p:column>
+            <div style="margin:auto;width:1024px;margin-bottom:50px;font-size:14px;">
+                
+                <h:form class="clear-left" style="padding:20px;float:left;height:200px;width:400px;">
+                    <h3 style="margin-top:0">Change privacy</h3>
+                    <p:commandButton value="Make calendar public"
+                                     action="#{settingsBean.changeCalendarVisibility()}"
+                                     icon="ui-icon-check"
+                                     disabled="#{settingsBean.loggedUserPublic}"/>
+                    <br/><br/>
+                    <p:commandButton value="Make calendar private"
+                                     action="#{settingsBean.changeCalendarVisibility()}"
+                                     icon="ui-icon-check"
+                                     disabled="#{!settingsBean.loggedUserPublic}"/>
+                </h:form>
+                
+                <h:form style="padding:20px;width:400px;height:200px;float:right">
+                    <p:dataTable id="evntable" var="event" value="#{settingsBean.getUserEvent()}"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}" 
+                                 paginator="true" rows="10" style="display: none;">
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Id" />
+                            </f:facet>
+                            <h:outputText value="#{event.eventId}" />
+                        </p:column>
 
-                    <p:column>
-                        <f:facet name="header">
-                            <h:outputText value="Name"/>
-                        </f:facet>
-                        <h:outputText value="#{event.name}" />
-                    </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Name"/>
+                            </f:facet>
+                            <h:outputText value="#{event.name}" />
+                        </p:column>
 
-                    <p:column>
-                        <f:facet name="header">
-                            <h:outputText value="Description" />
-                        </f:facet>
-                        <h:outputText value="#{event.description}" />
-                    </p:column>
-                    <p:column>
-                        <f:facet name="header">
-                            <h:outputText value="BeginTime" />
-                        </f:facet>
-                        <h:outputText value="#{event.beginTime}" />
-                    </p:column>
-                    <p:column>
-                        <f:facet name="header">
-                            <h:outputText value="EndTime" />
-                        </f:facet>
-                        <h:outputText value="#{event.endTime}" />
-                    </p:column>
-                    <p:column>
-                        <f:facet name="header">
-                            <h:outputText value="Location" />
-                        </f:facet>
-                        <h:outputText value="#{event.location}" />
-                    </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Description" />
+                            </f:facet>
+                            <h:outputText value="#{event.description}" />
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="BeginTime" />
+                            </f:facet>
+                            <h:outputText value="#{event.beginTime}" />
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="EndTime" />
+                            </f:facet>
+                            <h:outputText value="#{event.endTime}" />
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Location" />
+                            </f:facet>
+                            <h:outputText value="#{event.location}" />
+                        </p:column>
+
+                    </p:dataTable>
+
+
+                    <h3 style="margin-top:0">Export Calendar</h3>
+                    <h:commandLink>
+                        <h:graphicImage library="images" name="xml.png" width="50px" height="50px" />
+                        <p:dataExporter type="xml" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
+                    </h:commandLink>
+
+                    <h:commandLink>
+                        <h:graphicImage library="images" name="xls.png" width="50px" height="50px" />
+                        <p:dataExporter type="xls" target="evntable" fileName="MeteoCalEvents" pageOnly="true"/>
+                    </h:commandLink>
+
+                    <h:commandLink>
+                        <h:graphicImage library="images" name="csv.png" width="50px" height="50px" />
+                        <p:dataExporter type="csv" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
+                    </h:commandLink>
                     
-                </p:dataTable>
+                    <h:commandLink>
+                        <h:graphicImage library="images" name="pdf.png" width="50px" height="50px" />
+                        <p:dataExporter type="pdf" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
+                    </h:commandLink>
+                    <h6 style="margin-bottom:0;width:500px;">*PDF calendar cannot be imported.</h6>
+                     
+                </h:form>
                 
+                <h:form id="passform" style="padding:20px;float:left;height:200px;width:400px;">
+                    <h3 style="margin-top:0">Change password</h3>
+                    <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+                        <p:outputLabel for="oldpsw" value="Confirm old Password"/>
+                        <p:password id="oldpsw" value="#{settingsBean.password}" 
+                                     required="true" />
+                        <p:outputLabel for="newpsw" value="Insert new Password"/>
+                        <p:password id="newpsw" value="#{settingsBean.newPassword}" 
+                                    feedback="true" required="true" />
+                        <p:commandButton id="submit"
+                                         action="#{settingsBean.changePassword()}"
+                                         value="Change"
+                                         ajax="true"
+                                         update="@all"
+                                         icon="ui-icon-gear"/>
+                    </h:panelGrid>
+                </h:form>
+                
+                <h:form id="uploadform" enctype="multipart/form-data" style="padding:20px;width:400px;height:200px;float:right;">
+                    <h3 style="margin-top:0">Import Calendar</h3>
 
-                <h3 style="margin-top:0">Export Calendar</h3>
-                <h:commandLink>
-                    <h:graphicImage library="images" name="pdf.png" width="50px" height="50px" />
-                    <p:dataExporter type="pdf" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
-                </h:commandLink>
-                
-                <h:commandLink>
-                    <h:graphicImage library="images" name="xml.png" width="50px" height="50px" />
-                    <p:dataExporter type="xml" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
-                </h:commandLink>
-                
-                <h:commandLink>
-                    <h:graphicImage library="images" name="xls.png" width="50px" height="50px" />
-                    <p:dataExporter type="xls" target="evntable" fileName="MeteoCalEvents" pageOnly="true"/>
-                </h:commandLink>
+                    <p:fileUpload fileUploadListener="#{settingsBean.upload}" mode="advanced"
+                                  dragDropSupport="true" update="@all" sizeLimit="10000" fileLimit="1"
+                                  allowTypes="/(\.|\/)(xml|csv|xls)$/" auto="true"/>
+                    <h6>*Events no longer existing will not be imported.<br/>
+                        **Only .xml,.csv,.xls exported from Meteocal are allowed
+                    </h6>
 
-                <h:commandLink>
-                    <h:graphicImage library="images" name="csv.png" width="50px" height="50px" />
-                    <p:dataExporter type="csv" target="evntable" fileName="MeteoCalEvents" pageOnly="false" />
-                </h:commandLink>
-
-            </h:form>
-            <h:form id="uploadform" enctype="multipart/form-data" style="padding:20px; width: 600px;">
-                <h3 style="margin-top:0">Import Calendar (only xml, xls, csv from MeteoCal)</h3>
+                </h:form>
                 
-                <p:fileUpload fileUploadListener="#{settingsBean.upload}" mode="advanced"
-                              dragDropSupport="true" update="@all" sizeLimit="10000" fileLimit="1"
-                              allowTypes="/(\.|\/)(xml|csv|xls)$/" auto="true"/>
-                
-                
-                <h6>Events no longer existing will not be imported.</h6>
-
-            </h:form>
-            <h:form style="padding:20px;">
-                <h3 style="margin-top:0">Unregister Your Account</h3>
-                <p:commandButton value="Unregister" icon="ui-icon-close" action="#{settingsBean.unregister()}"/>
-            </h:form>
+                <h:form id="unregisterform" style="padding:20px;float:left;">
+                    <p:commandLink value="Unregister your account now"
+                                   action="#{settingsBean.unregister()}"/>
+                </h:form>
+            </div>    
         </section>
     </h:body>
 </html>

@@ -26,50 +26,53 @@
             </ul>
         </header>
         <section>
-            <h:form style="padding-bottom: 10px;">
-                <p:commandButton 
-                    action="#{userCalendarBean.addContact()}"
-                    value="Add To Contacts" disabled="#{userCalendarBean.contactExist()}"/>
-                <p:outputLabel style="margin:0px;padding:20px"
-                    value="#{userCalendarBean.selectedUserName} #{userCalendarBean.selectedUserSurname} (#{userCalendarBean.selectedUserEmail})"/>
-            </h:form>
+            <div style="width:1024px;margin:auto;margin-bottom:50px;">
+                <h:form style="padding-bottom: 10px;">
+                    <p:commandButton 
+                        action="#{userCalendarBean.addContact()}"
+                        value="Add To Contacts" disabled="#{userCalendarBean.contactExist()}"/>
+                    <p:outputLabel style="margin:0px;padding:20px;font-size:14px;"
+                        value="#{userCalendarBean.selectedUserName} #{userCalendarBean.selectedUserSurname} (#{userCalendarBean.selectedUserEmail})"/>
+                </h:form>
 
 
-            <h:form id="scheduleform">
-                <p:schedule id="schedule" value="#{userCalendarScheduleBean.scheduleModel}" widgetVar="myschedule"
-                            draggable="false" resizable="false" axisFormat="H(:mm)" timeFormat="H(:mm)"
-                            firstHour="0" showWeekends="true">
+                <h:form id="scheduleform">
+                    <p:schedule id="schedule" value="#{userCalendarScheduleBean.scheduleModel}" widgetVar="myschedule"
+                                draggable="false" resizable="false" axisFormat="H(:mm)" timeFormat="H(:mm)"
+                                firstHour="0" showWeekends="true">
 
 
-                    <p:ajax event="eventSelect" listener="#{userCalendarScheduleBean.onEventSelect}"
-                            update="eventDetails" oncomplete="PF('eventDialog').show();" />
+                        <p:ajax event="eventSelect" listener="#{userCalendarScheduleBean.onEventSelect}"
+                                update="eventDetails" oncomplete="PF('eventDialog').show();" />
 
-                </p:schedule>
+                    </p:schedule>
 
-                <p:dialog widgetVar="eventDialog" header="Event Details" showEffect="clip" hideEffect="clip">
-                    <h:panelGrid id="eventDetails" columns="2">
+                    <p:dialog widgetVar="eventDialog" header="Event Details"
+                              showEffect="clip" hideEffect="clip"  style="font-size: 15px;">
+                        <h:panelGrid id="eventDetails" columns="2">
 
-                        <p:outputLabel value="Name:"/>
-                        <p:outputLabel value="#{userCalendarScheduleBean.currentEvent.name}"/>
+                            <p:outputLabel value="Name:"/>
+                            <p:outputLabel value="#{userCalendarScheduleBean.currentEvent.name}"/>
 
-                        <p:outputLabel value="Description"/>
-                        <p:outputLabel value="#{userCalendarScheduleBean.currentEvent.description}"/>
+                            <p:outputLabel value="Description"/>
+                            <p:outputLabel value="#{userCalendarScheduleBean.currentEvent.description}"/>
 
-                        <p:outputLabel value="Begin Time:"/>
-                        <p:outputLabel value="#{userCalendarScheduleBean.currentEvent.beginTime}"/>
+                            <p:outputLabel value="Begin Time:"/>
+                            <p:outputLabel value="#{userCalendarScheduleBean.currentEvent.beginTime}"/>
 
-                        <p:outputLabel value="End Time:"/>
-                        <p:outputLabel value="#{userCalendarScheduleBean.currentEvent.endTime}"/>
+                            <p:outputLabel value="End Time:"/>
+                            <p:outputLabel value="#{userCalendarScheduleBean.currentEvent.endTime}"/>
 
-                        <p:outputLabel value="Location:"/>
-                        <p:outputLabel value="#{userCalendarScheduleBean.currentEvent.location}"/>
+                            <p:outputLabel value="Location:"/>
+                            <p:outputLabel value="#{userCalendarScheduleBean.currentEvent.location}"/>
 
-                        <p:commandButton id="goButton" value="Go in Event Page"
-                                         action="/event?faces-redirect=true"
-                                         disabled="#{userCalendarScheduleBean.isPrivate()}"/>
-                    </h:panelGrid>
-                </p:dialog>
-            </h:form>
+                            <p:commandButton id="goButton" value="Go in Event Page"
+                                             action="/event?faces-redirect=true"
+                                             disabled="#{userCalendarScheduleBean.isPrivate()}"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+            </div>
         </section>
     </h:body>
 </html>

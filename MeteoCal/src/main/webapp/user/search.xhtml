@@ -16,7 +16,12 @@
                 <p:inputText value="#{searchBean.searchInput}" id="keyword" maxlength="200"/>
                 <p:commandButton class="searchUsersButton" action="#{searchBean.findUser()}" icon="ui-icon-search"/>
                 <p:watermark for="keyword" value="Search..." id="watermark" />
-                <p:dataTable var="user" value="#{searchBean.usersSearched}" style="position:absolute;top:50px;left:0px;border:solid 1px black;">
+                <p:dataTable var="user" value="#{searchBean.usersSearched}"
+                             id="searchResultTable" style="font-size:15px;text-align:center;width:1024px;margin-left:13%;position:absolute;top:60px;left:0px;border-bottom:solid 1px black;">
+                    <p:column headerText="Email">
+                        <h:outputText value="#{user.email}" />
+                    </p:column>
+                    
                     <p:column headerText="Name">
                         <h:outputText value="#{user.name}" />
                     </p:column>
@@ -25,9 +30,10 @@
                         <h:outputText value="#{user.surname}" />
                     </p:column>
                     
-                    <p:column headerText="Link">
-                        <h:commandLink action="#{searchBean.selectUser(user)}"
-                                       value="See Calendar" />
+                    <p:column headerText="" style="background:none;border:none;">
+                        <p:commandButton action="#{searchBean.selectUser(user)}"
+                                       value="Go To Calendar"
+                                       style="margin:0;"/>
                     </p:column>
                 </p:dataTable>
             </h:form>

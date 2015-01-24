@@ -42,69 +42,74 @@
             </ul>
         </header>
         <section>
-            <h:form id="createeventform" class="clear-left">
-                <p:growl id="growl" life="3000"/>
-                <p:panel header="New Event Form">
-                    <p:panelGrid columns="3">
-                       
-                        <p:outputLabel value="Event Name"/>
-                        <p:inputText id="name" value="#{createEventBean.event.name}" maxlength="200"/>
-                        <p:outputLabel value=""/>
-                       
-                        <p:outputLabel value="Description"/>
-                        <p:inputTextarea id="description" value="#{createEventBean.event.description}"
-                                         rows="5" cols="30" counter="display" maxlength="100"
-                                         counterTemplate="{0} characters remaining." autoResize="false"/>
-                        <h:outputText id="display" />
+            <div style="width:1024px;margin:auto;margin-bottom:80px;">
+                <h:form id="createeventform" class="clear-left" style="font-size:14px;">
+                    <p:growl id="growl" life="3000"/>
+                    <p:panel header="New Event">
+                        <p:panelGrid columns="3">
 
-                        <p:outputLabel value="Public"/>
-                        <p:selectBooleanCheckbox value="#{createEventBean.event.public}"/>
-                        <p:outputLabel value=""/>
-                       
-                        <p:outputLabel value="Outdoor"/>
-                        <p:selectBooleanCheckbox value="#{createEventBean.event.outdoor}"/>
-                        <p:outputLabel value=""/>
+                            <p:outputLabel value="Event Name"/>
+                            <p:inputText id="name" value="#{createEventBean.event.name}" maxlength="200"/>
+                            <p:outputLabel value=""/>
 
-                        <p:outputLabel value="Begin time"/>
-                        <p:calendar id="beginTime" value="#{createEventBean.event.beginTime}"
-                                    pages="3" effect="fold" mindate="#{homeScheduleBean.today()}"
-                                    pattern="dd/MM/yyyy HH:mm"/>
-                        <p:outputLabel value=""/>    
-                       
-                        <p:outputLabel value="End time"/>
-                        <p:calendar id="endTime" value="#{createEventBean.event.endTime}"
-                                    pages="3" effect="fold" mindate="#{homeScheduleBean.today()}"
-                                    pattern="dd/MM/yyyy HH:mm"/>
-                        <p:outputLabel value=""/>
+                            <p:outputLabel value="Description"/>
+                            <p:inputTextarea id="description" value="#{createEventBean.event.description}"
+                                             rows="5" cols="30" counter="display" maxlength="100"
+                                             counterTemplate="{0} characters remaining." autoResize="false"/>
+                            <h:outputText id="display" />
 
-                        <p:outputLabel value="Location, write &quot;address, city, state&quot;" />
-                        <p:inputText id="location" value="#{createEventBean.event.location}" maxlength="200"/>
-                        <p:commandButton value="Check" type="button" onclick="myFunction()" />
-                        
-                        <p:outputLabel value="Insert email of invited users separated by &quot;;&quot;" />
-                        <p:inputTextarea value="#{createEventBean.invites}" rows="10" cols="50"
-                                         completeMethod="#{createEventBean.complete}"
-                                         queryDelay="500" minQueryLength="2"/>
-                        <p:outputLabel value="Insert lower case email address"/>
+                            <p:outputLabel value="Public"/>
+                            <p:selectBooleanCheckbox value="#{createEventBean.event.public}"/>
+                            <p:outputLabel value=""/>
 
-                        <p:outputLabel value=""/>
-                        <p:commandButton value="Create Event"
-                                         action="#{createEventBean.createEvent()}"
-                                         update="@all"
-                                         ajax="true" />
-                        <p:outputLabel value=""/>
-                       </p:panelGrid>
-                </p:panel>
-            </h:form>
-            <p:dialog header="Google Map" widgetVar="gmap" modal="true" height="450">
-                <iframe
-                    id="gmap"
-                    width="600"
-                    height="450"
-                    frameborder="0" 
-                    src="">
-                </iframe>
-            </p:dialog>
+                            <p:outputLabel value="Outdoor"/>
+                            <p:selectBooleanCheckbox value="#{createEventBean.event.outdoor}"/>
+                            <p:outputLabel value=""/>
+
+                            <p:outputLabel value="Begin time"/>
+                            <p:calendar id="beginTime" value="#{createEventBean.event.beginTime}"
+                                        pages="3" effect="fold" mindate="#{homeScheduleBean.today()}"
+                                        pattern="dd/MM/yyyy HH:mm"/>
+                            <p:outputLabel value=""/>    
+
+                            <p:outputLabel value="End time"/>
+                            <p:calendar id="endTime" value="#{createEventBean.event.endTime}"
+                                        pages="3" effect="fold" mindate="#{homeScheduleBean.today()}"
+                                        pattern="dd/MM/yyyy HH:mm"/>
+                            <p:outputLabel value=""/>
+
+                            <p:outputLabel value="Location (write as &quot;address, city, state&quot;) Please check your position!"
+                                           style="display:block;width:300px;"/>
+                            <p:inputText id="location" value="#{createEventBean.event.location}" maxlength="200"/>
+                            <p:commandButton value="Check" type="button" style="margin-left:0px;"
+                                             onclick="myFunction()" />
+
+                            <p:outputLabel value="Insert email of invited users separated by &quot;;&quot;" />
+                            <p:inputTextarea value="#{createEventBean.invites}" rows="10" cols="50"
+                                             completeMethod="#{createEventBean.complete}"
+                                             queryDelay="500" minQueryLength="2"/>
+                            <p:outputLabel value="Insert lower case Email address"/>
+
+                            <p:outputLabel value=""/>
+                            <p:commandButton value="Create Event"
+                                             action="#{createEventBean.createEvent()}"
+                                             update="@all"
+                                             ajax="true"
+                                             style="margin-left:115px;"/>
+                            <p:outputLabel value=""/>
+                           </p:panelGrid>
+                    </p:panel>
+                </h:form>
+                <p:dialog header="Google Map" widgetVar="gmap" modal="true" height="450">
+                    <iframe
+                        id="gmap"
+                        width="600"
+                        height="450"
+                        frameborder="0" 
+                        src="">
+                    </iframe>
+                </p:dialog>
+            </div>
         </section>
     </h:body>
 </html>

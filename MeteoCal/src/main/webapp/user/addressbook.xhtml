@@ -19,32 +19,35 @@
             <ul id="landmarks">
                 <li><p:link outcome="home" value="#{homeBean.name}'s Calendar"/></li>
                 <li><p:link outcome="notifications" value="Notifications (#{notificationBean.numberOfNotifies})"/></li>
-                <li><p:link outcome="addressbook" value="Addressbook"/></li>
+                <li><p:link outcome="addressbook" value="Addressbook" style="color:white"/></li>
                 <li><p:link outcome="settings" value="Settings"/></li>
                 <li><h:form><p:commandLink action="#{indexBean.logout()}" value="Logout"/></h:form></li>
             </ul>
         </header>
         <section>
-            <h:form class="clear-left">
-                <p:dataTable var="contact" value="#{addressBookBean.contacts}">
-                    <p:column headerText="Name">
-                        <h:outputText value="#{contact.name}" />
-                    </p:column>
+            <div style="width:1024px;margin:auto;">
+                <h:form class="clear-left">
+                    <p:dataTable var="contact" value="#{addressBookBean.contacts}" style="font-size:15px;text-align:center;">
+                        <p:column headerText="Email">
+                            <h:outputText value="#{contact.email}" />
+                        </p:column>
+                        
+                        <p:column headerText="Name">
+                            <h:outputText value="#{contact.name}" />
+                        </p:column>
 
-                    <p:column headerText="Surname">
-                        <h:outputText value="#{contact.surname}" />
-                    </p:column>
+                        <p:column headerText="Surname">
+                            <h:outputText value="#{contact.surname}" />
+                        </p:column>
 
-                    <p:column headerText="Email">
-                        <h:outputText value="#{contact.email}" />
-                    </p:column>
-
-                    <p:column headerText="Delete">
-                        <p:commandButton action="#{addressBookBean.deleteContact(contact)}"
-                                         value="Delete"/>
-                    </p:column>
-                </p:dataTable>
-            </h:form>
+                        <p:column headerText="" style="border:none;background:none;">
+                            <p:commandButton action="#{addressBookBean.deleteContact(contact)}"
+                                             value="Delete"
+                                             icon="ui-icon-trash"/>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+            </div>
         </section>
     </h:body>
 </html>

@@ -1,22 +1,27 @@
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
     margin:0px;
-    background: #FFF0B2;
+    background: url(../resources/images/theme.jpg);
 }
 
 #indexBody {
     background: url(../resources/images/background.jpg);
-    background-repeat: no;
+    background-repeat:  no-repeat;
     background-position: 50% 50%;
 }
 
 header {
-    background-color: #FF0000;
+    //background-color: #FF0000;
+    background: -webkit-linear-gradient(#FF0000, #CC0000); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(#FF0000, #CC0000); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#FF0000, #CC0000); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(#FF0000, #CC0000); /* Standard syntax */
+
     border-bottom: 1px solid #000000;
     position: fixed;
     z-index: 9;
     width: 100%;
-    min-width: 1000px;
+    min-width: 1024px;
     opacity:0.8;
 }
 
@@ -26,15 +31,21 @@ header {
 }
 
 #mainHeader h1 {
-    color:#fece2f;
+    //color:#fece2f;
+    color:white;
+    -ms-transform: rotate(-7deg); /* IE 9 */
+    -webkit-transform: rotate(-7deg); /* Chrome, Safari, Opera */
+    transform: rotate(-7deg);
 }
 
 #mainHeader a {
     text-decoration: none;
     color:#fece2f;
+    //color:white;
 }
 #mainHeader a:hover{
-    color:#000000;
+    //color:#000000;
+    color:white;
 }
 section{
     padding-top: 60px;
@@ -73,7 +84,7 @@ section{
     margin:0px;
     padding-top:50px;
     font-size: 60px;
-    width:180px;
+    width:270px;
     float:left;
     font-family: "Comic Sans MS", cursive, sans-serif;
     text-shadow: 1px 1px #000000;
@@ -84,9 +95,15 @@ section{
     padding: 0px 20px 0px 20px;
     display: inline;
     line-height: 50px;
+    position:relative;
+    top:10px;
     float: left;
-    color:#FFFF66;
-    text-shadow: 1px 1px #000000; 
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    color:white;
+    text-shadow: -2px 2px #000000; 
+    -ms-transform: rotate(-7deg); /* IE 9 */
+    -webkit-transform: rotate(-7deg); /* Chrome, Safari, Opera */
+    transform: rotate(-7deg);
 }
 
 ul, #landmarks {
@@ -133,11 +150,11 @@ ul, #landmarks {
     left:-45px;
     height:28px;
     border:none;
-    background:#FFF0B2;
+    background:white;
 }
 
 #searchForm .ui-inputfield {
-    background:#FFF0B2!important;
+    background:white!important;
 }
 
 .ui-state-active {
@@ -159,7 +176,10 @@ section h2 {
 
 .fc-event{
     cursor: pointer!important;
-    background:red!important;
+    background: -webkit-linear-gradient(#FF0000, #CC0000); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(#FF0000, #CC0000); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#FF0000, #CC0000); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(#FF0000, #CC0000); /* Standard syntax */
     border: 1px solid black!important;
     color:white!important;
     font-weight: bold;
@@ -171,4 +191,36 @@ section h2 {
 #recovery {
     padding-top : 60px;
     opacity : 0.8;
+}
+
+.ui-widget-content {
+    background: -webkit-linear-gradient(#FFFFFF, #FFFFCC); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(#FFFFFF, #FFFFCC); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#FFFFFF, #FFFFCC); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(#FFFFFF, #FFFFCC); /* Standard syntax */
+}
+
+.ui-state-highlight {
+    background: -webkit-linear-gradient(#FFFFFF, #fece2f); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(#FFFFFF, #fece2f); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#FFFFFF, #fece2f); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(#FFFFFF, #fece2f); /* Standard syntax */
+}
+
+#unregisterform a {
+    text-decoration: none;
+    color:black;
+    font-size:11px;
+}
+
+#unregisterform a:hover {
+    text-decoration: underline;
+}
+
+.ui-panelgrid .ui-panelgrid-cell {
+   border-style:none!important; 
+}
+
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
+    color:#fece2f;
 }
