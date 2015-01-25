@@ -152,6 +152,7 @@ public class EventArea{
     /**
      * Calls eventManager.deleteEvent(currentEvent)
      * currentEvent = null
+     * @return 
      */
     public int deleteEvent() {
         int r = eventManager.deleteEvent(currentEvent);

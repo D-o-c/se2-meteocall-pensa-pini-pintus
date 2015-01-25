@@ -30,7 +30,7 @@ public class SettingsBean {
     private static final String successfull = "Calendar imported succesfully";
     private static final String time_consistency_error = 
             "Calendar not completely imported because same event has problem with time consistency";
-    private static final String password_short = "Password must have at least 4 characters";
+    private static final String password_short = "Password must have at least 9 characters";
     private static final String password_changed = "Password Successfully Changed";
     private static final String try_again = "Please Try Again";
     private static final String public_calendar = "Now your calendar is PUBLIC";
@@ -241,7 +241,7 @@ public class SettingsBean {
         request.getSession().invalidate();
         
         context.addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, info, unregistration));
+                new FacesMessage(FacesMessage.SEVERITY_INFO, unregistration, info));
         context.getExternalContext().getFlash().setKeepMessages(true);
         
         return index_page_url;

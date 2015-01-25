@@ -1,29 +1,28 @@
 package it.polimi.meteocal.control;
 
-import it.polimi.meteocal.boundary.PublicArea;
 import it.polimi.meteocal.entity.WeatherCondition;
 import it.polimi.meteocal.entity.Event;
 import it.polimi.meteocal.entity.primarykeys.WeatherConditionPK;
-import it.polimi.meteocal.gui.IndexBean;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
-import javax.persistence.LockTimeoutException;
 import javax.persistence.PersistenceContext;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
+import javax.transaction.UserTransaction;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -55,7 +54,7 @@ public class WeatherManager {
     List<Event> eventstList;
     Date today;
     
-    @Schedule(second="*/30", minute="*/2", hour="*")
+    @Schedule(second="*", minute="*", hour="*/12")
     public void sunSearchWeather(){
         this.searchWeather();
     }
@@ -68,11 +67,11 @@ public class WeatherManager {
     public void searchWeather(){
         
         try{
-           // em.setProperty("javax.persistence.lock.timeout", 3600000);
             today = new Date();
             eventstList = em.createNamedQuery(Event.findAll, Event.class).getResultList();
 
             for (Event event : eventstList) {
+                
                 Boolean cont = true;
                 
                 while(cont){
@@ -105,6 +104,7 @@ public class WeatherManager {
 
                 }//endif
                 
+                em.lock(event, LockModeType.NONE);
             }//endfor
             um.sendNotifies();
         }

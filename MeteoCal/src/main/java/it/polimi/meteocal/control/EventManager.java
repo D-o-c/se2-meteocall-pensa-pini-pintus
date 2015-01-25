@@ -6,10 +6,17 @@ import it.polimi.meteocal.entity.User;
 import it.polimi.meteocal.entity.WeatherCondition;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
+import javax.transaction.UserTransaction;
 
 /**
  *
@@ -24,6 +31,9 @@ public class EventManager {
     
     @PersistenceContext
     EntityManager em;
+    
+    
+   
     
     //Controls
     @Inject
@@ -156,46 +166,49 @@ public class EventManager {
      *         -2: if you must retry
      */
     public int updateEvent(Event currEvent, Event tempEvent, List<String> invitedUsers) {
-        
-     //   em.setProperty("javax.persistence.lock.timeout", 2000);
-    //    currentEvent = em.merge(currentEvent);
-    //    currentEvent = em.find(Event.class, currentEvent.getEventId());
-        Event currentEvent = em.merge(currEvent);
-        Boolean cont = true;
-        while(cont){
-            try{
-                em.lock(currentEvent, LockModeType.PESSIMISTIC_WRITE);
-                cont=false;
+        try{
+        //    currentEvent = em.merge(currentEvent);
+        //    currentEvent = em.find(Event.class, currentEvent.getEventId());
+            Event currentEvent = em.merge(currEvent);
+            Boolean cont = true;
+            while(cont){
+                try{
+                    em.lock(currentEvent, LockModeType.PESSIMISTIC_WRITE);
+                    cont=false;
+                }
+                catch(Exception e){
+                    return -2;
+                }
             }
-            catch(Exception e){
-                return -2;
+            currentEvent = tempEvent;
+            //no notifies have been sent from the system(one day before)
+            currentEvent.setBwodb(false);
+            //no notifies have been sent from the system(3 days before)
+            currentEvent.setBwtdb(false);
+
+
+
+            //send invites
+            boolean noErrors = sendInvite(currentEvent, invitedUsers);
+            //removes weather conditions
+            currentEvent.setWeatherConditions(new ArrayList<WeatherCondition>());
+        //    em.persist(currentEvent);
+
+            currentEvent = em.merge(currentEvent);
+            updateManager.updateFromEventUpdate(currentEvent);
+
+            em.lock(currentEvent, LockModeType.NONE);
+
+            weatherManager.searchWeather();
+            if (noErrors){
+                return 0;
             }
+            return -1;
         }
-        currentEvent = tempEvent;
-        //no notifies have been sent from the system(one day before)
-        currentEvent.setBwodb(false);
-        //no notifies have been sent from the system(3 days before)
-        currentEvent.setBwtdb(false);
-        
-       
-        
-        //send invites
-        boolean noErrors = sendInvite(currentEvent, invitedUsers);
-        //removes weather conditions
-        currentEvent.setWeatherConditions(new ArrayList<WeatherCondition>());
-    //    em.persist(currentEvent);
-        
-        em.merge(currentEvent);
-        updateManager.updateFromEventUpdate(currentEvent);
-        
-    //    em.lock(currentEvent, LockModeType.NONE);
-        
-        
-        weatherManager.searchWeather();
-        if (noErrors){
-            return 0;
+        catch(Exception e){
+            return -2;
         }
-        return -1;
+        
     }
 
     /**
@@ -246,45 +259,50 @@ public class EventManager {
      * @return  
      */
     public int deleteEvent(Event e) {
-        Event event = em.merge(e);
-        Boolean cont = true;
-        while(cont){
-            try{
-                em.lock(event, LockModeType.PESSIMISTIC_WRITE);
-                cont=false;
-            }
-            catch(Exception exc){
-                return -2;
-            }
-        }
-        
-        for (Calendar calendar : event.getInvited()){
-            if (calendar.getInviteStatus() == 1){
-                emailSender.send(calendar.getUserEmail(),
-                                delete, 
-                                event.getName() + deleted);
-            }
-            
-            User u = calendar.getUser();
-            for (int i = 0; i < u.getEvents().size(); i++){
-                if (u.getEvents().get(i).getEvent().equals(event)){
-                    u.getEvents().remove(i);
-                    i--;
+        try{
+            Event event = em.merge(e);
+            Boolean cont = true;
+            while(cont){
+                try{
+                    em.lock(event, LockModeType.PESSIMISTIC_WRITE);
+                    cont=false;
+                }
+                catch(Exception exc){
+                    return -2;
                 }
             }
 
-            for (int i = 0; i < u.getNotifies().size(); i++){
-                if (u.getNotifies().get(i).getEvent().equals(event)){
-                    u.getNotifies().remove(i);
-                    i--;
+            for (Calendar calendar : event.getInvited()){
+                if (calendar.getInviteStatus() == 1){
+                    emailSender.send(calendar.getUserEmail(),
+                                    delete, 
+                                    event.getName() + deleted);
                 }
+
+                User u = calendar.getUser();
+                for (int i = 0; i < u.getEvents().size(); i++){
+                    if (u.getEvents().get(i).getEvent().equals(event)){
+                        u.getEvents().remove(i);
+                        i--;
+                    }
+                }
+
+                for (int i = 0; i < u.getNotifies().size(); i++){
+                    if (u.getNotifies().get(i).getEvent().equals(event)){
+                        u.getNotifies().remove(i);
+                        i--;
+                    }
+                }
+
+                em.merge(u);
             }
-            
-            em.merge(u);
+
+
+            em.remove(event);
         }
-        
-        
-        em.remove(event);
+        catch(Exception exc){
+            return -2;
+        }
         return 0;
     }
     
