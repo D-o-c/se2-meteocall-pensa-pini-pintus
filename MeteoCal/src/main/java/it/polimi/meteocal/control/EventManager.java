@@ -6,17 +6,10 @@ import it.polimi.meteocal.entity.User;
 import it.polimi.meteocal.entity.WeatherCondition;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
 
 /**
  *

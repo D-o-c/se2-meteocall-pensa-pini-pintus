@@ -9,7 +9,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Date;
 import java.util.List;
-import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
@@ -17,12 +16,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -255,11 +248,8 @@ public class WeatherManager {
      * @return numDaysEvent : number of days of an event
      */
     private int calculateNumDays(Event event){
-        int numDaysEvent = event.getEndTime().getDate() - event.getBeginTime().getDate();
-        if (event.getBeginTime().getDate() < event.getEndTime().getDate()){
-            return numDaysEvent + 1;
-        }
-        return numDaysEvent + 32 ;
+        long num = event.getEndTime().getTime() - event.getBeginTime().getTime();
+        return (int) (num * 1.15740741 * Math.pow(10, -8)) + 1;
     }
     
     

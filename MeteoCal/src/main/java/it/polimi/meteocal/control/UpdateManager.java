@@ -59,7 +59,7 @@ public class UpdateManager {
                                 String desc = "For your tomorrow event bad weather is expected\n\n" + 
                                     "Name: " + event.getName() + "\n" + 
                                     "Description: " + event.getDescription() + "\n" +
-                                    "Begin Time: " + event.getBeginTime() + "\n" +
+                                    "Start Time: " + event.getBeginTime() + "\n" +
                                     "Location: " + event.getLocation();
                                 emailSender.send(c.getUserEmail(),
                                     "Bad weather for you event",
@@ -108,7 +108,7 @@ public class UpdateManager {
                         String desc = "For one of your next events bad weather is expected\n\n" + 
                                     "Name: " + event.getName() + "\n" + 
                                     "Description: " + event.getDescription() + "\n" +
-                                    "Begin Time: " + event.getBeginTime() + "\n" +
+                                    "Start Time: " + event.getBeginTime() + "\n" +
                                     "Location: " + event.getLocation() + "\n\n" +
                                     "The first sunny day is: " + sunnyDay;
                         emailSender.send(event.getCreator().getEmail(),
@@ -159,7 +159,7 @@ public class UpdateManager {
                             String desc = "The weather for this event is just changed\n\n" + 
                                     "Name: " + event.getName() + "\n" + 
                                     "Description: " + event.getDescription() + "\n" +
-                                    "Begin Time: " + event.getBeginTime() + "\n" +
+                                    "Start Time: " + event.getBeginTime() + "\n" +
                                     "Location: " + event.getLocation();
                             emailSender.send(c.getUserEmail(),
                                 "Weather changed",
@@ -211,7 +211,7 @@ public class UpdateManager {
                 String desc = "The info for this event is just changed\n\n" + 
                         "Name: " + event.getName() + "\n" + 
                         "Description: " + event.getDescription() + "\n"+
-                        "Begin Time: " + event.getBeginTime() + "\n" +
+                        "Start Time: " + event.getBeginTime() + "\n" +
                         "Location: " + event.getLocation();
                 emailSender.send(c.getUserEmail(),
                     "Event info changed",

@@ -38,6 +38,9 @@ public class EventArea{
      * @return currentEvent
      */
     public Event getCurrentEvent() {
+        if (currentEvent != null){
+            currentEvent = eventManager.find(currentEvent.getEventId());
+        }
         return currentEvent;
     }
     
